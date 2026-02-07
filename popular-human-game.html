@@ -485,6 +485,12 @@
             height: 100%;
             background: #fafafa;
             overflow-y: auto;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 200;
         }
 
         .result-screen.active {
@@ -644,24 +650,37 @@
             padding: 16px;
             margin-bottom: 12px;
             border: 1px solid #e5e5e5;
-        }
-
-        .question-result-header {
             display: flex;
             align-items: center;
             gap: 12px;
-            margin-bottom: 12px;
         }
 
         .question-result-icon {
             font-size: 24px;
+            flex-shrink: 0;
+        }
+
+        .question-result-content {
+            flex: 1;
         }
 
         .question-result-title {
-            flex: 1;
             font-size: 14px;
             font-weight: 600;
             color: #333;
+            margin-bottom: 6px;
+        }
+
+        .question-result-answer {
+            font-size: 13px;
+            color: #666;
+        }
+
+        .question-result-percent {
+            font-size: 15px;
+            font-weight: 700;
+            color: #000;
+            flex-shrink: 0;
         }
 
         .answer-comparison {
@@ -835,13 +854,30 @@
             color: #999;
         }
 
-        /* 게임 헤더 (뒤로가기) */
+        /* 게임 헤더 삭제 */
         .game-header {
+            display: none;
+        }
+
+        .back-btn-overlay {
+            position: absolute;
+            top: 16px;
+            left: 16px;
+            width: 40px;
+            height: 40px;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(10px);
+            border-radius: 50%;
             display: flex;
             align-items: center;
-            padding: 16px 20px;
-            background: #fff;
-            border-bottom: 1px solid #e5e5e5;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 10;
+            border: none;
+            color: #fff;
+            font-size: 20px;
+            font-weight: 700;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
         }
 
         .back-btn {
@@ -999,13 +1035,8 @@
 
             <!-- 게임 화면 -->
             <div class="game-screen" id="gameScreen">
-                <div class="game-header">
-                    <button class="back-btn" onclick="backToHome()">←</button>
-                    <div class="game-title" id="gameHeaderTitle"></div>
-                    <div class="game-title-placeholder"></div>
-                </div>
-
                 <div class="animation-area">
+                    <button class="back-btn-overlay" onclick="backToHome()">←</button>
                     <div class="animation-image" id="animationImage">💒</div>
                     <div class="game-timer-banner" id="gameTimer">10:00</div>
                     <div class="context-overlay" id="contextOverlay">
@@ -1102,10 +1133,6 @@
                             <div class="status-item">
                                 <span class="status-label">정답 문제</span>
                                 <span class="status-value" id="correctAnswersLose">7 / 10</span>
-                            </div>
-                            <div class="status-item">
-                                <span class="status-label">상위 선택률</span>
-                                <span class="status-value" id="topPercentile">38%</span>
                             </div>
                         </div>
 
@@ -1864,9 +1891,6 @@
         function loadQuestion() {
             const question = currentScenario.questions[currentQuestion];
             
-            // 게임 헤더 타이틀
-            document.getElementById('gameHeaderTitle').textContent = currentScenario.name;
-            
             // 배너 이미지 설정 (애니메이션 영역 배경으로)
             const animationArea = document.querySelector('.animation-area');
             animationArea.style.backgroundImage = `url('${currentScenario.bannerImage}')`;
@@ -2019,31 +2043,23 @@
                 document.getElementById('resultTitle').textContent = '당신은 대중적 인간입니다';
                 document.getElementById('resultSubtitle').textContent = '전 세계 사람들의 판단 흐름을 끝까지 읽었습니다';
                 
-                document.getElementById('rewardAmount').textContent = result.rewardAmount + ' USDT';
+                // 1/n 상금 계산 (총 상금 풀을 승자 수로 나눔)
+                const totalPool = 1000; // 총 상금 풀 (예시)
+                const rewardPerWinner = (totalPool / result.totalWinners).toFixed(2);
+                
+                document.getElementById('rewardAmount').textContent = rewardPerWinner + ' USDT';
                 document.getElementById('totalWinners').textContent = result.totalWinners.toLocaleString();
                 document.getElementById('correctAnswers').textContent = `${result.correctCount} / ${result.totalQuestions}`;
                 
-                // 문제별 결과 표시
+                // 문제별 결과 표시 (전부 정답이므로 간단하게)
                 const resultsHtml = result.questionResults.map((qr, idx) => `
                     <div class="question-result">
-                        <div class="question-result-header">
-                            <span class="question-result-icon">${qr.isCorrect ? '✅' : '❌'}</span>
-                            <span class="question-result-title">Q${qr.questionNumber}. ${qr.question}</span>
+                        <span class="question-result-icon">✅</span>
+                        <div class="question-result-content">
+                            <div class="question-result-title">Q${qr.questionNumber}. ${qr.question}</div>
+                            <div class="question-result-answer">${qr.userAnswer}</div>
                         </div>
-                        <div class="answer-comparison">
-                            <div class="answer-item user-choice ${qr.isCorrect ? 'correct' : ''}">
-                                <span class="answer-badge badge-you">YOU</span>
-                                <span class="answer-text">${qr.userAnswer}</span>
-                                <span class="answer-percent">${qr.userPercentage}%</span>
-                            </div>
-                            ${!qr.isCorrect ? `
-                            <div class="answer-item correct">
-                                <span class="answer-badge badge-popular">인기</span>
-                                <span class="answer-text">${qr.correctAnswer}</span>
-                                <span class="answer-percent">${qr.correctPercentage}%</span>
-                            </div>
-                            ` : ''}
-                        </div>
+                        <span class="question-result-percent">${qr.userPercentage}%</span>
                     </div>
                 `).join('');
                 
@@ -2057,7 +2073,7 @@
                 const currentCoins = parseInt(document.getElementById('coinCount').textContent);
                 const currentPoints = parseInt(document.getElementById('rewardPoints').textContent);
                 updateUserStats({
-                    coins: currentCoins + Math.floor(result.rewardAmount),
+                    coins: currentCoins + Math.floor(parseFloat(rewardPerWinner)),
                     rewardPoints: currentPoints + (result.correctCount * 5)
                 });
             } else {
@@ -2067,29 +2083,16 @@
                 document.getElementById('resultSubtitle').textContent = '하지만, 대부분의 사람도 이 지점에서 갈렸습니다';
                 
                 document.getElementById('correctAnswersLose').textContent = `${result.correctCount} / ${result.totalQuestions}`;
-                document.getElementById('topPercentile').textContent = result.topPercentile + '%';
                 
                 // 문제별 결과 표시
                 const resultsHtml = result.questionResults.map((qr, idx) => `
                     <div class="question-result">
-                        <div class="question-result-header">
-                            <span class="question-result-icon">${qr.isCorrect ? '✅' : '❌'}</span>
-                            <span class="question-result-title">Q${qr.questionNumber}. ${qr.question}</span>
+                        <span class="question-result-icon">${qr.isCorrect ? '✅' : '❌'}</span>
+                        <div class="question-result-content">
+                            <div class="question-result-title">Q${qr.questionNumber}. ${qr.question}</div>
+                            <div class="question-result-answer">${qr.isCorrect ? qr.userAnswer : qr.correctAnswer} (${qr.isCorrect ? qr.userPercentage : qr.correctPercentage}%)</div>
                         </div>
-                        <div class="answer-comparison">
-                            <div class="answer-item user-choice ${qr.isCorrect ? 'correct' : ''}">
-                                <span class="answer-badge badge-you">YOU</span>
-                                <span class="answer-text">${qr.userAnswer}</span>
-                                <span class="answer-percent">${qr.userPercentage}%</span>
-                            </div>
-                            ${!qr.isCorrect ? `
-                            <div class="answer-item correct">
-                                <span class="answer-badge badge-popular">인기</span>
-                                <span class="answer-text">${qr.correctAnswer}</span>
-                                <span class="answer-percent">${qr.correctPercentage}%</span>
-                            </div>
-                            ` : ''}
-                        </div>
+                        ${!qr.isCorrect ? `<span class="question-result-percent">내 선택: ${qr.userPercentage}%</span>` : ''}
                     </div>
                 `).join('');
                 
