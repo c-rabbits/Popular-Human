@@ -149,6 +149,7 @@
 
         .scenario-section {
             padding: 20px;
+            padding-bottom: 90px;
         }
 
         .section-title {
@@ -1065,6 +1066,65 @@
         .game-title-placeholder {
             width: 24px;
         }
+
+        /* 시간 종료 팝업 */
+        .timeout-popup {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 300;
+            padding: 20px;
+        }
+
+        .timeout-popup.active {
+            display: flex;
+        }
+
+        .timeout-popup-content {
+            background: #fff;
+            border-radius: 16px;
+            padding: 32px 24px;
+            max-width: 320px;
+            width: 100%;
+            text-align: center;
+        }
+
+        .timeout-popup-icon {
+            font-size: 64px;
+            margin-bottom: 16px;
+        }
+
+        .timeout-popup-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: #000;
+            margin-bottom: 12px;
+        }
+
+        .timeout-popup-text {
+            font-size: 15px;
+            line-height: 1.6;
+            color: #666;
+            margin-bottom: 24px;
+        }
+
+        .timeout-popup-btn {
+            width: 100%;
+            padding: 14px;
+            background: #000;
+            color: #fff;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+        }
     </style>
 </head>
 <body>
@@ -1100,7 +1160,7 @@
                                     <div class="status-dot"></div>
                                     참여 가능
                                 </div>
-                                <div class="scenario-countdown" id="weddingCountdown">02:00:00</div>
+                                <div class="scenario-countdown" id="weddingCountdown">02:40:00</div>
                             </div>
                             <div class="scenario-content">
                                 <div class="scenario-info">
@@ -1133,7 +1193,7 @@
                                     <div class="status-dot"></div>
                                     참여 가능
                                 </div>
-                                <div class="scenario-countdown" id="blindDateCountdown">02:00:00</div>
+                                <div class="scenario-countdown" id="blindDateCountdown">02:40:00</div>
                             </div>
                             <div class="scenario-content">
                                 <div class="scenario-info">
@@ -1166,7 +1226,7 @@
                                     <div class="status-dot"></div>
                                     참여 가능
                                 </div>
-                                <div class="scenario-countdown" id="bbqCountdown">02:00:00</div>
+                                <div class="scenario-countdown" id="bbqCountdown">02:40:00</div>
                             </div>
                             <div class="scenario-content">
                                 <div class="scenario-info">
@@ -1349,6 +1409,16 @@
                         <button class="share-btn share-btn-close" onclick="closeSharePopup()">닫기</button>
                         <button class="share-btn share-btn-copy" onclick="copyShareText()">복사하기</button>
                     </div>
+                </div>
+            </div>
+
+            <!-- 시간 종료 팝업 -->
+            <div class="timeout-popup" id="timeoutPopup">
+                <div class="timeout-popup-content">
+                    <div class="timeout-popup-icon">⏱️</div>
+                    <div class="timeout-popup-title">시간이 종료되었습니다</div>
+                    <div class="timeout-popup-text">10분 안에 모든 질문에<br>답변하지 못했습니다.</div>
+                    <button class="timeout-popup-btn" onclick="closeTimeoutPopup()">확인</button>
                 </div>
             </div>
 
@@ -1936,13 +2006,13 @@
 
         // 카운트다운 타이머
         function startCountdowns() {
-            // 임시: 2시간 카운트다운 (실제로는 서버에서 종료 시간을 받아와야 함)
+            // 임시: 2시간 40분 카운트다운 (실제로는 서버에서 종료 시간을 받아와야 함)
             // 서버 응답 예시: { endTime: '2026-02-07T15:30:00Z' }
             
             const countdowns = {
-                'weddingCountdown': 2 * 60 * 60, // 2시간 (초 단위)
-                'blindDateCountdown': 2 * 60 * 60,
-                'bbqCountdown': 2 * 60 * 60
+                'weddingCountdown': 2 * 60 * 60 + 40 * 60, // 2시간 40분 (9600초)
+                'blindDateCountdown': 2 * 60 * 60 + 40 * 60,
+                'bbqCountdown': 2 * 60 * 60 + 40 * 60
             };
             
             Object.keys(countdowns).forEach(id => {
@@ -2065,9 +2135,8 @@
                 if (gameTimeLeft <= 0) {
                     clearInterval(gameTimerInterval);
                     timerElement.textContent = '시간 종료';
-                    // 시간 종료 처리
-                    alert('시간이 종료되었습니다!');
-                    showResult();
+                    // 시간 종료 팝업 표시
+                    showTimeoutPopup();
                     return;
                 }
                 
@@ -2080,6 +2149,17 @@
             
             updateGameTimer();
             gameTimerInterval = setInterval(updateGameTimer, 1000);
+        }
+
+        // 시간 종료 팝업 표시
+        function showTimeoutPopup() {
+            document.getElementById('timeoutPopup').classList.add('active');
+        }
+
+        // 시간 종료 팝업 닫기 및 메인 화면으로
+        function closeTimeoutPopup() {
+            document.getElementById('timeoutPopup').classList.remove('active');
+            backToHome();
         }
 
         // 게임 타이머 정지
