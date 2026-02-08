@@ -1335,6 +1335,215 @@
             color: #999;
         }
 
+        /* 트렌드 보드 스타일 */
+        .trend-summary {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .trend-info-card {
+            background: #fff;
+            border: 2px solid #e5e5e5;
+            border-radius: 12px;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .trend-info-icon {
+            font-size: 32px;
+        }
+
+        .trend-info-content {
+            flex: 1;
+        }
+
+        .trend-info-label {
+            font-size: 12px;
+            color: #999;
+            margin-bottom: 4px;
+        }
+
+        .trend-info-value {
+            font-size: 20px;
+            font-weight: 700;
+            color: #000;
+        }
+
+        .trend-note {
+            background: #f8f8f8;
+            border-radius: 8px;
+            padding: 12px 16px;
+            font-size: 13px;
+            color: #666;
+            margin-bottom: 24px;
+            text-align: center;
+        }
+
+        .trend-section {
+            margin-top: 20px;
+        }
+
+        .trend-section-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #000;
+            margin-bottom: 16px;
+        }
+
+        .trend-scenario-card {
+            background: #fff;
+            border: 2px solid #e5e5e5;
+            border-radius: 16px;
+            overflow: hidden;
+            margin-bottom: 16px;
+        }
+
+        .trend-banner {
+            width: 100%;
+            padding-bottom: 43.75%; /* 16:7 비율 */
+            background-size: cover;
+            background-position: center;
+            position: relative;
+        }
+
+        .trend-banner-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
+            padding: 16px;
+        }
+
+        .trend-scenario-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #fff;
+        }
+
+        .trend-stats-row {
+            display: flex;
+            padding: 16px;
+            gap: 16px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .trend-stat {
+            flex: 1;
+            text-align: center;
+        }
+
+        .trend-stat-label {
+            display: block;
+            font-size: 12px;
+            color: #999;
+            margin-bottom: 4px;
+        }
+
+        .trend-stat-value {
+            display: block;
+            font-size: 16px;
+            font-weight: 700;
+            color: #000;
+        }
+
+        .trend-dropdown-header {
+            padding: 16px;
+            background: #f8f8f8;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 14px;
+            font-weight: 600;
+            color: #333;
+            transition: background 0.2s;
+            touch-action: manipulation;
+            -webkit-user-select: none;
+            user-select: none;
+        }
+
+        .trend-dropdown-header:hover {
+            background: #f0f0f0;
+        }
+
+        .trend-dropdown-arrow {
+            transition: transform 0.3s;
+        }
+
+        .trend-dropdown-arrow.open {
+            transform: rotate(180deg);
+        }
+
+        .trend-dropdown-content {
+            padding: 16px;
+            background: #fafafa;
+        }
+
+        .trend-question {
+            margin-bottom: 20px;
+        }
+
+        .trend-question:last-child {
+            margin-bottom: 0;
+        }
+
+        .trend-question-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 12px;
+        }
+
+        .trend-choices {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .trend-choice {
+            background: #fff;
+            border-radius: 8px;
+            padding: 12px;
+        }
+
+        .trend-choice-text {
+            font-size: 13px;
+            color: #666;
+            margin-bottom: 8px;
+        }
+
+        .trend-choice-bar {
+            position: relative;
+            height: 24px;
+            background: #e5e5e5;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .trend-choice-fill {
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            transition: width 0.5s ease-out;
+        }
+
+        .trend-choice-percent {
+            position: absolute;
+            right: 8px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 12px;
+            font-weight: 700;
+            color: #333;
+        }
+
         /* 상점 스타일 */
         .shop-section {
             margin-bottom: 30px;
@@ -2241,10 +2450,174 @@
                 </div>
             </div>
 
-            <!-- 랭킹 화면 -->
+            <!-- 트렌드 보드 화면 -->
             <div class="other-screen" id="rankingScreen">
-                <div class="screen-title">🏆 랭킹</div>
-                <div class="placeholder-content">랭킹 화면 (준비 중)</div>
+                <div class="screen-title">📊 트렌드 보드</div>
+                
+                <!-- 집계 정보 -->
+                <div class="trend-summary">
+                    <div class="trend-info-card">
+                        <div class="trend-info-icon">👥</div>
+                        <div class="trend-info-content">
+                            <div class="trend-info-label">총 참여자</div>
+                            <div class="trend-info-value" id="trendTotalParticipants">1,247명</div>
+                        </div>
+                    </div>
+                    <div class="trend-info-card">
+                        <div class="trend-info-icon">✅</div>
+                        <div class="trend-info-content">
+                            <div class="trend-info-label">정답자</div>
+                            <div class="trend-info-value" id="trendCorrectParticipants">124명</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="trend-note">
+                    ℹ️ 순위 없음 - 집계 정보만 제공됩니다
+                </div>
+                
+                <!-- 선택 트렌드 섹션 -->
+                <div class="trend-section">
+                    <div class="trend-section-title">사람들은 이렇게 선택했습니다</div>
+                    
+                    <!-- 시나리오별 트렌드 -->
+                    <div class="trend-scenario-card">
+                        <div class="trend-banner" style="background-image: url('wedding_banner.png');">
+                            <div class="trend-banner-overlay">
+                                <div class="trend-scenario-title">친구의 결혼식</div>
+                            </div>
+                        </div>
+                        
+                        <div class="trend-stats-row">
+                            <div class="trend-stat">
+                                <span class="trend-stat-label">참여자</span>
+                                <span class="trend-stat-value">1,247명</span>
+                            </div>
+                            <div class="trend-stat">
+                                <span class="trend-stat-label">정답자</span>
+                                <span class="trend-stat-value">124명</span>
+                            </div>
+                        </div>
+                        
+                        <!-- 문제별 선택 트렌드 드롭다운 -->
+                        <div class="trend-dropdown-header" onclick="toggleTrendDropdown('wedding')">
+                            <span>📊 문제별 선택 트렌드</span>
+                            <span class="trend-dropdown-arrow" id="trendArrowWedding">▼</span>
+                        </div>
+                        
+                        <div class="trend-dropdown-content" id="trendContentWedding" style="display: none;">
+                            <!-- Q1 -->
+                            <div class="trend-question">
+                                <div class="trend-question-title">Q1. 결혼식 초대를 받았을 때, 가장 먼저 드는 생각은?</div>
+                                <div class="trend-choices">
+                                    <div class="trend-choice">
+                                        <div class="trend-choice-text">"선물(축의금)을 얼마로 할까?"</div>
+                                        <div class="trend-choice-bar">
+                                            <div class="trend-choice-fill" style="width: 65%"></div>
+                                            <span class="trend-choice-percent">65%</span>
+                                        </div>
+                                    </div>
+                                    <div class="trend-choice">
+                                        <div class="trend-choice-text">"어떤 옷을 입지?"</div>
+                                        <div class="trend-choice-bar">
+                                            <div class="trend-choice-fill" style="width: 23%"></div>
+                                            <span class="trend-choice-percent">23%</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Q2 -->
+                            <div class="trend-question">
+                                <div class="trend-question-title">Q2. 결혼식 복장으로 가장 무난한 선택은?</div>
+                                <div class="trend-choices">
+                                    <div class="trend-choice">
+                                        <div class="trend-choice-text">단정한 포멀 스타일</div>
+                                        <div class="trend-choice-bar">
+                                            <div class="trend-choice-fill" style="width: 72%"></div>
+                                            <span class="trend-choice-percent">72%</span>
+                                        </div>
+                                    </div>
+                                    <div class="trend-choice">
+                                        <div class="trend-choice-text">세미 포멀 (깔끔한 캐주얼)</div>
+                                        <div class="trend-choice-bar">
+                                            <div class="trend-choice-fill" style="width: 18%"></div>
+                                            <span class="trend-choice-percent">18%</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Q3 -->
+                            <div class="trend-question">
+                                <div class="trend-question-title">Q3. 축하의 표시로 가장 많이 선택하는 것은?</div>
+                                <div class="trend-choices">
+                                    <div class="trend-choice">
+                                        <div class="trend-choice-text">현금 / 기프트 카드</div>
+                                        <div class="trend-choice-bar">
+                                            <div class="trend-choice-fill" style="width: 83%"></div>
+                                            <span class="trend-choice-percent">83%</span>
+                                        </div>
+                                    </div>
+                                    <div class="trend-choice">
+                                        <div class="trend-choice-text">미리 준비한 선물</div>
+                                        <div class="trend-choice-bar">
+                                            <div class="trend-choice-fill" style="width: 11%"></div>
+                                            <span class="trend-choice-percent">11%</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 두 번째 시나리오 -->
+                    <div class="trend-scenario-card">
+                        <div class="trend-banner" style="background-image: url('blind_date_banner.png');">
+                            <div class="trend-banner-overlay">
+                                <div class="trend-scenario-title">처음 하는 소개팅</div>
+                            </div>
+                        </div>
+                        
+                        <div class="trend-stats-row">
+                            <div class="trend-stat">
+                                <span class="trend-stat-label">참여자</span>
+                                <span class="trend-stat-value">892명</span>
+                            </div>
+                            <div class="trend-stat">
+                                <span class="trend-stat-label">정답자</span>
+                                <span class="trend-stat-value">76명</span>
+                            </div>
+                        </div>
+                        
+                        <div class="trend-dropdown-header" onclick="toggleTrendDropdown('blinddate')">
+                            <span>📊 문제별 선택 트렌드</span>
+                            <span class="trend-dropdown-arrow" id="trendArrowBlinddate">▼</span>
+                        </div>
+                        
+                        <div class="trend-dropdown-content" id="trendContentBlinddate" style="display: none;">
+                            <div class="trend-question">
+                                <div class="trend-question-title">Q1. 소개팅 약속 시간은?</div>
+                                <div class="trend-choices">
+                                    <div class="trend-choice">
+                                        <div class="trend-choice-text">정확히 약속 시간</div>
+                                        <div class="trend-choice-bar">
+                                            <div class="trend-choice-fill" style="width: 58%"></div>
+                                            <span class="trend-choice-percent">58%</span>
+                                        </div>
+                                    </div>
+                                    <div class="trend-choice">
+                                        <div class="trend-choice-text">5분 정도 일찍</div>
+                                        <div class="trend-choice-bar">
+                                            <div class="trend-choice-fill" style="width: 31%"></div>
+                                            <span class="trend-choice-percent">31%</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
 
             <!-- 프로필 화면 -->
@@ -2268,7 +2641,7 @@
             </div>
             <div class="nav-item" onclick="switchScreen('ranking')">
                 <div class="nav-icon">🏆</div>
-                <div class="nav-label">랭킹</div>
+                <div class="nav-label">트렌드</div>
             </div>
             <div class="nav-item active" onclick="switchScreen('home')">
                 <div class="nav-icon">🏠</div>
@@ -3740,6 +4113,28 @@ ${window.location.href}`;
             
             const content = document.getElementById(contentId);
             const arrow = document.getElementById(arrowId);
+            
+            if (content.style.display === 'none') {
+                content.style.display = 'block';
+                arrow.classList.add('open');
+            } else {
+                content.style.display = 'none';
+                arrow.classList.remove('open');
+            }
+        }
+
+        // 트렌드 보드 드롭다운 토글
+        function toggleTrendDropdown(scenarioId) {
+            const contentId = 'trendContent' + scenarioId.charAt(0).toUpperCase() + scenarioId.slice(1);
+            const arrowId = 'trendArrow' + scenarioId.charAt(0).toUpperCase() + scenarioId.slice(1);
+            
+            const content = document.getElementById(contentId);
+            const arrow = document.getElementById(arrowId);
+            
+            if (!content || !arrow) {
+                console.error('트렌드 드롭다운 요소를 찾을 수 없습니다:', contentId, arrowId);
+                return;
+            }
             
             if (content.style.display === 'none') {
                 content.style.display = 'block';
