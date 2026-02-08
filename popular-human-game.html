@@ -20,6 +20,15 @@
             display: flex;
             justify-content: center;
             align-items: center;
+            /* 텍스트 선택 방지 (복사/공유 메뉴 차단) */
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            /* iOS 길게 누르기 메뉴 차단 */
+            -webkit-touch-callout: none;
+            /* 터치 이벤트 최적화 */
+            -webkit-tap-highlight-color: transparent;
         }
 
         .game-container {
@@ -225,6 +234,8 @@
             background: #d0d0d0;
             cursor: pointer;
             transition: all 0.3s;
+            /* 터치 최적화 */
+            touch-action: manipulation;
         }
 
         .banner-dot.active {
@@ -282,6 +293,10 @@
             transition: all 0.3s;
             position: relative;
             box-shadow: 0 2px 8px rgba(102, 126, 234, 0.2);
+            /* 터치 최적화 */
+            touch-action: manipulation;
+            -webkit-user-select: none;
+            user-select: none;
         }
 
         .ad-reward-btn:active:not(.cooldown) {
@@ -387,6 +402,8 @@
             overflow: hidden;
             cursor: pointer;
             transition: all 0.2s;
+            /* 터치 최적화 */
+            touch-action: manipulation;
         }
 
         .scenario-card:hover {
@@ -687,6 +704,9 @@
             color: #000;
             margin-bottom: 24px;
             line-height: 1.4;
+            /* 텍스트 선택 방지 */
+            -webkit-user-select: none;
+            user-select: none;
         }
 
         .options {
@@ -706,6 +726,10 @@
             color: #333;
             font-weight: 500;
             text-align: left;
+            /* 터치 최적화 */
+            touch-action: manipulation;
+            -webkit-user-select: none;
+            user-select: none;
         }
 
         .option:hover {
@@ -735,6 +759,10 @@
             transition: all 0.3s;
             opacity: 0.3;
             pointer-events: none;
+            /* 터치 최적화 */
+            touch-action: manipulation;
+            -webkit-user-select: none;
+            user-select: none;
         }
 
         .next-btn.active {
@@ -1030,6 +1058,10 @@
             justify-content: center;
             gap: 8px;
             position: relative;
+            /* 터치 최적화 */
+            touch-action: manipulation;
+            -webkit-user-select: none;
+            user-select: none;
         }
 
         .btn-primary {
@@ -3978,6 +4010,12 @@ ${window.location.href}`;
         // ========================================
         // 페이지 로드 시 앱 초기화 실행
         // ========================================
+        
+        // 우클릭 메뉴 방지 (PC/모바일 모두)
+        document.addEventListener('contextmenu', e => e.preventDefault());
+        
+        // 드래그 방지 (이미지 드래그 등)
+        document.addEventListener('dragstart', e => e.preventDefault());
         
         // DOMContentLoaded 이벤트로 초기화
         if (document.readyState === 'loading') {
