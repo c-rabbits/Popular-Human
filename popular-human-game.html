@@ -10,6 +10,14 @@
             padding: 0;
             box-sizing: border-box;
             -webkit-tap-highlight-color: transparent;
+            /* 스크롤바 숨기기 */
+            scrollbar-width: none; /* Firefox */
+            -ms-overflow-style: none; /* IE and Edge */
+        }
+
+        /* 웹킷 브라우저 스크롤바 숨기기 (Chrome, Safari, Opera) */
+        *::-webkit-scrollbar {
+            display: none;
         }
 
         body {
