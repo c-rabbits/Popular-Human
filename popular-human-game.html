@@ -2540,9 +2540,12 @@
 
         function startGame(scenarioId) {
             console.log('startGame 호출:', scenarioId);
+            console.log('scenarioId 타입:', typeof scenarioId);
+            console.log('scenarios 객체 키들:', Object.keys(scenarios));
             
             // 시나리오 ID 저장
             pendingScenarioId = scenarioId;
+            console.log('pendingScenarioId 저장:', pendingScenarioId);
             
             // 확인 팝업 표시
             const popup = document.getElementById('gameStartPopup');
@@ -2562,8 +2565,21 @@
         }
 
         async function confirmGameStart() {
+            console.log('confirmGameStart 호출');
+            console.log('pendingScenarioId (닫기 전):', pendingScenarioId);
+            
+            // pendingScenarioId를 먼저 저장 (팝업 닫으면 null이 되므로)
+            const scenarioId = pendingScenarioId;
+            console.log('scenarioId 저장:', scenarioId);
+            
             // 팝업 닫기
             closeGameStartPopup();
+            
+            if (!scenarioId) {
+                console.error('시나리오 ID가 없습니다');
+                alert('시나리오를 선택해주세요.');
+                return;
+            }
             
             // 티켓 확인
             const currentTickets = parseInt(document.getElementById('ticketCount').textContent);
@@ -2573,7 +2589,7 @@
             }
             
             // API를 통한 게임 시작 및 티켓 차감
-            const result = await API.startGame(pendingScenarioId);
+            const result = await API.startGame(scenarioId);
             if (!result.success) {
                 alert(result.message || '게임을 시작할 수 없습니다.');
                 return;
@@ -2583,13 +2599,29 @@
             updateUserStats({ tickets: currentTickets - 1 });
             
             currentGameId = result.gameId;
-            currentScenario = scenarios[pendingScenarioId];
+            
+            // scenarios 객체 확인
+            console.log('scenarios 객체:', scenarios);
+            console.log('scenarios[scenarioId]:', scenarios[scenarioId]);
+            
+            currentScenario = scenarios[scenarioId];
+            
+            if (!currentScenario) {
+                console.error('시나리오를 찾을 수 없습니다:', scenarioId);
+                alert('시나리오를 찾을 수 없습니다.');
+                return;
+            }
+            
             currentQuestion = 0;
             userAnswers = [];
             correctCount = 0;
 
+            console.log('currentScenario 설정 완료:', currentScenario);
+
             document.getElementById('homeScreen').classList.remove('active');
             document.getElementById('gameScreen').classList.add('active');
+            
+            console.log('게임 화면으로 전환');
             
             // 하단 메뉴 숨기기 및 메인 콘텐츠 패딩 제거
             document.querySelector('.bottom-nav').classList.add('hidden');
@@ -2664,47 +2696,92 @@
         }
 
         function loadQuestion() {
+            console.log('loadQuestion 호출');
+            console.log('currentScenario:', currentScenario);
+            console.log('currentQuestion:', currentQuestion);
+            
+            if (!currentScenario || !currentScenario.questions) {
+                console.error('currentScenario가 정의되지 않았습니다');
+                return;
+            }
+            
             const question = currentScenario.questions[currentQuestion];
+            console.log('질문:', question);
             
             // 배너 이미지 설정 (애니메이션 영역 배경으로)
             const animationArea = document.querySelector('.animation-area');
-            animationArea.style.backgroundImage = `url('${currentScenario.bannerImage}')`;
+            if (animationArea) {
+                animationArea.style.backgroundImage = `url('${currentScenario.bannerImage}')`;
+                animationArea.style.backgroundSize = 'cover';
+                animationArea.style.backgroundPosition = 'center';
+                console.log('배너 이미지 설정:', currentScenario.bannerImage);
+            } else {
+                console.error('animation-area를 찾을 수 없습니다');
+            }
             
             // 애니메이션 이미지 숨김 (이모지 아이콘 제거)
-            document.getElementById('animationImage').style.display = 'none';
+            const animImage = document.getElementById('animationImage');
+            if (animImage) {
+                animImage.style.display = 'none';
+            }
             
             // 컨텍스트 오버레이 표시 (첫 질문에만)
             const contextOverlay = document.getElementById('contextOverlay');
             if (currentQuestion === 0) {
                 document.getElementById('contextTitle').textContent = currentScenario.contextTitle;
                 document.getElementById('contextSubtitle').textContent = currentScenario.contextSubtitle;
-                contextOverlay.style.display = 'block';
+                if (contextOverlay) {
+                    contextOverlay.style.display = 'block';
+                }
             } else {
-                contextOverlay.style.display = 'none';
+                if (contextOverlay) {
+                    contextOverlay.style.display = 'none';
+                }
             }
             
             // 진행바 업데이트
             const progress = ((currentQuestion + 1) / currentScenario.questions.length) * 100;
-            document.getElementById('progressFill').style.width = progress + '%';
+            const progressFill = document.getElementById('progressFill');
+            if (progressFill) {
+                progressFill.style.width = progress + '%';
+            }
             
             // 질문 표시
-            document.getElementById('questionNumber').textContent = `질문 ${currentQuestion + 1}/${currentScenario.questions.length}`;
-            document.getElementById('questionText').textContent = question.q;
+            const questionNumber = document.getElementById('questionNumber');
+            const questionText = document.getElementById('questionText');
+            
+            if (questionNumber) {
+                questionNumber.textContent = `질문 ${currentQuestion + 1}/${currentScenario.questions.length}`;
+                console.log('질문 번호 설정:', questionNumber.textContent);
+            }
+            
+            if (questionText) {
+                questionText.textContent = question.q;
+                console.log('질문 텍스트 설정:', question.q);
+            }
             
             // 선택지 표시
             const optionsContainer = document.getElementById('optionsContainer');
-            optionsContainer.innerHTML = '';
-            
-            question.options.forEach((option, index) => {
-                const optionDiv = document.createElement('div');
-                optionDiv.className = 'option';
-                optionDiv.textContent = option;
-                optionDiv.onclick = () => selectOption(index, optionDiv);
-                optionsContainer.appendChild(optionDiv);
-            });
+            if (optionsContainer) {
+                optionsContainer.innerHTML = '';
+                
+                question.options.forEach((option, index) => {
+                    const optionDiv = document.createElement('div');
+                    optionDiv.className = 'option';
+                    optionDiv.textContent = option;
+                    optionDiv.onclick = () => selectOption(index, optionDiv);
+                    optionsContainer.appendChild(optionDiv);
+                });
+                console.log('선택지 생성 완료:', question.options.length + '개');
+            } else {
+                console.error('optionsContainer를 찾을 수 없습니다');
+            }
             
             // 다음 버튼 비활성화
-            document.getElementById('nextBtn').classList.remove('active');
+            const nextBtn = document.getElementById('nextBtn');
+            if (nextBtn) {
+                nextBtn.classList.remove('active');
+            }
         }
 
         async function selectOption(index, element) {
