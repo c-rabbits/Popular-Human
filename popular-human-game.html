@@ -67,6 +67,41 @@
             color: #000;
         }
 
+        /* 상단 헤더 */
+        .top-header {
+            background: #fff;
+            padding: 12px 20px;
+            border-bottom: 1px solid #f0f0f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .user-stats {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .stat-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: #f8f8f8;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .stat-icon {
+            font-size: 16px;
+        }
+
+        .stat-value {
+            color: #000;
+        }
+
         /* 메인 컨텐츠 영역 */
         .main-content {
             flex: 1;
@@ -1333,25 +1368,44 @@
 
         <!-- 메인 컨텐츠 영역 -->
         <div class="main-content">
+            <!-- 상단 헤더 -->
+            <div class="top-header">
+                <div class="logo">🎮 대중적 인간</div>
+                <div class="user-stats">
+                    <div class="stat-item">
+                        <span class="stat-icon">💰</span>
+                        <span class="stat-value" id="coinCount">1250</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-icon">⭐</span>
+                        <span class="stat-value" id="rewardPoints">850</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-icon">🎫</span>
+                        <span class="stat-value" id="ticketCount">5</span>
+                    </div>
+                </div>
+            </div>
+
             <!-- 홈 화면 -->
             <div class="home-screen active" id="homeScreen">
                 <!-- 상단 배너 슬라이더 -->
                 <div class="top-banner-slider">
                     <div class="banner-track" id="bannerTrack">
                         <div class="banner-slide" onclick="navigateBanner('https://example.com/banner1')">
-                            <div class="banner-image" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);"></div>
+                            <div class="banner-image" style="background-image: url('Main_Banner_001.png');"></div>
                         </div>
                         <div class="banner-slide" onclick="navigateBanner('https://example.com/banner2')">
-                            <div class="banner-image" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);"></div>
+                            <div class="banner-image" style="background-image: url('Main_Banner_002.png');"></div>
                         </div>
                         <div class="banner-slide" onclick="navigateBanner('https://example.com/banner3')">
-                            <div class="banner-image" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);"></div>
+                            <div class="banner-image" style="background-image: url('Main_Banner_003.png');"></div>
                         </div>
                         <div class="banner-slide" onclick="navigateBanner('#shop')">
-                            <div class="banner-image" style="background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);"></div>
+                            <div class="banner-image" style="background-image: url('Main_Banner_004.png');"></div>
                         </div>
                         <div class="banner-slide" onclick="navigateBanner('#ranking')">
-                            <div class="banner-image" style="background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);"></div>
+                            <div class="banner-image" style="background-image: url('Main_Banner_005.png');"></div>
                         </div>
                     </div>
                     <div class="banner-navigation" id="bannerNavigation">
@@ -2378,12 +2432,20 @@
                 'settings': 'settingsScreen'
             };
             
-            document.getElementById(screenMap[screenName]).classList.add('active');
+            const targetScreen = screenMap[screenName];
+            if (targetScreen) {
+                document.getElementById(targetScreen).classList.add('active');
+            }
             
-            // 네비게이션 활성화
-            event.currentTarget.classList.add('active');
+            // 네비게이션 활성화 (이벤트 타겟 찾기)
+            const navItems = document.querySelectorAll('.nav-item');
+            navItems.forEach(item => {
+                const onclick = item.getAttribute('onclick');
+                if (onclick && onclick.includes(`'${screenName}'`)) {
+                    item.classList.add('active');
+                }
+            });
             
-            // 홈 화면이 아닐 때는 하단 메뉴 숨기기 (다른 화면 전환 시에만)
             // 홈 화면일 때는 하단 메뉴 보이기
             const bottomNav = document.querySelector('.bottom-nav');
             if (screenName === 'home') {
