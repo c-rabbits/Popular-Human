@@ -236,6 +236,8 @@
         /* 홈 화면 */
         .home-screen {
             display: none;
+            height: 100%;
+            overflow-y: auto;
         }
 
         .home-screen.active {
@@ -244,7 +246,11 @@
 
         .scenario-section {
             padding: 20px;
-            padding-bottom: 90px;
+            padding-bottom: 20px;
+        }
+
+        .scenario-section:last-child {
+            padding-bottom: 100px;
         }
 
         .section-title {
@@ -252,6 +258,121 @@
             font-weight: 700;
             color: #000;
             margin-bottom: 16px;
+        }
+
+        /* 광고 리워드 섹션 */
+        .ad-reward-section {
+            padding: 0 20px 20px;
+        }
+
+        .ad-reward-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+        }
+
+        .ad-reward-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #fff;
+            border: none;
+            border-radius: 12px;
+            padding: 20px 8px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+            box-shadow: 0 2px 8px rgba(102, 126, 234, 0.2);
+        }
+
+        .ad-reward-btn:active:not(.cooldown) {
+            transform: scale(0.98);
+        }
+
+        .ad-reward-btn:hover:not(.cooldown) {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+
+        .ad-reward-btn.loading {
+            background: linear-gradient(135deg, #555 0%, #777 100%);
+            cursor: wait;
+        }
+
+        .ad-reward-btn.loading .ad-reward-icon {
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .ad-reward-btn.cooldown {
+            background: linear-gradient(135deg, #e5e5e5 0%, #d0d0d0 100%);
+            color: #999;
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+
+        .ad-reward-icon {
+            font-size: 28px;
+            margin-bottom: 6px;
+            display: block;
+        }
+
+        .ad-reward-text {
+            font-size: 13px;
+            font-weight: 600;
+            line-height: 1.4;
+        }
+
+        .ad-reward-cooldown {
+            font-size: 11px;
+            margin-top: 6px;
+            opacity: 0.9;
+            font-weight: 600;
+        }
+
+        /* 준비중 시나리오 */
+        .scenario-card.upcoming {
+            opacity: 0.7;
+            cursor: not-allowed;
+            position: relative;
+            filter: grayscale(30%);
+        }
+
+        .scenario-card.upcoming::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255, 255, 255, 0.4);
+            border-radius: 16px;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .scenario-card.upcoming .scenario-banner::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.2);
+            z-index: 0;
+        }
+
+        .scenario-status.upcoming {
+            background: rgba(108, 117, 125, 0.95);
+            z-index: 2;
+        }
+
+        .scenario-card.upcoming .scenario-countdown {
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 2;
         }
 
         .scenario-grid {
@@ -678,6 +799,13 @@
         @keyframes bounce {
             0%, 100% { transform: translateY(0); }
             50% { transform: translateY(-30px); }
+        }
+
+        @keyframes fadeInOut {
+            0% { opacity: 0; transform: translate(-50%, -50%) scale(0.8); }
+            20% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+            80% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+            100% { opacity: 0; transform: translate(-50%, -50%) scale(0.8); }
         }
 
         .result-title {
@@ -1153,6 +1281,7 @@
             display: none;
             padding: 20px;
             height: 100%;
+            overflow-y: auto;
         }
 
         .other-screen.active {
@@ -1565,7 +1694,7 @@
             <div class="home-screen active" id="homeScreen">
                 <!-- 상단 헤더 -->
                 <div class="top-header">
-                    <div class="logo">🎮 대중적 인간</div>
+                    <div class="logo"></div>
                     <div class="user-stats">
                         <div class="stat-item">
                             <span class="stat-icon">💰</span>
@@ -1585,19 +1714,19 @@
                 <!-- 상단 배너 슬라이더 -->
                 <div class="top-banner-slider">
                     <div class="banner-track" id="bannerTrack">
-                        <div class="banner-slide" onclick="navigateBanner('https://www.naver.com')">
+                        <div class="banner-slide">
                             <div class="banner-image" style="background-image: url('Main_Banner_001.png');"></div>
                         </div>
-                        <div class="banner-slide" onclick="navigateBanner('https://www.naver.com')">
+                        <div class="banner-slide">
                             <div class="banner-image" style="background-image: url('Main_Banner_002.png');"></div>
                         </div>
-                        <div class="banner-slide" onclick="navigateBanner('https://www.naver.com')">
+                        <div class="banner-slide">
                             <div class="banner-image" style="background-image: url('Main_Banner_003.png');"></div>
                         </div>
-                        <div class="banner-slide" onclick="navigateBanner('https://www.naver.com')">
+                        <div class="banner-slide">
                             <div class="banner-image" style="background-image: url('Main_Banner_004.png');"></div>
                         </div>
-                        <div class="banner-slide" onclick="navigateBanner('https://www.naver.com')">
+                        <div class="banner-slide">
                             <div class="banner-image" style="background-image: url('Main_Banner_005.png');"></div>
                         </div>
                     </div>
@@ -1611,7 +1740,7 @@
                 </div>
 
                 <div class="scenario-section">
-                    <div class="section-title">오늘의 시나리오</div>
+                    <div class="section-title">🎯 오늘의 시나리오</div>
                     <div class="scenario-grid">
                         <div class="scenario-card" onclick="startGame('wedding')">
                             <div class="scenario-banner" style="background-image: url('wedding_banner.png');">
@@ -1690,6 +1819,100 @@
                             <div class="scenario-content">
                                 <div class="scenario-info">
                                     <div class="scenario-title">바베큐 굽기</div>
+                                </div>
+                                <div class="scenario-stats">
+                                    <div class="stat-box">
+                                        <div class="stat-label">리워드</div>
+                                        <div class="stat-value-box">💰 50 USDT</div>
+                                    </div>
+                                    <div class="stat-box">
+                                        <div class="stat-label">플레이 제한시간</div>
+                                        <div class="stat-value-box">⏱ 10분</div>
+                                    </div>
+                                    <div class="stat-box">
+                                        <div class="stat-label">문제 수</div>
+                                        <div class="stat-value-box">❓ 10문제</div>
+                                    </div>
+                                    <div class="stat-box">
+                                        <div class="stat-label">필요 티켓</div>
+                                        <div class="stat-value-box">🎫 1개</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 광고 리워드 섹션 -->
+                <div class="ad-reward-section">
+                    <div class="section-title">🎁 무료 티켓 받기</div>
+                    <div class="ad-reward-grid">
+                        <button class="ad-reward-btn" id="adRewardBtn1" onclick="watchAd(1)">
+                            <div class="ad-reward-icon">📺</div>
+                            <div class="ad-reward-text">광고 보고<br>🎫 받기</div>
+                            <div class="ad-reward-cooldown" id="adCooldown1"></div>
+                        </button>
+                        <button class="ad-reward-btn" id="adRewardBtn2" onclick="watchAd(2)">
+                            <div class="ad-reward-icon">📺</div>
+                            <div class="ad-reward-text">광고 보고<br>🎫 받기</div>
+                            <div class="ad-reward-cooldown" id="adCooldown2"></div>
+                        </button>
+                        <button class="ad-reward-btn" id="adRewardBtn3" onclick="watchAd(3)">
+                            <div class="ad-reward-icon">📺</div>
+                            <div class="ad-reward-text">광고 보고<br>🎫 받기</div>
+                            <div class="ad-reward-cooldown" id="adCooldown3"></div>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 준비중 시나리오 섹션 -->
+                <div class="scenario-section">
+                    <div class="section-title">⏰ 다음 시나리오 예고</div>
+                    <div class="scenario-grid">
+                        <div class="scenario-card upcoming">
+                            <div class="scenario-banner" style="background-image: url('wedding_banner.png');">
+                                <div class="scenario-status upcoming">
+                                    <div class="status-dot"></div>
+                                    준비 중
+                                </div>
+                                <div class="scenario-countdown" id="upcomingCountdown1">12:30:00</div>
+                            </div>
+                            <div class="scenario-content">
+                                <div class="scenario-info">
+                                    <div class="scenario-title">회사 회식</div>
+                                </div>
+                                <div class="scenario-stats">
+                                    <div class="stat-box">
+                                        <div class="stat-label">리워드</div>
+                                        <div class="stat-value-box">💰 50 USDT</div>
+                                    </div>
+                                    <div class="stat-box">
+                                        <div class="stat-label">플레이 제한시간</div>
+                                        <div class="stat-value-box">⏱ 10분</div>
+                                    </div>
+                                    <div class="stat-box">
+                                        <div class="stat-label">문제 수</div>
+                                        <div class="stat-value-box">❓ 10문제</div>
+                                    </div>
+                                    <div class="stat-box">
+                                        <div class="stat-label">필요 티켓</div>
+                                        <div class="stat-value-box">🎫 1개</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="scenario-card upcoming">
+                            <div class="scenario-banner" style="background-image: url('blind_date_banner.png');">
+                                <div class="scenario-status upcoming">
+                                    <div class="status-dot"></div>
+                                    준비 중
+                                </div>
+                                <div class="scenario-countdown" id="upcomingCountdown2">18:45:00</div>
+                            </div>
+                            <div class="scenario-content">
+                                <div class="scenario-info">
+                                    <div class="scenario-title">부모님 댁 방문</div>
                                 </div>
                                 <div class="scenario-stats">
                                     <div class="stat-box">
@@ -1850,10 +2073,6 @@
                         </div>
 
                         <div class="action-buttons">
-                            <button class="action-btn btn-primary" onclick="retryGame()">
-                                다시 도전하기
-                                <span class="ticket-badge">🎫 -1</span>
-                            </button>
                             <button class="action-btn btn-dark" onclick="backToHome()">
                                 메인 화면
                             </button>
@@ -2550,6 +2769,9 @@
         let gameTimerInterval = null;
         let attemptCount = 0; // 도전 횟수 추적
 
+        // 광고 쿨타임 관리 (로컬 스토리지 사용)
+        const AD_COOLDOWN_DURATION = 60 * 60 * 1000; // 1시간 (밀리초)
+
         // ========================================
         // 초기화
         // ========================================
@@ -2568,6 +2790,12 @@
             
             // 배너 슬라이더 초기화
             initBannerSlider();
+            
+            // 광고 버튼 초기화
+            initAdButtons();
+            
+            // 준비중 시나리오 카운트다운 시작
+            startUpcomingCountdowns();
         }
 
         // 배너 슬라이더 초기화
@@ -2628,6 +2856,9 @@
                     currentBannerIndex = (currentBannerIndex - 1 + 5) % 5;
                 }
                 updateBannerPosition();
+            } else {
+                // 50px 미만 이동 = 클릭으로 간주
+                handleBannerClick();
             }
             
             startBannerAutoSlide();
@@ -2659,9 +2890,33 @@
                     currentBannerIndex = (currentBannerIndex - 1 + 5) % 5;
                 }
                 updateBannerPosition();
+            } else {
+                // 50px 미만 이동 = 클릭으로 간주
+                handleBannerClick();
             }
             
             startBannerAutoSlide();
+        }
+
+        function handleBannerClick() {
+            // 현재 배너의 링크로 이동
+            const bannerLinks = [
+                'https://www.naver.com',
+                'https://www.naver.com',
+                'https://www.naver.com',
+                'https://www.naver.com',
+                'https://www.naver.com'
+            ];
+            
+            const link = bannerLinks[currentBannerIndex];
+            if (link.startsWith('#')) {
+                // 내부 링크
+                const screen = link.substring(1);
+                switchScreen(screen);
+            } else {
+                // 외부 링크
+                window.open(link, '_blank');
+            }
         }
 
         function startBannerAutoSlide() {
@@ -3440,6 +3695,186 @@ ${window.location.href}`;
                 content.style.display = 'none';
                 arrow.classList.remove('open');
             }
+        }
+
+        // 광고 시청
+        function watchAd(slotNumber) {
+            const btn = document.getElementById(`adRewardBtn${slotNumber}`);
+            const icon = btn.querySelector('.ad-reward-icon');
+            const text = btn.querySelector('.ad-reward-text');
+            
+            if (btn.classList.contains('cooldown')) {
+                const cooldownDiv = document.getElementById(`adCooldown${slotNumber}`);
+                showToast(`⏰ 쿨타임: ${cooldownDiv.textContent}`);
+                return;
+            }
+            
+            if (btn.classList.contains('loading')) {
+                return; // 이미 로딩 중
+            }
+            
+            // 로딩 상태 시작
+            btn.classList.add('loading');
+            const originalIcon = icon.textContent;
+            icon.textContent = '⏳';
+            text.innerHTML = '광고<br>로딩 중...';
+            
+            // 실제로는 광고 SDK를 연동해야 함
+            // 예시: Google AdMob, Unity Ads 등
+            // adSDK.showRewardedVideo({
+            //     onComplete: () => { grantReward(slotNumber); },
+            //     onError: () => { resetButton(slotNumber, originalIcon); }
+            // });
+            
+            // 시뮬레이션: 2초 후 광고 완료
+            console.log(`광고 슬롯 ${slotNumber} 시청 시작`);
+            
+            setTimeout(() => {
+                // 광고 시청 완료 처리
+                grantReward(slotNumber);
+                
+                // 로딩 상태 종료
+                btn.classList.remove('loading');
+                icon.textContent = originalIcon;
+                text.innerHTML = '광고 보고<br>🎫 받기';
+            }, 2000);
+        }
+
+        function grantReward(slotNumber) {
+            // 티켓 지급
+            const currentTickets = parseInt(document.getElementById('ticketCount').textContent);
+            updateUserStats({ tickets: currentTickets + 1 });
+            
+            // 쿨타임 시작
+            startAdCooldown(slotNumber);
+            
+            // 성공 알림
+            showToast('🎫 티켓 1개를 받았습니다!');
+            
+            console.log(`광고 슬롯 ${slotNumber} 보상 지급 완료`);
+        }
+
+        function showToast(message) {
+            // 간단한 토스트 메시지 (alert 대신)
+            const toast = document.createElement('div');
+            toast.style.cssText = `
+                position: fixed;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                background: rgba(0, 0, 0, 0.8);
+                color: #fff;
+                padding: 16px 24px;
+                border-radius: 12px;
+                font-size: 16px;
+                font-weight: 600;
+                z-index: 10000;
+                animation: fadeInOut 2s ease-in-out;
+            `;
+            toast.textContent = message;
+            document.body.appendChild(toast);
+            
+            setTimeout(() => {
+                document.body.removeChild(toast);
+            }, 2000);
+        }
+
+        function startAdCooldown(slotNumber) {
+            const now = Date.now();
+            const endTime = now + AD_COOLDOWN_DURATION;
+            
+            // 로컬 스토리지에 쿨타임 종료 시간 저장
+            localStorage.setItem(`adCooldown${slotNumber}`, endTime);
+            
+            updateAdButton(slotNumber);
+        }
+
+        function updateAdButton(slotNumber) {
+            const btn = document.getElementById(`adRewardBtn${slotNumber}`);
+            const cooldownDiv = document.getElementById(`adCooldown${slotNumber}`);
+            const endTime = localStorage.getItem(`adCooldown${slotNumber}`);
+            
+            if (!endTime) {
+                btn.classList.remove('cooldown');
+                cooldownDiv.textContent = '';
+                return;
+            }
+            
+            const now = Date.now();
+            const remaining = endTime - now;
+            
+            if (remaining <= 0) {
+                // 쿨타임 종료
+                localStorage.removeItem(`adCooldown${slotNumber}`);
+                btn.classList.remove('cooldown');
+                cooldownDiv.textContent = '';
+            } else {
+                // 쿨타임 진행 중
+                btn.classList.add('cooldown');
+                
+                const hours = Math.floor(remaining / (60 * 60 * 1000));
+                const minutes = Math.floor((remaining % (60 * 60 * 1000)) / (60 * 1000));
+                const seconds = Math.floor((remaining % (60 * 1000)) / 1000);
+                
+                cooldownDiv.textContent = `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+            }
+        }
+
+        function initAdButtons() {
+            // 모든 광고 버튼 상태 초기화
+            for (let i = 1; i <= 3; i++) {
+                updateAdButton(i);
+            }
+            
+            // 1초마다 쿨타임 업데이트
+            setInterval(() => {
+                for (let i = 1; i <= 3; i++) {
+                    updateAdButton(i);
+                }
+            }, 1000);
+        }
+
+        // 준비중 시나리오 카운트다운
+        function startUpcomingCountdowns() {
+            const countdowns = {
+                'upcomingCountdown1': 12 * 60 * 60 + 30 * 60, // 12시간 30분
+                'upcomingCountdown2': 18 * 60 * 60 + 45 * 60  // 18시간 45분
+            };
+            
+            Object.keys(countdowns).forEach(id => {
+                let timeLeft = countdowns[id];
+                
+                const updateTimer = () => {
+                    if (timeLeft <= 0) {
+                        const element = document.getElementById(id);
+                        element.textContent = '🎉 곧 시작';
+                        element.style.background = 'rgba(76, 175, 80, 0.9)';
+                        element.style.color = '#fff';
+                        element.style.fontWeight = '700';
+                        element.style.animation = 'pulse 2s ease-in-out infinite';
+                        return;
+                    }
+                    
+                    const hours = Math.floor(timeLeft / 3600);
+                    const minutes = Math.floor((timeLeft % 3600) / 60);
+                    const seconds = timeLeft % 60;
+                    
+                    const timeString = `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+                    document.getElementById(id).textContent = timeString;
+                    
+                    // 1시간 미만일 때 강조
+                    if (timeLeft < 3600) {
+                        const element = document.getElementById(id);
+                        element.style.background = 'rgba(255, 152, 0, 0.9)';
+                        element.style.color = '#fff';
+                    }
+                    
+                    timeLeft--;
+                };
+                
+                updateTimer();
+                setInterval(updateTimer, 1000);
+            });
         }
 
         // 티켓 구매
