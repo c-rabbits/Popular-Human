@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>대중적 인간 - Popular Human</title>
+    <script charset="utf-8" src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
     <style>
         * {
             margin: 0;
@@ -1894,9 +1895,104 @@
             background: #000;
             color: #fff;
         }
+
+        /* LIFF 로딩 스플래시 화면 */
+        .liff-loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #000;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 10000;
+            transition: opacity 0.4s ease;
+        }
+
+        .liff-loading-screen.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .liff-loading-logo {
+            font-size: 48px;
+            margin-bottom: 24px;
+        }
+
+        .liff-loading-title {
+            color: #fff;
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .liff-loading-subtitle {
+            color: #999;
+            font-size: 14px;
+            margin-bottom: 32px;
+        }
+
+        .liff-loading-spinner {
+            width: 32px;
+            height: 32px;
+            border: 3px solid #333;
+            border-top-color: #fff;
+            border-radius: 50%;
+            animation: liffSpin 0.8s linear infinite;
+        }
+
+        @keyframes liffSpin {
+            to { transform: rotate(360deg); }
+        }
+
+        .liff-loading-error {
+            color: #ff6b6b;
+            font-size: 13px;
+            margin-top: 16px;
+            text-align: center;
+            padding: 0 40px;
+            display: none;
+        }
+
+        /* 상단 헤더 프로필 */
+        .user-profile-area {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .user-profile-img {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid #e5e5e5;
+        }
+
+        .user-profile-name {
+            font-size: 14px;
+            font-weight: 600;
+            color: #000;
+            max-width: 80px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
     </style>
 </head>
 <body>
+    <!-- LIFF 로딩 스플래시 -->
+    <div class="liff-loading-screen" id="liffLoadingScreen">
+        <div class="liff-loading-logo">🎯</div>
+        <div class="liff-loading-title">대중적 인간</div>
+        <div class="liff-loading-subtitle">Popular Human</div>
+        <div class="liff-loading-spinner"></div>
+        <div class="liff-loading-error" id="liffErrorMsg"></div>
+    </div>
+
     <div class="game-container">
         <!-- 메인 컨텐츠 영역 -->
         <div class="main-content">
@@ -1904,7 +2000,10 @@
             <div class="home-screen active" id="homeScreen">
                 <!-- 상단 헤더 -->
                 <div class="top-header">
-                    <div class="logo"></div>
+                    <div class="user-profile-area" id="userProfileArea">
+                        <img class="user-profile-img" id="userProfileImg" src="" alt="프로필" style="display:none;">
+                        <span class="user-profile-name" id="userProfileName"></span>
+                    </div>
                     <div class="user-stats">
                         <div class="stat-item">
                             <span class="stat-icon">💰</span>
@@ -2907,7 +3006,29 @@
             <!-- 프로필 화면 -->
             <div class="other-screen" id="profileScreen">
                 <div class="screen-title">👤 프로필</div>
-                <div class="placeholder-content">프로필 화면 (준비 중)</div>
+                <div style="display:flex; flex-direction:column; align-items:center; padding:24px 0;">
+                    <img id="profilePageImg" src="" alt="프로필" style="width:80px; height:80px; border-radius:50%; object-fit:cover; border:3px solid #e5e5e5; margin-bottom:12px; display:none;">
+                    <div id="profilePageName" style="font-size:20px; font-weight:700; color:#000; margin-bottom:4px;"></div>
+                    <div id="profilePageStatus" style="font-size:14px; color:#999; margin-bottom:20px;"></div>
+                    <div style="background:#f8f8f8; border-radius:12px; padding:16px 20px; width:100%;">
+                        <div style="display:flex; justify-content:space-between; padding:8px 0; border-bottom:1px solid #eee;">
+                            <span style="color:#999; font-size:14px;">LINE ID</span>
+                            <span id="profilePageUserId" style="font-size:14px; font-weight:600; color:#000;">-</span>
+                        </div>
+                        <div style="display:flex; justify-content:space-between; padding:8px 0; border-bottom:1px solid #eee;">
+                            <span style="color:#999; font-size:14px;">보유 코인</span>
+                            <span id="profilePageCoins" style="font-size:14px; font-weight:600; color:#000;">-</span>
+                        </div>
+                        <div style="display:flex; justify-content:space-between; padding:8px 0; border-bottom:1px solid #eee;">
+                            <span style="color:#999; font-size:14px;">리워드 포인트</span>
+                            <span id="profilePagePoints" style="font-size:14px; font-weight:600; color:#000;">-</span>
+                        </div>
+                        <div style="display:flex; justify-content:space-between; padding:8px 0;">
+                            <span style="color:#999; font-size:14px;">보유 티켓</span>
+                            <span id="profilePageTickets" style="font-size:14px; font-weight:600; color:#000;">-</span>
+                        </div>
+                    </div>
+                </div>
             </div>
 
             <!-- 설정 화면 -->
@@ -2944,6 +3065,105 @@
 
     <script>
         // ========================================
+        // LINE LIFF 인증 모듈
+        // ========================================
+
+        const LIFF_CONFIG = {
+            // TODO: LINE Developers Console에서 발급받은 LIFF ID 입력
+            liffId: '2009089916-d5ymB1Rz',
+        };
+
+        // LIFF에서 가져온 유저 프로필 저장
+        let liffProfile = null;
+        let isLIFFInitialized = false;
+
+        // LIFF 초기화 및 로그인
+        async function initLIFF() {
+            const loadingScreen = document.getElementById('liffLoadingScreen');
+            const errorMsg = document.getElementById('liffErrorMsg');
+
+            // LIFF ID 미설정 시 개발 모드
+            if (!LIFF_CONFIG.liffId) {
+                console.warn('[LIFF] LIFF ID 미설정 → 개발 모드로 실행');
+                console.warn('[LIFF] LINE Developers Console에서 LIFF ID를 발급받아 LIFF_CONFIG.liffId에 입력하세요.');
+                liffProfile = {
+                    userId: 'dev_user_' + Date.now(),
+                    displayName: '개발 테스터',
+                    pictureUrl: '',
+                    statusMessage: '개발 모드'
+                };
+                isLIFFInitialized = true;
+                hideLiffLoading();
+                await initApp();
+                return;
+            }
+
+            try {
+                await liff.init({
+                    liffId: LIFF_CONFIG.liffId,
+                    withLoginOnExternalBrowser: true
+                });
+                console.log('[LIFF] 초기화 성공');
+
+                // 로그인 상태 확인
+                if (!liff.isLoggedIn()) {
+                    console.log('[LIFF] 미로그인 → 로그인 페이지로 이동');
+                    liff.login();
+                    return; // 로그인 후 리다이렉트됨
+                }
+
+                // 프로필 가져오기
+                liffProfile = await liff.getProfile();
+                console.log('[LIFF] 프로필:', liffProfile.displayName);
+
+                isLIFFInitialized = true;
+                hideLiffLoading();
+                await initApp();
+
+            } catch (error) {
+                console.error('[LIFF] 초기화 실패:', error);
+                errorMsg.textContent = 'LINE 연결에 실패했습니다. 다시 시도해주세요.';
+                errorMsg.style.display = 'block';
+
+                // 3초 후 개발 모드로 폴백
+                setTimeout(async () => {
+                    console.warn('[LIFF] 폴백 → 개발 모드로 실행');
+                    liffProfile = {
+                        userId: 'fallback_user',
+                        displayName: '게스트',
+                        pictureUrl: '',
+                        statusMessage: ''
+                    };
+                    isLIFFInitialized = true;
+                    hideLiffLoading();
+                    await initApp();
+                }, 3000);
+            }
+        }
+
+        // 로딩 화면 숨기기
+        function hideLiffLoading() {
+            const loadingScreen = document.getElementById('liffLoadingScreen');
+            loadingScreen.classList.add('hidden');
+            setTimeout(() => {
+                loadingScreen.style.display = 'none';
+            }, 400);
+        }
+
+        // LIFF Access Token 가져오기 (API 호출용)
+        function getLIFFToken() {
+            if (isLIFFInitialized && LIFF_CONFIG.liffId && typeof liff !== 'undefined' && liff.isLoggedIn()) {
+                return liff.getAccessToken();
+            }
+            return null;
+        }
+
+        // LINE 환경 확인
+        function isInLINE() {
+            return isLIFFInitialized && LIFF_CONFIG.liffId && typeof liff !== 'undefined' && liff.isInClient();
+        }
+
+        // ========================================
         // 서버 연동을 위한 API 구조
         // ========================================
         
@@ -2954,16 +3174,19 @@
             // 유저 정보 가져오기
             async getUserInfo() {
                 try {
+                    // const token = getLIFFToken();
                     // const response = await fetch(`${this.baseURL}/user/info`, {
-                    //     headers: { 'Authorization': `Bearer ${getToken()}` }
+                    //     headers: { 'Authorization': `Bearer ${token}` }
                     // });
                     // return await response.json();
-                    
-                    // 임시 데이터
+
+                    // LIFF 프로필 + 임시 게임 데이터 결합
                     return {
-                        userId: 'user123',
-                        email: 'player@example.com',
-                        characterName: '대중러버',
+                        userId: liffProfile ? liffProfile.userId : 'user123',
+                        displayName: liffProfile ? liffProfile.displayName : '대중러버',
+                        pictureUrl: liffProfile ? liffProfile.pictureUrl : '',
+                        statusMessage: liffProfile ? (liffProfile.statusMessage || '') : '',
+                        characterName: liffProfile ? liffProfile.displayName : '대중러버',
                         coins: 1250,
                         rewardPoints: 850,
                         tickets: 5
@@ -2994,7 +3217,7 @@
                     // const response = await fetch(`${this.baseURL}/game/start`, {
                     //     method: 'POST',
                     //     headers: { 
-                    //         'Authorization': `Bearer ${getToken()}`,
+                    //         'Authorization': `Bearer ${getLIFFToken()}`,
                     //         'Content-Type': 'application/json'
                     //     },
                     //     body: JSON.stringify({ scenarioId })
@@ -3020,7 +3243,7 @@
                     // const response = await fetch(`${this.baseURL}/game/answer`, {
                     //     method: 'POST',
                     //     headers: { 
-                    //         'Authorization': `Bearer ${getToken()}`,
+                    //         'Authorization': `Bearer ${getLIFFToken()}`,
                     //         'Content-Type': 'application/json'
                     //     },
                     //     body: JSON.stringify({ gameId, questionId, answer })
@@ -3041,7 +3264,7 @@
                     // const response = await fetch(`${this.baseURL}/game/complete`, {
                     //     method: 'POST',
                     //     headers: { 
-                    //         'Authorization': `Bearer ${getToken()}`,
+                    //         'Authorization': `Bearer ${getLIFFToken()}`,
                     //         'Content-Type': 'application/json'
                     //     },
                     //     body: JSON.stringify({ gameId, answers })
@@ -3073,7 +3296,7 @@
             async getEventResult(gameId) {
                 try {
                     // const response = await fetch(`${this.baseURL}/game/result/${gameId}`, {
-                    //     headers: { 'Authorization': `Bearer ${getToken()}` }
+                    //     headers: { 'Authorization': `Bearer ${getLIFFToken()}` }
                     // });
                     // return await response.json();
                     
@@ -3467,22 +3690,38 @@
         
         async function initApp() {
             console.log('앱 초기화 시작...');
+
+            // LIFF 프로필을 상단 헤더에 반영
+            if (liffProfile) {
+                const profileImg = document.getElementById('userProfileImg');
+                const profileName = document.getElementById('userProfileName');
+
+                if (liffProfile.pictureUrl) {
+                    profileImg.src = liffProfile.pictureUrl;
+                    profileImg.style.display = 'block';
+                } else {
+                    profileImg.style.display = 'none';
+                }
+                profileName.textContent = liffProfile.displayName || '';
+            }
+
             // 유저 정보 로드
             const userInfo = await API.getUserInfo();
             console.log('유저 정보:', userInfo);
             if (userInfo) {
                 updateUserStats(userInfo);
+                updateProfilePage(userInfo);
             }
-            
+
             // 카운트다운 시작
             startCountdowns();
-            
+
             // 배너 슬라이더 초기화
             initBannerSlider();
-            
+
             // 광고 버튼 초기화
             initAdButtons();
-            
+
             // 준비중 시나리오 카운트다운 시작
             startUpcomingCountdowns();
         }
@@ -3722,6 +3961,28 @@
             if (data.tickets !== undefined) {
                 document.getElementById('ticketCount').textContent = data.tickets;
             }
+        }
+
+        // 프로필 페이지 업데이트
+        function updateProfilePage(data) {
+            const pageImg = document.getElementById('profilePageImg');
+            const pageName = document.getElementById('profilePageName');
+            const pageStatus = document.getElementById('profilePageStatus');
+            const pageUserId = document.getElementById('profilePageUserId');
+            const pageCoins = document.getElementById('profilePageCoins');
+            const pagePoints = document.getElementById('profilePagePoints');
+            const pageTickets = document.getElementById('profilePageTickets');
+
+            if (data.pictureUrl) {
+                pageImg.src = data.pictureUrl;
+                pageImg.style.display = 'block';
+            }
+            pageName.textContent = data.displayName || data.characterName || '';
+            pageStatus.textContent = data.statusMessage || '';
+            pageUserId.textContent = data.userId ? data.userId.substring(0, 10) + '...' : '-';
+            pageCoins.textContent = data.coins !== undefined ? data.coins.toLocaleString() : '-';
+            pagePoints.textContent = data.rewardPoints !== undefined ? data.rewardPoints.toLocaleString() : '-';
+            pageTickets.textContent = data.tickets !== undefined ? data.tickets : '-';
         }
 
         // ========================================
@@ -4696,12 +4957,12 @@ ${window.location.href}`;
         // 드래그 방지 (이미지 드래그 등)
         document.addEventListener('dragstart', e => e.preventDefault());
         
-        // DOMContentLoaded 이벤트로 초기화
+        // DOMContentLoaded 이벤트로 초기화 (LIFF → initApp 체인)
         if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', initApp);
+            document.addEventListener('DOMContentLoaded', initLIFF);
         } else {
             // 이미 로드된 경우 바로 실행
-            initApp();
+            initLIFF();
         }
     </script>
 </body>
