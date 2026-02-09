@@ -51,6 +51,10 @@ async function initApp() {
 
     // 준비중 시나리오 카운트다운 시작
     startUpcomingCountdowns();
+
+    // 설정 화면 초기화
+    updateSettingsProfile();
+    initSettingsToggles();
 }
 
 // ========================================

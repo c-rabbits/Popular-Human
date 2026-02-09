@@ -1058,7 +1058,133 @@
             <!-- 설정 화면 -->
             <div class="other-screen" id="settingsScreen">
                 <div class="screen-title">⚙️ 설정</div>
-                <div class="placeholder-content">설정 화면 (준비 중)</div>
+
+                <!-- 프로필 섹션 -->
+                <div class="settings-section">
+                    <div class="settings-section-title">프로필</div>
+                    <div class="settings-profile-card" id="settingsProfileCard">
+                        <img class="settings-profile-img" id="settingsProfileImg" src="" alt="프로필" style="display:none;">
+                        <div class="settings-profile-info">
+                            <div class="settings-profile-name" id="settingsProfileName">-</div>
+                            <div class="settings-profile-status" id="settingsProfileStatus">LINE 계정 연동됨</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 알림 섹션 -->
+                <div class="settings-section">
+                    <div class="settings-section-title">알림</div>
+                    <div class="settings-item">
+                        <div class="settings-item-left">
+                            <span class="settings-item-icon">🔔</span>
+                            <div class="settings-item-text">
+                                <div class="settings-item-label">이벤트 알림</div>
+                                <div class="settings-item-desc">새 시나리오 오픈 시 알림</div>
+                            </div>
+                        </div>
+                        <label class="settings-toggle">
+                            <input type="checkbox" id="toggleEventNotif" checked onchange="toggleSetting('eventNotification', this.checked)">
+                            <span class="settings-toggle-slider"></span>
+                        </label>
+                    </div>
+                    <div class="settings-item">
+                        <div class="settings-item-left">
+                            <span class="settings-item-icon">📊</span>
+                            <div class="settings-item-text">
+                                <div class="settings-item-label">결과 알림</div>
+                                <div class="settings-item-desc">이벤트 종료 및 결과 발표 알림</div>
+                            </div>
+                        </div>
+                        <label class="settings-toggle">
+                            <input type="checkbox" id="toggleResultNotif" checked onchange="toggleSetting('resultNotification', this.checked)">
+                            <span class="settings-toggle-slider"></span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- 게임 섹션 -->
+                <div class="settings-section">
+                    <div class="settings-section-title">게임</div>
+                    <div class="settings-item">
+                        <div class="settings-item-left">
+                            <span class="settings-item-icon">🔊</span>
+                            <div class="settings-item-text">
+                                <div class="settings-item-label">효과음</div>
+                                <div class="settings-item-desc">정답/오답 효과음</div>
+                            </div>
+                        </div>
+                        <label class="settings-toggle">
+                            <input type="checkbox" id="toggleSound" checked onchange="toggleSetting('soundEffect', this.checked)">
+                            <span class="settings-toggle-slider"></span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- 계정 섹션 -->
+                <div class="settings-section">
+                    <div class="settings-section-title">계정</div>
+                    <div class="settings-item clickable" onclick="resetGameData()">
+                        <div class="settings-item-left">
+                            <span class="settings-item-icon">🗑️</span>
+                            <div class="settings-item-text">
+                                <div class="settings-item-label">게임 전적 초기화</div>
+                                <div class="settings-item-desc">내 게임 기록을 초기화합니다</div>
+                            </div>
+                        </div>
+                        <span class="settings-item-arrow">›</span>
+                    </div>
+                    <div class="settings-item clickable" onclick="logoutLIFF()">
+                        <div class="settings-item-left">
+                            <span class="settings-item-icon">🚪</span>
+                            <div class="settings-item-text">
+                                <div class="settings-item-label">로그아웃</div>
+                                <div class="settings-item-desc">LINE 계정 연결을 해제합니다</div>
+                            </div>
+                        </div>
+                        <span class="settings-item-arrow">›</span>
+                    </div>
+                </div>
+
+                <!-- 정보 섹션 -->
+                <div class="settings-section">
+                    <div class="settings-section-title">정보</div>
+                    <div class="settings-item clickable" onclick="openTerms()">
+                        <div class="settings-item-left">
+                            <span class="settings-item-icon">📄</span>
+                            <div class="settings-item-text">
+                                <div class="settings-item-label">이용약관</div>
+                            </div>
+                        </div>
+                        <span class="settings-item-arrow">›</span>
+                    </div>
+                    <div class="settings-item clickable" onclick="openPrivacy()">
+                        <div class="settings-item-left">
+                            <span class="settings-item-icon">🔒</span>
+                            <div class="settings-item-text">
+                                <div class="settings-item-label">개인정보처리방침</div>
+                            </div>
+                        </div>
+                        <span class="settings-item-arrow">›</span>
+                    </div>
+                    <div class="settings-item clickable" onclick="openInquiry()">
+                        <div class="settings-item-left">
+                            <span class="settings-item-icon">💬</span>
+                            <div class="settings-item-text">
+                                <div class="settings-item-label">문의하기</div>
+                            </div>
+                        </div>
+                        <span class="settings-item-arrow">›</span>
+                    </div>
+                    <div class="settings-item">
+                        <div class="settings-item-left">
+                            <span class="settings-item-icon">📱</span>
+                            <div class="settings-item-text">
+                                <div class="settings-item-label">앱 버전</div>
+                            </div>
+                        </div>
+                        <span class="settings-item-value">v1.0.0</span>
+                    </div>
+                </div>
             </div>
         </div>
 

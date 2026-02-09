@@ -1978,3 +1978,184 @@ body {
     text-overflow: ellipsis;
     white-space: nowrap;
 }
+
+/* ========================================
+   설정 화면
+   ======================================== */
+
+.settings-section {
+    margin-bottom: 24px;
+}
+
+.settings-section-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: #999;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 8px;
+    padding-left: 4px;
+}
+
+/* 프로필 카드 */
+.settings-profile-card {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    background: #fff;
+    border: 2px solid #e5e5e5;
+    border-radius: 16px;
+    padding: 16px;
+}
+
+.settings-profile-img {
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #e5e5e5;
+    flex-shrink: 0;
+}
+
+.settings-profile-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.settings-profile-name {
+    font-size: 17px;
+    font-weight: 700;
+    color: #000;
+    margin-bottom: 2px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.settings-profile-status {
+    font-size: 13px;
+    color: #999;
+}
+
+/* 설정 항목 */
+.settings-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: #fff;
+    border: 2px solid #e5e5e5;
+    border-radius: 12px;
+    padding: 14px 16px;
+    margin-bottom: 8px;
+}
+
+.settings-item.clickable {
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.settings-item.clickable:hover {
+    border-color: #000;
+    background: #fafafa;
+}
+
+.settings-item.clickable:active {
+    transform: scale(0.99);
+}
+
+.settings-item-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex: 1;
+    min-width: 0;
+}
+
+.settings-item-icon {
+    font-size: 22px;
+    flex-shrink: 0;
+    width: 28px;
+    text-align: center;
+}
+
+.settings-item-text {
+    flex: 1;
+    min-width: 0;
+}
+
+.settings-item-label {
+    font-size: 15px;
+    font-weight: 600;
+    color: #000;
+}
+
+.settings-item-desc {
+    font-size: 12px;
+    color: #999;
+    margin-top: 2px;
+}
+
+.settings-item-arrow {
+    font-size: 20px;
+    color: #ccc;
+    font-weight: 300;
+    flex-shrink: 0;
+    margin-left: 8px;
+}
+
+.settings-item-value {
+    font-size: 14px;
+    color: #999;
+    font-weight: 600;
+    flex-shrink: 0;
+    margin-left: 8px;
+}
+
+/* 토글 스위치 */
+.settings-toggle {
+    position: relative;
+    display: inline-block;
+    width: 48px;
+    height: 28px;
+    flex-shrink: 0;
+    margin-left: 8px;
+}
+
+.settings-toggle input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.settings-toggle-slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: #e5e5e5;
+    border-radius: 28px;
+    transition: all 0.3s;
+}
+
+.settings-toggle-slider::before {
+    content: '';
+    position: absolute;
+    height: 22px;
+    width: 22px;
+    left: 3px;
+    bottom: 3px;
+    background: #fff;
+    border-radius: 50%;
+    transition: all 0.3s;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+}
+
+.settings-toggle input:checked + .settings-toggle-slider {
+    background: #000;
+}
+
+.settings-toggle input:checked + .settings-toggle-slider::before {
+    transform: translateX(20px);
+}

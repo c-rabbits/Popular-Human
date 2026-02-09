@@ -531,3 +531,101 @@ function startUpcomingCountdowns() {
         setInterval(updateTimer, 1000);
     });
 }
+
+// ========================================
+// 설정 화면
+// ========================================
+
+// 설정값 로컬 저장/불러오기
+function getSettings() {
+    const defaults = {
+        eventNotification: true,
+        resultNotification: true,
+        soundEffect: true
+    };
+    try {
+        const saved = localStorage.getItem('appSettings');
+        return saved ? { ...defaults, ...JSON.parse(saved) } : defaults;
+    } catch (e) {
+        return defaults;
+    }
+}
+
+function saveSettings(settings) {
+    localStorage.setItem('appSettings', JSON.stringify(settings));
+}
+
+// 토글 설정 변경
+function toggleSetting(key, value) {
+    const settings = getSettings();
+    settings[key] = value;
+    saveSettings(settings);
+    console.log(`[설정] ${key}: ${value}`);
+}
+
+// 설정 화면 프로필 업데이트
+function updateSettingsProfile() {
+    if (!liffProfile) return;
+
+    const img = document.getElementById('settingsProfileImg');
+    const name = document.getElementById('settingsProfileName');
+    const status = document.getElementById('settingsProfileStatus');
+
+    if (liffProfile.pictureUrl) {
+        img.src = liffProfile.pictureUrl;
+        img.style.display = 'block';
+    }
+    name.textContent = liffProfile.displayName || '게스트';
+    status.textContent = LIFF_CONFIG.liffId ? 'LINE 계정 연동됨' : '개발 모드';
+}
+
+// 설정 화면 토글 초기화
+function initSettingsToggles() {
+    const settings = getSettings();
+    const toggleEvent = document.getElementById('toggleEventNotif');
+    const toggleResult = document.getElementById('toggleResultNotif');
+    const toggleSound = document.getElementById('toggleSound');
+
+    if (toggleEvent) toggleEvent.checked = settings.eventNotification;
+    if (toggleResult) toggleResult.checked = settings.resultNotification;
+    if (toggleSound) toggleSound.checked = settings.soundEffect;
+}
+
+// 게임 전적 초기화
+function resetGameData() {
+    if (confirm('정말로 게임 전적을 초기화하시겠습니까?\n이 작업은 되돌릴 수 없습니다.')) {
+        // TODO: 백엔드 연동 시 서버 데이터 삭제 API 호출
+        showToast('게임 전적이 초기화되었습니다');
+        console.log('[설정] 게임 전적 초기화');
+    }
+}
+
+// 로그아웃
+function logoutLIFF() {
+    if (confirm('로그아웃 하시겠습니까?')) {
+        if (LIFF_CONFIG.liffId && typeof liff !== 'undefined' && liff.isLoggedIn()) {
+            liff.logout();
+            window.location.reload();
+        } else {
+            showToast('개발 모드에서는 로그아웃할 수 없습니다');
+        }
+    }
+}
+
+// 이용약관
+function openTerms() {
+    // TODO: 실제 약관 URL로 변경
+    showToast('이용약관 페이지 준비 중입니다');
+}
+
+// 개인정보처리방침
+function openPrivacy() {
+    // TODO: 실제 개인정보처리방침 URL로 변경
+    showToast('개인정보처리방침 페이지 준비 중입니다');
+}
+
+// 문의하기
+function openInquiry() {
+    // TODO: 실제 문의 채널로 변경 (카카오톡 채널, 이메일 등)
+    showToast('문의 채널 준비 중입니다');
+}
