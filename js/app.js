@@ -55,6 +55,9 @@ async function initApp() {
     // 설정 화면 초기화
     initSettingsToggles();
 
+    // [onclick] 요소를 포인터 탭으로 통합 (모바일·웹 동일 동작)
+    initPointerTapDelegation();
+
     // 친구 초대 현황 업데이트
     updateInviteStats();
 }

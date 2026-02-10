@@ -239,7 +239,7 @@ function loadQuestion() {
             const optionDiv = document.createElement('div');
             optionDiv.className = 'option';
             optionDiv.textContent = option;
-            optionDiv.onclick = () => selectOption(index, optionDiv);
+            onPointerTap(optionDiv, () => selectOption(index, optionDiv));
             optionsContainer.appendChild(optionDiv);
         });
         console.log('선택지 생성 완료:', question.options.length + '개');

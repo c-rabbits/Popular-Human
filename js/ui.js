@@ -3,17 +3,18 @@
 // ========================================
 
 // ========================================
-// 배너 슬라이더
+// 배너 슬라이더 (모바일·웹 공통: pointer 이벤트 사용)
 // ========================================
 
 let currentBannerIndex = 0;    // 실제 배너 인덱스 (0 ~ bannerCount-1)
 let bannerVisualIndex = 0;     // 트랙 상의 시각적 인덱스 (클론 포함)
 let bannerCount = 0;           // 실제 배너 개수
 let bannerInterval;
-let touchStartX = 0;
-let touchEndX = 0;
-let touchStartTime = 0;
+let pointerStartX = 0;
+let pointerEndX = 0;
+let pointerStartTime = 0;
 let isDragging = false;
+let activePointerId = null; // pointerId로 터치/마우스 구분 (멀티포인터·이벤트 혼선 방지)
 const SWIPE_THRESHOLD = 50; // 50px 이상 이동 시 스와이프, 미만이면 클릭 (이동 거리만 사용, 시간 무관)
 
 function initBannerSlider() {
@@ -61,80 +62,43 @@ function initBannerSlider() {
     // 루프용 transition 종료 처리 (transform만 처리해 중복 방지)
     track.addEventListener('transitionend', handleBannerTransitionEnd);
 
-    // 터치 이벤트
-    slider.addEventListener('touchstart', handleTouchStart, { passive: true });
-    slider.addEventListener('touchmove', handleTouchMove, { passive: false });
-    slider.addEventListener('touchend', handleTouchEnd);
-
-    // 마우스 이벤트 (데스크톱)
-    slider.addEventListener('mousedown', handleMouseDown);
-    slider.addEventListener('mousemove', handleMouseMove);
-    slider.addEventListener('mouseup', handleMouseEnd);
-    slider.addEventListener('mouseleave', handleMouseEnd);
+    // 포인터 이벤트 (터치·마우스·펜 통합 — 모바일/웹 모두 동일 동작)
+    slider.addEventListener('pointerdown', handlePointerDown, { passive: true });
+    slider.addEventListener('pointermove', handlePointerMove, { passive: false });
+    slider.addEventListener('pointerup', handlePointerEnd);
+    slider.addEventListener('pointercancel', handlePointerEnd);
+    slider.addEventListener('pointerleave', handlePointerEnd);
 
     startBannerAutoSlide();
 }
 
-function handleTouchStart(e) {
-    touchStartX = e.touches[0].clientX;
-    touchEndX = touchStartX; // 초기값을 시작 위치로 설정 (탭을 스와이프로 오인하지 않도록)
-    touchStartTime = Date.now();
+function handlePointerDown(e) {
+    if (activePointerId !== null) return; // 이미 다른 포인터로 드래그 중이면 무시
+    activePointerId = e.pointerId;
+    pointerStartX = e.clientX;
+    pointerEndX = pointerStartX;
+    pointerStartTime = Date.now();
     isDragging = true;
+    e.currentTarget.setPointerCapture(e.pointerId); // 슬라이더 밖에서 뗄 때도 이벤트 수신 (모바일/웹 공통)
     document.getElementById('bannerTrack').classList.add('dragging');
     clearInterval(bannerInterval);
 }
 
-function handleTouchMove(e) {
-    if (!isDragging) return;
-    touchEndX = e.touches[0].clientX;
+function handlePointerMove(e) {
+    if (!isDragging || e.pointerId !== activePointerId) return;
+    pointerEndX = e.clientX;
+    e.preventDefault(); // 터치 스크롤 방지 (모바일에서 슬라이드만 인식)
 }
 
-function handleTouchEnd(e) {
-    if (!isDragging) return;
+function handlePointerEnd(e) {
+    if (e.pointerId !== activePointerId) return;
+    try { e.currentTarget.releasePointerCapture(e.pointerId); } catch (_) {}
+    activePointerId = null;
     isDragging = false;
     document.getElementById('bannerTrack').classList.remove('dragging');
-    if (e.changedTouches && e.changedTouches[0]) touchEndX = e.changedTouches[0].clientX;
+    pointerEndX = e.clientX; // 포인터가 떨어진 위치로 거리 계산 (move 미수신 대비)
 
-    const diff = touchStartX - touchEndX;
-    const distance = Math.abs(diff);
-
-    if (distance >= SWIPE_THRESHOLD) {
-        if (diff > 0) {
-            currentBannerIndex = (currentBannerIndex + 1) % bannerCount;
-            bannerVisualIndex += 1;
-        } else {
-            currentBannerIndex = (currentBannerIndex - 1 + bannerCount) % bannerCount;
-            bannerVisualIndex -= 1;
-        }
-        updateBannerPosition();
-    } else {
-        handleBannerClick();
-    }
-
-    startBannerAutoSlide();
-}
-
-function handleMouseDown(e) {
-    touchStartX = e.clientX;
-    touchEndX = touchStartX; // 마우스도 동일하게 초기값 설정
-    touchStartTime = Date.now();
-    isDragging = true;
-    document.getElementById('bannerTrack').classList.add('dragging');
-    clearInterval(bannerInterval);
-}
-
-function handleMouseMove(e) {
-    if (!isDragging) return;
-    touchEndX = e.clientX;
-}
-
-function handleMouseEnd(e) {
-    if (!isDragging) return;
-    isDragging = false;
-    document.getElementById('bannerTrack').classList.remove('dragging');
-    touchEndX = e.clientX; // 손 뗀 위치로 거리 계산 (mousemove를 놓친 경우 대비)
-
-    const diff = touchStartX - touchEndX;
+    const diff = pointerStartX - pointerEndX;
     const distance = Math.abs(diff);
 
     if (distance >= SWIPE_THRESHOLD) {
@@ -238,6 +202,105 @@ function navigateBanner(url) {
         // 외부 링크
         window.open(url, '_blank');
     }
+}
+
+// ========================================
+// 포인터 이벤트 공통 (모바일·웹 통합 탭/클릭)
+// ========================================
+
+const POINTER_TAP_MOVE_THRESHOLD = 10; // 이 거리 이상 이동 시 탭으로 인정하지 않음
+const pointerDownById = new Map(); // pointerId -> { element, x, y }
+const pointerTapHandlers = new Map(); // element -> onclick 함수 (위임용)
+
+/** 요소에 포인터 탭(터치/마우스 통합) 핸들러 등록. JS에서 동적 바인딩할 때 사용 */
+function onPointerTap(element, callback) {
+    if (!element) return;
+    const handler = function (e) {
+        if (e.pointerType === 'mouse' && e.button !== 0) return;
+        callback(e);
+    };
+    pointerTapHandlers.set(element, handler);
+    element.addEventListener('pointerdown', handlePointerTapDown, { passive: true });
+    element.addEventListener('pointerup', handlePointerTapUp);
+    element.addEventListener('pointercancel', handlePointerTapCancel);
+    element.addEventListener('pointerleave', handlePointerTapCancel);
+}
+
+function handlePointerTapDown(e) {
+    if (e.pointerType === 'mouse' && e.button !== 0) return;
+    pointerDownById.set(e.pointerId, {
+        element: e.currentTarget,
+        x: e.clientX,
+        y: e.clientY
+    });
+}
+
+function handlePointerTapUp(e) {
+    const down = pointerDownById.get(e.pointerId);
+    pointerDownById.delete(e.pointerId);
+    if (!down || down.element !== e.currentTarget) return;
+    const dx = e.clientX - down.x, dy = e.clientY - down.y;
+    if (dx * dx + dy * dy > POINTER_TAP_MOVE_THRESHOLD * POINTER_TAP_MOVE_THRESHOLD) return;
+    const fn = pointerTapHandlers.get(e.currentTarget);
+    if (fn) fn(e);
+}
+
+function handlePointerTapCancel(e) {
+    pointerDownById.delete(e.pointerId);
+}
+
+/** document 위임: [onclick] 요소를 포인터 탭으로 동작하게 바인딩 (한 번만 호출) */
+function initPointerTapDelegation() {
+    if (initPointerTapDelegation.done) return;
+    initPointerTapDelegation.done = true;
+
+    const byPointerId = new Map(); // pointerId -> { element, x, y }
+    const tapHandlerByElement = new Map(); // element -> 원래 onclick 함수
+
+    document.querySelectorAll('[onclick]').forEach(el => {
+        const fn = el.onclick;
+        if (typeof fn !== 'function') return;
+        tapHandlerByElement.set(el, fn);
+        el.onclick = null;
+    });
+
+    function findTappedElement(node) {
+        let n = node;
+        while (n && n !== document.body) {
+            if (tapHandlerByElement.has(n)) return n;
+            n = n.parentElement;
+        }
+        return null;
+    }
+
+    document.addEventListener('pointerdown', function (e) {
+        if (e.pointerType === 'mouse' && e.button !== 0) return;
+        const el = findTappedElement(e.target);
+        if (el) byPointerId.set(e.pointerId, { element: el, x: e.clientX, y: e.clientY });
+    }, true);
+
+    document.addEventListener('pointerup', function (e) {
+        const down = byPointerId.get(e.pointerId);
+        byPointerId.delete(e.pointerId);
+        if (!down) return;
+        const el = findTappedElement(e.target);
+        if (el !== down.element) return;
+        const dx = e.clientX - down.x, dy = e.clientY - down.y;
+        if (dx * dx + dy * dy > POINTER_TAP_MOVE_THRESHOLD * POINTER_TAP_MOVE_THRESHOLD) return;
+        const fn = tapHandlerByElement.get(el);
+        if (fn) fn.call(el, e);
+    }, true);
+
+    document.addEventListener('pointercancel', function (e) { byPointerId.delete(e.pointerId); }, true);
+
+    // 키보드 접근성: 포커스된 요소에서 Enter/Space 시 동일 핸들러 실행
+    document.addEventListener('keydown', function (e) {
+        if (e.key !== 'Enter' && e.key !== ' ') return;
+        const el = findTappedElement(e.target);
+        if (!el || !tapHandlerByElement.has(el)) return;
+        e.preventDefault();
+        tapHandlerByElement.get(el).call(el, e);
+    }, true);
 }
 
 // ========================================
