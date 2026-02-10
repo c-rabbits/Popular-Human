@@ -14,8 +14,7 @@ let touchStartX = 0;
 let touchEndX = 0;
 let touchStartTime = 0;
 let isDragging = false;
-const SWIPE_THRESHOLD = 100; // 100px 이상 이동 시 스와이프
-const SWIPE_TIME_THRESHOLD = 600; // 600ms 이내 제스처만 스와이프 처리
+const SWIPE_THRESHOLD = 50; // 50px 이상 이동 시 스와이프, 미만이면 클릭 (이동 거리만 사용, 시간 무관)
 
 function initBannerSlider() {
     const track = document.getElementById('bannerTrack');
@@ -35,11 +34,21 @@ function initBannerSlider() {
         return;
     }
 
-    // 무한 루프용 클론 슬라이드 추가 (앞/뒤에 한 장씩)
+    // 무한 루프용 클론 슬라이드 추가 (앞/뒤에 한 장씩), 배경 이미지 명시 복사로 항상 표시 보장
     const firstClone = slides[0].cloneNode(true);
     const lastClone = slides[slides.length - 1].cloneNode(true);
     firstClone.classList.add('banner-clone');
     lastClone.classList.add('banner-clone');
+
+    const copyBannerImage = (fromSlide, toSlide) => {
+        const fromImg = fromSlide.querySelector('.banner-image');
+        const toImg = toSlide.querySelector('.banner-image');
+        if (fromImg && toImg && fromImg.style.backgroundImage) {
+            toImg.style.backgroundImage = fromImg.style.backgroundImage;
+        }
+    };
+    copyBannerImage(slides[0], firstClone);
+    copyBannerImage(slides[slides.length - 1], lastClone);
 
     track.appendChild(firstClone);            // 맨 뒤에 첫 번째 슬라이드 클론
     track.insertBefore(lastClone, slides[0]); // 맨 앞에 마지막 슬라이드 클론
@@ -86,27 +95,18 @@ function handleTouchEnd(e) {
     document.getElementById('bannerTrack').classList.remove('dragging');
 
     const diff = touchStartX - touchEndX;
-    const touchDuration = Date.now() - touchStartTime;
     const distance = Math.abs(diff);
 
-    // 스와이프 판단 기준 (감도 완화):
-    // 일정 거리 이상(SWIPE_THRESHOLD) + 비교적 짧은 시간 안에 이동한 경우만 스와이프로 처리
-    const isSwipe = distance >= SWIPE_THRESHOLD && touchDuration < SWIPE_TIME_THRESHOLD;
-
-    if (isSwipe) {
-        // 스와이프
+    if (distance >= SWIPE_THRESHOLD) {
         if (diff > 0) {
-            // 왼쪽으로 스와이프 → 다음 배너
             currentBannerIndex = (currentBannerIndex + 1) % bannerCount;
             bannerVisualIndex += 1;
         } else {
-            // 오른쪽으로 스와이프 → 이전 배너
             currentBannerIndex = (currentBannerIndex - 1 + bannerCount) % bannerCount;
             bannerVisualIndex -= 1;
         }
         updateBannerPosition();
     } else {
-        // 클릭 (작은 이동 또는 긴 터치)
         handleBannerClick();
     }
 
@@ -133,27 +133,18 @@ function handleMouseEnd(e) {
     document.getElementById('bannerTrack').classList.remove('dragging');
 
     const diff = touchStartX - touchEndX;
-    const touchDuration = Date.now() - touchStartTime;
     const distance = Math.abs(diff);
 
-    // 스와이프 판단 기준 (감도 완화):
-    // 일정 거리 이상(SWIPE_THRESHOLD) + 비교적 짧은 시간 안에 이동한 경우만 스와이프로 처리
-    const isSwipe = distance >= SWIPE_THRESHOLD && touchDuration < SWIPE_TIME_THRESHOLD;
-
-    if (isSwipe) {
-        // 스와이프
+    if (distance >= SWIPE_THRESHOLD) {
         if (diff > 0) {
-            // 왼쪽으로 스와이프 → 다음 배너
             currentBannerIndex = (currentBannerIndex + 1) % bannerCount;
             bannerVisualIndex += 1;
         } else {
-            // 오른쪽으로 스와이프 → 이전 배너
             currentBannerIndex = (currentBannerIndex - 1 + bannerCount) % bannerCount;
             bannerVisualIndex -= 1;
         }
         updateBannerPosition();
     } else {
-        // 클릭 (작은 이동 또는 긴 터치)
         handleBannerClick();
     }
 
