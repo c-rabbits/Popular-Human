@@ -457,6 +457,163 @@ function loadMoreHistory(type) {
 }
 
 // ========================================
+// 친구 초대
+// ========================================
+
+// 초대 데이터 (localStorage 기반 목업)
+function getInviteData() {
+    const stored = localStorage.getItem('ph_invite_data');
+    if (stored) {
+        try { return JSON.parse(stored); } catch(e) {}
+    }
+    return { invitedCount: 0, rewardTickets: 0 };
+}
+
+function saveInviteData(data) {
+    localStorage.setItem('ph_invite_data', JSON.stringify(data));
+}
+
+function updateInviteStats() {
+    const data = getInviteData();
+    const countEl = document.getElementById('invitedCount');
+    const rewardEl = document.getElementById('inviteRewardTotal');
+    if (countEl) countEl.textContent = data.invitedCount;
+    if (rewardEl) rewardEl.textContent = data.rewardTickets + '장';
+}
+
+// 초대 링크 생성
+function getInviteLink() {
+    const userId = liffProfile ? liffProfile.userId : 'user123';
+    // 실제 배포 시 LIFF URL로 교체
+    const baseUrl = LIFF_CONFIG.liffId
+        ? 'https://liff.line.me/' + LIFF_CONFIG.liffId
+        : window.location.origin + window.location.pathname;
+    return baseUrl + '?ref=' + encodeURIComponent(userId);
+}
+
+// 홈 배너 클릭 → 지갑 화면 초대 섹션으로 이동
+function onInviteBannerClick() {
+    switchScreen('profile');
+    // 살짝 딜레이 후 초대 섹션으로 스크롤
+    setTimeout(() => {
+        const section = document.getElementById('inviteRewardSection');
+        if (section) {
+            section.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            // 강조 효과
+            section.style.transition = 'box-shadow 0.3s';
+            section.style.boxShadow = '0 0 0 3px #FF6B35';
+            setTimeout(() => {
+                section.style.boxShadow = '0 1px 4px rgba(0,0,0,0.06)';
+            }, 1500);
+        }
+    }, 200);
+}
+
+// LINE으로 초대 메시지 공유 (liff.shareTargetPicker)
+function shareInviteLink() {
+    const inviteLink = getInviteLink();
+
+    // LIFF 환경에서 shareTargetPicker 사용
+    if (typeof liff !== 'undefined' && liff.isApiAvailable && liff.isApiAvailable('shareTargetPicker')) {
+        liff.shareTargetPicker([
+            {
+                type: 'flex',
+                altText: '대중적 인간 - 함께 플레이해요!',
+                contents: {
+                    type: 'bubble',
+                    hero: {
+                        type: 'box',
+                        layout: 'vertical',
+                        contents: [
+                            {
+                                type: 'text',
+                                text: '🎁 대중적 인간',
+                                weight: 'bold',
+                                size: 'xl',
+                                align: 'center',
+                                color: '#FF6B35'
+                            },
+                            {
+                                type: 'text',
+                                text: '사회적 행동 예측 퀴즈 게임',
+                                size: 'sm',
+                                align: 'center',
+                                color: '#999999',
+                                margin: 'sm'
+                            }
+                        ],
+                        paddingAll: '20px',
+                        backgroundColor: '#FFF8F5'
+                    },
+                    body: {
+                        type: 'box',
+                        layout: 'vertical',
+                        contents: [
+                            {
+                                type: 'text',
+                                text: '친구가 초대했어요!',
+                                weight: 'bold',
+                                size: 'md',
+                                align: 'center'
+                            },
+                            {
+                                type: 'text',
+                                text: '지금 참여하면 티켓 3장을 드려요',
+                                size: 'sm',
+                                align: 'center',
+                                color: '#999999',
+                                margin: 'md'
+                            }
+                        ],
+                        paddingAll: '16px'
+                    },
+                    footer: {
+                        type: 'box',
+                        layout: 'vertical',
+                        contents: [
+                            {
+                                type: 'button',
+                                action: {
+                                    type: 'uri',
+                                    label: '게임 시작하기',
+                                    uri: inviteLink
+                                },
+                                style: 'primary',
+                                color: '#FF6B35'
+                            }
+                        ],
+                        paddingAll: '12px'
+                    }
+                }
+            }
+        ]).then((res) => {
+            if (res) {
+                showToast('초대 메시지를 전송했습니다!');
+                // 목업: 초대 카운트 증가
+                const data = getInviteData();
+                data.invitedCount += 1;
+                data.rewardTickets += 3;
+                saveInviteData(data);
+                updateInviteStats();
+            }
+        }).catch((err) => {
+            console.error('shareTargetPicker 에러:', err);
+            // 폴백: 링크 복사
+            copyInviteLink();
+        });
+    } else {
+        // LIFF 외 환경: 링크 복사 폴백
+        copyInviteLink();
+    }
+}
+
+// 초대 링크 복사
+function copyInviteLink() {
+    const link = getInviteLink();
+    copyToClipboard(link, '초대 링크');
+}
+
+// ========================================
 // 화면 전환
 // ========================================
 

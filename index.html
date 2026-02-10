@@ -47,8 +47,17 @@
                 <!-- 상단 배너 슬라이더 -->
                 <div class="top-banner-slider">
                     <div class="banner-track" id="bannerTrack">
-                        <div class="banner-slide">
-                            <div class="banner-image" style="background-image: url('Main_Banner_001.png');"></div>
+                        <div class="banner-slide" onclick="onInviteBannerClick()">
+                            <div class="invite-banner">
+                                <div class="invite-banner-content">
+                                    <div class="invite-banner-emoji">🎁</div>
+                                    <div class="invite-banner-text">
+                                        <div class="invite-banner-title">친구 초대하고 티켓 받기!</div>
+                                        <div class="invite-banner-desc">친구 1명 초대 = 티켓 3장 지급</div>
+                                    </div>
+                                    <div class="invite-banner-arrow">›</div>
+                                </div>
+                            </div>
                         </div>
                         <div class="banner-slide">
                             <div class="banner-image" style="background-image: url('Main_Banner_002.png');"></div>
@@ -1128,6 +1137,39 @@
                     <div class="wallet-asset-row">
                         <span class="wallet-asset-label">🎫 보유 티켓</span>
                         <span class="wallet-asset-value" id="walletTickets">-</span>
+                    </div>
+                </div>
+
+                <!-- 친구초대 리워드 섹션 -->
+                <div class="wallet-section-title">친구 초대</div>
+                <div class="invite-reward-card" id="inviteRewardSection">
+                    <div class="invite-reward-header">
+                        <div class="invite-reward-header-left">
+                            <span class="invite-reward-icon">🎁</span>
+                            <div class="invite-reward-info">
+                                <div class="invite-reward-title">친구 초대하고 티켓 받기!</div>
+                                <div class="invite-reward-desc">친구 1명 초대할 때마다 티켓 3장 지급</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="invite-reward-stats">
+                        <div class="invite-stat-item">
+                            <span class="invite-stat-value" id="invitedCount">0</span>
+                            <span class="invite-stat-label">초대한 친구</span>
+                        </div>
+                        <div class="invite-stat-divider"></div>
+                        <div class="invite-stat-item">
+                            <span class="invite-stat-value" id="inviteRewardTotal">0장</span>
+                            <span class="invite-stat-label">받은 티켓</span>
+                        </div>
+                    </div>
+                    <div class="invite-reward-actions">
+                        <button class="invite-share-btn" onclick="shareInviteLink()">
+                            💌 LINE으로 초대하기
+                        </button>
+                        <button class="invite-copy-link-btn" onclick="copyInviteLink()">
+                            🔗 링크 복사
+                        </button>
                     </div>
                 </div>
 

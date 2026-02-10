@@ -54,6 +54,9 @@ async function initApp() {
 
     // 설정 화면 초기화
     initSettingsToggles();
+
+    // 친구 초대 현황 업데이트
+    updateInviteStats();
 }
 
 // ========================================

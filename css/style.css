@@ -2499,3 +2499,178 @@ body {
 .wallet-history-item-amount.negative {
     color: #FF4444;
 }
+
+/* ========================================
+   친구초대 배너 (홈)
+   ======================================== */
+
+.invite-banner {
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, #FF6B35 0%, #FF8F5E 100%);
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    padding: 0 20px;
+    cursor: pointer;
+}
+
+.invite-banner-content {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    gap: 14px;
+}
+
+.invite-banner-emoji {
+    font-size: 36px;
+    flex-shrink: 0;
+}
+
+.invite-banner-text {
+    flex: 1;
+}
+
+.invite-banner-title {
+    font-size: 17px;
+    font-weight: 800;
+    color: #fff;
+    margin-bottom: 3px;
+}
+
+.invite-banner-desc {
+    font-size: 13px;
+    color: rgba(255,255,255,0.85);
+    font-weight: 500;
+}
+
+.invite-banner-arrow {
+    font-size: 28px;
+    color: rgba(255,255,255,0.7);
+    font-weight: 300;
+    flex-shrink: 0;
+}
+
+/* ========================================
+   친구초대 리워드 섹션 (지갑)
+   ======================================== */
+
+.invite-reward-card {
+    background: #fff;
+    border-radius: 14px;
+    padding: 16px;
+    margin-bottom: 10px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+}
+
+.invite-reward-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 14px;
+}
+
+.invite-reward-header-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.invite-reward-icon {
+    font-size: 28px;
+    flex-shrink: 0;
+}
+
+.invite-reward-info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.invite-reward-title {
+    font-size: 15px;
+    font-weight: 700;
+    color: #222;
+}
+
+.invite-reward-desc {
+    font-size: 12px;
+    color: #999;
+}
+
+.invite-reward-stats {
+    display: flex;
+    align-items: center;
+    background: #f8f8f8;
+    border-radius: 12px;
+    padding: 14px 0;
+    margin-bottom: 14px;
+}
+
+.invite-stat-item {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+}
+
+.invite-stat-value {
+    font-size: 20px;
+    font-weight: 800;
+    color: #FF6B35;
+}
+
+.invite-stat-label {
+    font-size: 12px;
+    color: #999;
+    font-weight: 500;
+}
+
+.invite-stat-divider {
+    width: 1px;
+    height: 32px;
+    background: #e5e5e5;
+    flex-shrink: 0;
+}
+
+.invite-reward-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.invite-share-btn {
+    flex: 1;
+    padding: 12px 0;
+    background: #06C755;
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.invite-share-btn:active {
+    opacity: 0.85;
+    transform: scale(0.98);
+}
+
+.invite-copy-link-btn {
+    flex-shrink: 0;
+    padding: 12px 16px;
+    background: #f0f0f0;
+    color: #555;
+    border: none;
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.invite-copy-link-btn:active {
+    background: #e0e0e0;
+    transform: scale(0.98);
+}
