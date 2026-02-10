@@ -1529,29 +1529,24 @@ body {
 .shop-list {
     display: flex;
     flex-direction: column;
-    gap: 0;
-    background: #fff;
-    border-radius: 14px;
-    overflow: hidden;
-    box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+    gap: 14px;
 }
 
 .shop-list-item {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 14px 16px;
-    border-bottom: 1px solid #f0f0f0;
+    padding: 16px 18px;
+    background: #fff;
+    border-radius: 14px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.06);
     cursor: pointer;
-    transition: background 0.15s;
-}
-
-.shop-list-item:last-child {
-    border-bottom: none;
+    transition: background 0.15s, box-shadow 0.2s;
 }
 
 .shop-list-item:active {
     background: #f8f8f8;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
 }
 
 .shop-list-item-left {
