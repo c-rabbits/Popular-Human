@@ -43,9 +43,9 @@ function initBannerSlider() {
     const copyBannerImage = (fromSlide, toSlide) => {
         const fromImg = fromSlide.querySelector('.banner-image');
         const toImg = toSlide.querySelector('.banner-image');
-        if (fromImg && toImg && fromImg.style.backgroundImage) {
-            toImg.style.backgroundImage = fromImg.style.backgroundImage;
-        }
+        if (!fromImg || !toImg) return;
+        const bg = fromImg.style.backgroundImage || (window.getComputedStyle && getComputedStyle(fromImg).backgroundImage);
+        if (bg) toImg.style.backgroundImage = bg;
     };
     copyBannerImage(slides[0], firstClone);
     copyBannerImage(slides[slides.length - 1], lastClone);
@@ -53,10 +53,14 @@ function initBannerSlider() {
     track.appendChild(firstClone);            // 맨 뒤에 첫 번째 슬라이드 클론
     track.insertBefore(lastClone, slides[0]); // 맨 앞에 마지막 슬라이드 클론
 
-    // 초기 위치: 첫 번째 실제 배너(시각적 인덱스 1)
+    const totalSlides = bannerCount + 2;
+    track.style.setProperty('--banner-total', String(totalSlides));
+    track.style.width = (totalSlides * 100) + '%';
+
+    // 초기 위치: 첫 번째 실제 배너(시각적 인덱스 1), translateX %는 트랙 너비 기준
     currentBannerIndex = 0;
     bannerVisualIndex = 1;
-    track.style.transform = `translateX(-${bannerVisualIndex * 100}%)`;
+    track.style.transform = `translateX(-${(bannerVisualIndex * 100) / totalSlides}%)`;
 
     // 루프용 transition 종료 처리 (transform만 처리해 중복 방지)
     track.addEventListener('transitionend', handleBannerTransitionEnd);
@@ -93,6 +97,7 @@ function handleTouchEnd(e) {
     if (!isDragging) return;
     isDragging = false;
     document.getElementById('bannerTrack').classList.remove('dragging');
+    if (e.changedTouches && e.changedTouches[0]) touchEndX = e.changedTouches[0].clientX;
 
     const diff = touchStartX - touchEndX;
     const distance = Math.abs(diff);
@@ -131,6 +136,7 @@ function handleMouseEnd(e) {
     if (!isDragging) return;
     isDragging = false;
     document.getElementById('bannerTrack').classList.remove('dragging');
+    touchEndX = e.clientX; // 손 뗀 위치로 거리 계산 (mousemove를 놓친 경우 대비)
 
     const diff = touchStartX - touchEndX;
     const distance = Math.abs(diff);
@@ -191,8 +197,8 @@ function updateBannerPosition() {
         return;
     }
 
-    // 시각적 인덱스를 기준으로 트랙 이동 (클론 포함)
-    track.style.transform = `translateX(-${bannerVisualIndex * 100}%)`;
+    const totalSlides = bannerCount + 2;
+    track.style.transform = `translateX(-${(bannerVisualIndex * 100) / totalSlides}%)`;
 
     dots.forEach((dot, index) => {
         if (index === currentBannerIndex) {
@@ -223,7 +229,8 @@ function handleBannerTransitionEnd(e) {
             bannerVisualIndex = 1;
             currentBannerIndex = 0;
         }
-        track.style.transform = `translateX(-${bannerVisualIndex * 100}%)`;
+        const totalSlides = bannerCount + 2;
+        track.style.transform = `translateX(-${(bannerVisualIndex * 100) / totalSlides}%)`;
         requestAnimationFrame(() => { track.style.transition = ''; });
     });
 }

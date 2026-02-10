@@ -209,9 +209,8 @@ body {
 }
 
 .banner-slide {
-    min-width: 100%;
-    width: 100%;
-    flex-shrink: 0;
+    flex: 0 0 calc(100% / var(--banner-total, 7));
+    min-width: 0;
     height: 0;
     padding-bottom: 43.75%; /* 16:7 비율 */
     position: relative;
