@@ -53,14 +53,10 @@ function initBannerSlider() {
     track.appendChild(firstClone);            // 맨 뒤에 첫 번째 슬라이드 클론
     track.insertBefore(lastClone, slides[0]); // 맨 앞에 마지막 슬라이드 클론
 
-    const totalSlides = bannerCount + 2;
-    track.style.setProperty('--banner-total', String(totalSlides));
-    track.style.width = (totalSlides * 100) + '%';
-
-    // 초기 위치: 첫 번째 실제 배너(시각적 인덱스 1), translateX %는 트랙 너비 기준
+    // 초기 위치: 첫 번째 실제 배너(시각적 인덱스 1)
     currentBannerIndex = 0;
     bannerVisualIndex = 1;
-    track.style.transform = `translateX(-${(bannerVisualIndex * 100) / totalSlides}%)`;
+    track.style.transform = `translateX(-${bannerVisualIndex * 100}%)`;
 
     // 루프용 transition 종료 처리 (transform만 처리해 중복 방지)
     track.addEventListener('transitionend', handleBannerTransitionEnd);
@@ -197,8 +193,7 @@ function updateBannerPosition() {
         return;
     }
 
-    const totalSlides = bannerCount + 2;
-    track.style.transform = `translateX(-${(bannerVisualIndex * 100) / totalSlides}%)`;
+    track.style.transform = `translateX(-${bannerVisualIndex * 100}%)`;
 
     dots.forEach((dot, index) => {
         if (index === currentBannerIndex) {
@@ -229,8 +224,7 @@ function handleBannerTransitionEnd(e) {
             bannerVisualIndex = 1;
             currentBannerIndex = 0;
         }
-        const totalSlides = bannerCount + 2;
-        track.style.transform = `translateX(-${(bannerVisualIndex * 100) / totalSlides}%)`;
+        track.style.transform = `translateX(-${bannerVisualIndex * 100}%)`;
         requestAnimationFrame(() => { track.style.transition = ''; });
     });
 }
