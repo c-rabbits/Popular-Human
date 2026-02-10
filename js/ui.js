@@ -218,24 +218,23 @@ function handleBannerTransitionEnd(e) {
     const track = document.getElementById('bannerTrack');
     if (!track) return;
 
-    // 점프 시 transition이 적용되지 않도록: 먼저 transition 제거 → reflow → transform 변경 → 다음 프레임에 transition 복원
-    if (bannerVisualIndex === 0) {
-        // 왼쪽 끝 클론에 도달 → 마지막 실제 배너 위치로 순간 이동
-        track.classList.add('dragging');
-        bannerVisualIndex = bannerCount;
-        currentBannerIndex = bannerCount - 1;
-        void track.offsetHeight; // reflow로 transition:none 적용 보장
+    const atLeftClone = (bannerVisualIndex === 0);
+    const atRightClone = (bannerVisualIndex === bannerCount + 1);
+    if (!atLeftClone && !atRightClone) return;
+
+    // 다음 프레임에서 점프 실행 (transition 제거 → transform 변경 → 다음 프레임에 transition 복원)
+    requestAnimationFrame(() => {
+        track.style.transition = 'none';
+        if (atLeftClone) {
+            bannerVisualIndex = bannerCount;
+            currentBannerIndex = bannerCount - 1;
+        } else {
+            bannerVisualIndex = 1;
+            currentBannerIndex = 0;
+        }
         track.style.transform = `translateX(-${bannerVisualIndex * 100}%)`;
-        requestAnimationFrame(() => { track.classList.remove('dragging'); });
-    } else if (bannerVisualIndex === bannerCount + 1) {
-        // 오른쪽 끝 클론(첫번째와 동일 이미지)에 도달 → 첫 번째 실제 배너 위치로 순간 이동 (화면은 그대로, 루프만 리셋)
-        track.classList.add('dragging');
-        bannerVisualIndex = 1;
-        currentBannerIndex = 0;
-        void track.offsetHeight; // reflow로 transition:none 적용 보장
-        track.style.transform = `translateX(-${bannerVisualIndex * 100}%)`;
-        requestAnimationFrame(() => { track.classList.remove('dragging'); });
-    }
+        requestAnimationFrame(() => { track.style.transition = ''; });
+    });
 }
 
 function navigateBanner(url) {
