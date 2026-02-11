@@ -1771,8 +1771,8 @@ body {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    min-height: 100px;
-    padding: 18px 20px;
+    min-height: 82px;
+    padding: 14px 18px;
     background: #fff;
     border-radius: 14px;
     border: 1px solid #c4c4c4;
@@ -1788,14 +1788,14 @@ body {
 
 .shop-list-item-row-top {
     flex: 0 0 auto;
-    min-height: 36px;
+    min-height: 32px;
 }
 
 .shop-list-item-row-bottom {
     flex: 0 0 auto;
-    padding-top: 14px;
+    padding-top: 10px;
     border-top: 1px solid #eee;
-    margin-top: 2px;
+    margin-top: 0;
 }
 
 .shop-list-item-left {
