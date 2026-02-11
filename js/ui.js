@@ -635,102 +635,88 @@ function onInviteBannerClick() {
     }, 200);
 }
 
-// LINE으로 초대 메시지 공유 (liff.shareTargetPicker)
+// LINE으로 초대 메시지 공유 — 친구 선택 화면(Share Target Picker) 표시
+// ※ LINE Developers 콘솔 → LIFF 앱 → Scope에 "chat_message.write" 추가 필요
 function shareInviteLink() {
     const inviteLink = getInviteLink();
 
-    // LIFF 환경에서 shareTargetPicker 사용
-    if (typeof liff !== 'undefined' && liff.isApiAvailable && liff.isApiAvailable('shareTargetPicker')) {
-        liff.shareTargetPicker([
-            {
-                type: 'flex',
-                altText: '대중적 인간 - 함께 플레이해요!',
-                contents: {
-                    type: 'bubble',
-                    hero: {
-                        type: 'box',
-                        layout: 'vertical',
-                        contents: [
-                            {
-                                type: 'text',
-                                text: '🎁 대중적 인간',
-                                weight: 'bold',
-                                size: 'xl',
-                                align: 'center',
-                                color: '#FF6B35'
-                            },
-                            {
-                                type: 'text',
-                                text: '사회적 행동 예측 퀴즈 게임',
-                                size: 'sm',
-                                align: 'center',
-                                color: '#999999',
-                                margin: 'sm'
-                            }
-                        ],
-                        paddingAll: '20px',
-                        backgroundColor: '#FFF8F5'
-                    },
-                    body: {
-                        type: 'box',
-                        layout: 'vertical',
-                        contents: [
-                            {
-                                type: 'text',
-                                text: '친구가 초대했어요!',
-                                weight: 'bold',
-                                size: 'md',
-                                align: 'center'
-                            },
-                            {
-                                type: 'text',
-                                text: '지금 참여하면 티켓 3장을 드려요',
-                                size: 'sm',
-                                align: 'center',
-                                color: '#999999',
-                                margin: 'md'
-                            }
-                        ],
-                        paddingAll: '16px'
-                    },
-                    footer: {
-                        type: 'box',
-                        layout: 'vertical',
-                        contents: [
-                            {
-                                type: 'button',
-                                action: {
-                                    type: 'uri',
-                                    label: '게임 시작하기',
-                                    uri: inviteLink
-                                },
-                                style: 'primary',
-                                color: '#FF6B35'
-                            }
-                        ],
-                        paddingAll: '12px'
-                    }
+    // LINE 앱 내부가 아니면 친구 선택 불가 → 안내 후 링크 복사
+    if (typeof liff === 'undefined') {
+        showToast('LINE 앱에서 열어주시면 친구를 선택해서 보낼 수 있어요');
+        copyInviteLink();
+        return;
+    }
+    if (!liff.isInClient()) {
+        showToast('LINE 앱 내에서 열어주시면 친구 선택 화면이 나타나요');
+        copyInviteLink();
+        return;
+    }
+
+    // LINE 앱 내부: Share Target Picker 호출 → 친구/그룹 선택 화면 표시
+    var messages = [
+        {
+            type: 'flex',
+            altText: '대중적 인간 - 함께 플레이해요!',
+            contents: {
+                type: 'bubble',
+                hero: {
+                    type: 'box',
+                    layout: 'vertical',
+                    contents: [
+                        { type: 'text', text: '🎁 대중적 인간', weight: 'bold', size: 'xl', align: 'center', color: '#FF6B35' },
+                        { type: 'text', text: '사회적 행동 예측 퀴즈 게임', size: 'sm', align: 'center', color: '#999999', margin: 'sm' }
+                    ],
+                    paddingAll: '20px',
+                    backgroundColor: '#FFF8F5'
+                },
+                body: {
+                    type: 'box',
+                    layout: 'vertical',
+                    contents: [
+                        { type: 'text', text: '친구가 초대했어요!', weight: 'bold', size: 'md', align: 'center' },
+                        { type: 'text', text: '지금 참여하면 티켓 3장을 드려요', size: 'sm', align: 'center', color: '#999999', margin: 'md' }
+                    ],
+                    paddingAll: '16px'
+                },
+                footer: {
+                    type: 'box',
+                    layout: 'vertical',
+                    contents: [
+                        {
+                            type: 'button',
+                            action: { type: 'uri', label: '게임 시작하기', uri: inviteLink },
+                            style: 'primary',
+                            color: '#FF6B35'
+                        }
+                    ],
+                    paddingAll: '12px'
                 }
             }
-        ]).then((res) => {
+        }
+    ];
+
+    liff.shareTargetPicker(messages)
+        .then(function (res) {
             if (res) {
                 showToast('초대 메시지를 전송했습니다!');
-                // 목업: 초대 카운트 증가
-                const data = getInviteData();
+                var data = getInviteData();
                 data.invitedCount += 1;
                 data.rewardTickets += 3;
                 saveInviteData(data);
                 updateInviteStats();
             }
-        }).catch((err) => {
+        })
+        .catch(function (err) {
             console.error('shareTargetPicker 에러:', err);
-            // 폴백: 링크 복사
-            copyInviteLink();
+            var code = err && err.code;
+            if (code === 'UNAUTHORIZED') {
+                showToast('로그인 후 다시 시도해 주세요');
+            } else if (code === 'FORBIDDEN') {
+                showToast('친구 선택 기능은 LINE 앱에서만 사용할 수 있어요');
+            } else {
+                showToast('친구 선택을 취소했거나 일시적인 오류가 발생했어요');
+            }
         });
-    } else {
-        // LIFF 외 환경: 링크 복사 폴백
-        copyInviteLink();
-    }
 }
 
 // 초대 링크 복사
