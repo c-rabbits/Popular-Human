@@ -168,19 +168,31 @@ body {
     background: #111;
 }
 
-.nav-item.active .nav-icon {
-    color: #fff;
-}
-
 .nav-item.active .nav-label {
     color: #fff;
     font-weight: 700;
 }
 
 .nav-icon {
-    font-size: 24px;
-    color: #aaa;
-    transition: color 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    transition: filter 0.2s;
+}
+
+.nav-icon img {
+    width: 22px;
+    height: 22px;
+    display: block;
+    /* 오렌지 계열 #e85d2c */
+    filter: brightness(0) saturate(100%) invert(42%) sepia(93%) saturate(1200%) hue-rotate(350deg);
+    transition: filter 0.2s;
+}
+
+.nav-item.active .nav-icon img {
+    filter: brightness(0) invert(1);
 }
 
 .nav-label {
