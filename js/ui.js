@@ -1056,6 +1056,8 @@ function initSettingsToggles() {
     if (toggleEvent) toggleEvent.checked = settings.eventNotification;
     if (toggleResult) toggleResult.checked = settings.resultNotification;
 
+    fillTimePickerOptions();
+
     if (startTimeInput) {
         startTimeInput.value = settings.notificationStartTime || '09:00';
         startTimeInput.addEventListener('change', saveNotificationTimeRange);
@@ -1064,6 +1066,77 @@ function initSettingsToggles() {
         endTimeInput.value = settings.notificationEndTime || '21:00';
         endTimeInput.addEventListener('change', saveNotificationTimeRange);
     }
+
+    syncCustomTimePickerFromSettings();
+    bindCustomTimePickerListeners();
+}
+
+function fillTimePickerOptions() {
+    const pad = (n) => String(n).padStart(2, '0');
+    const hours = Array.from({ length: 24 }, (_, i) => pad(i));
+    const minutes = Array.from({ length: 60 }, (_, i) => pad(i));
+
+    ['notificationStartHour', 'notificationEndHour'].forEach(id => {
+        const el = document.getElementById(id);
+        if (!el) return;
+        el.textContent = '';
+        hours.forEach(v => {
+            const o = document.createElement('option');
+            o.value = v;
+            o.textContent = v;
+            el.appendChild(o);
+        });
+    });
+    ['notificationStartMin', 'notificationEndMin'].forEach(id => {
+        const el = document.getElementById(id);
+        if (!el) return;
+        el.textContent = '';
+        minutes.forEach(v => {
+            const o = document.createElement('option');
+            o.value = v;
+            o.textContent = v;
+            el.appendChild(o);
+        });
+    });
+}
+
+function syncCustomTimePickerFromSettings() {
+    const settings = getSettings();
+    const start = (settings.notificationStartTime || '09:00').split(':');
+    const end = (settings.notificationEndTime || '21:00').split(':');
+    const pad = (v) => String(v || '0').padStart(2, '0');
+    const setSelect = (id, value) => {
+        const el = document.getElementById(id);
+        if (el) el.value = pad(value);
+    };
+    setSelect('notificationStartHour', start[0]);
+    setSelect('notificationStartMin', start[1]);
+    setSelect('notificationEndHour', end[0]);
+    setSelect('notificationEndMin', end[1]);
+}
+
+function bindCustomTimePickerListeners() {
+    const ids = ['notificationStartHour', 'notificationStartMin', 'notificationEndHour', 'notificationEndMin'];
+    const startIds = ['notificationStartHour', 'notificationStartMin'];
+    const endIds = ['notificationEndHour', 'notificationEndMin'];
+
+    function updateNativeFromSelects() {
+        const startEl = document.getElementById('notificationStartTime');
+        const endEl = document.getElementById('notificationEndTime');
+        if (!startEl || !endEl) return;
+        const h1 = document.getElementById('notificationStartHour');
+        const m1 = document.getElementById('notificationStartMin');
+        const h2 = document.getElementById('notificationEndHour');
+        const m2 = document.getElementById('notificationEndMin');
+        if (h1 && m1) startEl.value = (h1.value || '09') + ':' + (m1.value || '00');
+        if (h2 && m2) endEl.value = (h2.value || '21') + ':' + (m2.value || '00');
+        saveNotificationTimeRange();
+    }
+
+    ids.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.addEventListener('change', updateNativeFromSelects);
+    });
 }
 
 function saveNotificationTimeRange() {

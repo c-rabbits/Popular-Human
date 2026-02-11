@@ -1282,7 +1282,7 @@
                         </label>
                     </div>
                     <div class="settings-item settings-item-time-range">
-                        <div class="settings-item-left">
+                        <div class="settings-item-left settings-item-time-label">
                             <span class="settings-item-icon">🕐</span>
                             <div class="settings-item-text">
                                 <div class="settings-item-label">알림 받을 시간대</div>
@@ -1290,9 +1290,32 @@
                             </div>
                         </div>
                         <div class="settings-time-inputs">
-                            <input type="time" id="notificationStartTime" class="settings-time-input" title="시작 시간" aria-label="알림 시작 시간">
-                            <span class="settings-time-sep">~</span>
-                            <input type="time" id="notificationEndTime" class="settings-time-input" title="종료 시간" aria-label="알림 종료 시간">
+                            <!-- 모바일: 네이티브 time 입력 -->
+                            <div class="settings-time-native">
+                                <input type="time" id="notificationStartTime" class="settings-time-input" title="시작 시간" aria-label="알림 시작 시간">
+                                <span class="settings-time-sep">~</span>
+                                <input type="time" id="notificationEndTime" class="settings-time-input" title="종료 시간" aria-label="알림 종료 시간">
+                            </div>
+                            <!-- 웹: 커스텀 시/분 선택 -->
+                            <div class="settings-time-custom" aria-hidden="true">
+                                <div class="time-picker-block">
+                                    <span class="time-picker-label">시작</span>
+                                    <div class="time-picker-selects">
+                                        <select id="notificationStartHour" class="time-picker-select" aria-label="시작 시"></select>
+                                        <span class="time-picker-colon">:</span>
+                                        <select id="notificationStartMin" class="time-picker-select" aria-label="시작 분"></select>
+                                    </div>
+                                </div>
+                                <span class="settings-time-sep">~</span>
+                                <div class="time-picker-block">
+                                    <span class="time-picker-label">종료</span>
+                                    <div class="time-picker-selects">
+                                        <select id="notificationEndHour" class="time-picker-select" aria-label="종료 시"></select>
+                                        <span class="time-picker-colon">:</span>
+                                        <select id="notificationEndMin" class="time-picker-select" aria-label="종료 분"></select>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>

@@ -2221,15 +2221,43 @@ body {
 
 /* 알림 시간대 설정 */
 .settings-item-time-range {
-    flex-wrap: wrap;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0;
+}
+
+.settings-item-time-range .settings-item-time-label {
+    margin-bottom: 4px;
 }
 
 .settings-time-inputs {
     display: flex;
     align-items: center;
+    gap: 8px;
+    margin-left: 0;
+    margin-top: 6px;
+    padding-left: 40px;
+    flex-wrap: nowrap;
+}
+
+@media (max-width: 380px) {
+    .settings-time-inputs {
+        padding-left: 0;
+    }
+}
+
+/* 모바일: 네이티브 time만 표시 */
+.settings-time-native {
+    display: flex;
+    align-items: center;
     gap: 6px;
-    flex-shrink: 0;
-    margin-left: 8px;
+    flex: 1;
+    min-width: 0;
+}
+
+.settings-time-custom {
+    display: none;
 }
 
 .settings-time-input {
@@ -2252,6 +2280,95 @@ body {
     font-size: 13px;
     color: #888;
     font-weight: 500;
+    flex-shrink: 0;
+}
+
+/* 웹: 커스텀 시간 선택 UI (고급 스타일) */
+@media (min-width: 768px) {
+    .settings-time-inputs {
+        padding-left: 40px;
+        margin-top: 10px;
+        gap: 12px;
+    }
+
+    .settings-time-native {
+        display: none;
+    }
+
+    .settings-time-custom {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        flex: 1;
+        flex-wrap: nowrap;
+    }
+
+    .time-picker-block {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        background: #fff;
+        border: 2px solid #e8e8e8;
+        border-radius: 12px;
+        padding: 10px 14px;
+        transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .time-picker-block:focus-within {
+        border-color: #f18709;
+        box-shadow: 0 0 0 3px rgba(241, 135, 9, 0.15);
+    }
+
+    .time-picker-label {
+        font-size: 12px;
+        font-weight: 700;
+        color: #888;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        min-width: 32px;
+    }
+
+    .time-picker-selects {
+        display: flex;
+        align-items: center;
+        gap: 2px;
+    }
+
+    .time-picker-select {
+        font-size: 15px;
+        font-weight: 700;
+        color: #222;
+        background: #fafafa;
+        border: 1px solid #e0e0e0;
+        border-radius: 8px;
+        padding: 6px 8px;
+        min-width: 56px;
+        cursor: pointer;
+        appearance: none;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23888' d='M6 8L2 4h8z'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 6px center;
+        padding-right: 24px;
+        transition: border-color 0.2s, background-color 0.2s;
+    }
+
+    .time-picker-select:hover {
+        border-color: #f18709;
+        background-color: #fff;
+    }
+
+    .time-picker-select:focus {
+        outline: none;
+        border-color: #f18709;
+        background-color: #fff;
+    }
+
+    .time-picker-colon {
+        font-size: 16px;
+        font-weight: 700;
+        color: #444;
+        padding: 0 2px;
+    }
 }
 
 /* ========================================
