@@ -141,6 +141,29 @@ const API = {
         }
     },
 
+    // 알림 설정 (푸시 허용 + 알림 받을 시간대 전달)
+    async setNotification(enabled, options = {}) {
+        try {
+            const settings = typeof getSettings === 'function' ? getSettings() : {};
+            const start = options.notificationStartTime ?? settings.notificationStartTime ?? '09:00';
+            const end = options.notificationEndTime ?? settings.notificationEndTime ?? '21:00';
+            // const response = await fetch(`${this.baseURL}/user/notification`, {
+            //     method: 'POST',
+            //     headers: {
+            //         'Authorization': `Bearer ${getLIFFToken()}`,
+            //         'Content-Type': 'application/json'
+            //     },
+            //     body: JSON.stringify({ enabled, notificationStartTime: start, notificationEndTime: end })
+            // });
+            // return await response.json();
+            console.log('[API] setNotification', { enabled, notificationStartTime: start, notificationEndTime: end });
+            return { success: true };
+        } catch (error) {
+            console.error('알림 설정 실패:', error);
+            return { success: false };
+        }
+    },
+
     // 이벤트 종료 후 결과 조회
     async getEventResult(gameId) {
         try {

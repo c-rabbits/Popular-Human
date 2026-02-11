@@ -1022,7 +1022,8 @@ function getSettings() {
     const defaults = {
         eventNotification: true,
         resultNotification: true,
-        soundEffect: true
+        notificationStartTime: '09:00',
+        notificationEndTime: '21:00'
     };
     try {
         const saved = localStorage.getItem('appSettings');
@@ -1044,25 +1045,55 @@ function toggleSetting(key, value) {
     console.log(`[설정] ${key}: ${value}`);
 }
 
-// 설정 화면 토글 초기화
+// 설정 화면 토글·알림 시간대 초기화
 function initSettingsToggles() {
     const settings = getSettings();
     const toggleEvent = document.getElementById('toggleEventNotif');
     const toggleResult = document.getElementById('toggleResultNotif');
-    const toggleSound = document.getElementById('toggleSound');
+    const startTimeInput = document.getElementById('notificationStartTime');
+    const endTimeInput = document.getElementById('notificationEndTime');
 
     if (toggleEvent) toggleEvent.checked = settings.eventNotification;
     if (toggleResult) toggleResult.checked = settings.resultNotification;
-    if (toggleSound) toggleSound.checked = settings.soundEffect;
+
+    if (startTimeInput) {
+        startTimeInput.value = settings.notificationStartTime || '09:00';
+        startTimeInput.addEventListener('change', saveNotificationTimeRange);
+    }
+    if (endTimeInput) {
+        endTimeInput.value = settings.notificationEndTime || '21:00';
+        endTimeInput.addEventListener('change', saveNotificationTimeRange);
+    }
 }
 
-// 게임 전적 초기화
-function resetGameData() {
-    if (confirm('정말로 게임 전적을 초기화하시겠습니까?\n이 작업은 되돌릴 수 없습니다.')) {
-        // TODO: 백엔드 연동 시 서버 데이터 삭제 API 호출
-        showToast('게임 전적이 초기화되었습니다');
-        console.log('[설정] 게임 전적 초기화');
+function saveNotificationTimeRange() {
+    const startEl = document.getElementById('notificationStartTime');
+    const endEl = document.getElementById('notificationEndTime');
+    if (!startEl || !endEl) return;
+    const settings = getSettings();
+    settings.notificationStartTime = startEl.value || '09:00';
+    settings.notificationEndTime = endEl.value || '21:00';
+    saveSettings(settings);
+    console.log('[설정] 알림 시간대:', settings.notificationStartTime, '~', settings.notificationEndTime);
+}
+
+/** 현재 시각이 알림 허용 시간대 안인지 확인 (서버/클라이언트 공통 로직용) */
+function isWithinNotificationTimeRange() {
+    const settings = getSettings();
+    const start = settings.notificationStartTime || '09:00';
+    const end = settings.notificationEndTime || '21:00';
+    const now = new Date();
+    const toMinutes = (hhmm) => {
+        const [h, m] = hhmm.split(':').map(Number);
+        return (h || 0) * 60 + (m || 0);
+    };
+    const nowMin = now.getHours() * 60 + now.getMinutes();
+    let startMin = toMinutes(start);
+    let endMin = toMinutes(end);
+    if (startMin <= endMin) {
+        return nowMin >= startMin && nowMin <= endMin;
     }
+    return nowMin >= startMin || nowMin <= endMin;
 }
 
 // 로그아웃

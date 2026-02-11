@@ -2061,41 +2061,61 @@ body {
    설정 화면
    ======================================== */
 
-.settings-section {
+#settingsScreen .screen-title {
+    margin-bottom: 4px;
+}
+
+.settings-subtitle {
+    font-size: 14px;
+    color: #666;
     margin-bottom: 24px;
+    padding: 0 4px;
+}
+
+.settings-section {
+    margin-bottom: 28px;
+}
+
+.settings-section-card {
+    background: #fff;
+    border-radius: 16px;
+    padding: 16px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+    border: 1px solid #eee;
 }
 
 .settings-section-title {
-    font-size: 13px;
+    font-size: 12px;
     font-weight: 700;
-    color: #999;
-    text-transform: uppercase;
+    color: #888;
     letter-spacing: 0.5px;
-    margin-bottom: 8px;
+    margin-bottom: 10px;
     padding-left: 4px;
 }
 
-/* 프로필 카드 */
-/* 설정 항목 */
 .settings-item {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    background: #fff;
-    border: 2px solid #e5e5e5;
+    background: #fafafa;
     border-radius: 12px;
     padding: 14px 16px;
     margin-bottom: 8px;
+    border: 1px solid transparent;
+    transition: border-color 0.2s, background 0.2s;
+}
+
+.settings-item:last-child {
+    margin-bottom: 0;
 }
 
 .settings-item.clickable {
     cursor: pointer;
-    transition: all 0.2s;
 }
 
 .settings-item.clickable:hover {
-    border-color: #000;
-    background: #fafafa;
+    background: #f5f5f5;
+    border-color: #e0e0e0;
 }
 
 .settings-item.clickable:active {
@@ -2111,7 +2131,7 @@ body {
 }
 
 .settings-item-icon {
-    font-size: 22px;
+    font-size: 20px;
     flex-shrink: 0;
     width: 28px;
     text-align: center;
@@ -2125,26 +2145,26 @@ body {
 .settings-item-label {
     font-size: 15px;
     font-weight: 600;
-    color: #000;
+    color: #222;
 }
 
 .settings-item-desc {
     font-size: 12px;
-    color: #999;
+    color: #888;
     margin-top: 2px;
 }
 
 .settings-item-arrow {
-    font-size: 20px;
-    color: #ccc;
+    font-size: 18px;
+    color: #bbb;
     font-weight: 300;
     flex-shrink: 0;
     margin-left: 8px;
 }
 
 .settings-item-value {
-    font-size: 14px;
-    color: #999;
+    font-size: 13px;
+    color: #888;
     font-weight: 600;
     flex-shrink: 0;
     margin-left: 8px;
@@ -2173,9 +2193,9 @@ body {
     left: 0;
     right: 0;
     bottom: 0;
-    background: #e5e5e5;
+    background: #ddd;
     border-radius: 28px;
-    transition: all 0.3s;
+    transition: background 0.25s;
 }
 
 .settings-toggle-slider::before {
@@ -2187,16 +2207,51 @@ body {
     bottom: 3px;
     background: #fff;
     border-radius: 50%;
-    transition: all 0.3s;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+    transition: transform 0.25s;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.2);
 }
 
 .settings-toggle input:checked + .settings-toggle-slider {
-    background: #000;
+    background: #f18709;
 }
 
 .settings-toggle input:checked + .settings-toggle-slider::before {
     transform: translateX(20px);
+}
+
+/* 알림 시간대 설정 */
+.settings-item-time-range {
+    flex-wrap: wrap;
+}
+
+.settings-time-inputs {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-shrink: 0;
+    margin-left: 8px;
+}
+
+.settings-time-input {
+    font-size: 14px;
+    font-weight: 600;
+    color: #222;
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 6px 10px;
+    min-width: 0;
+}
+
+.settings-time-input::-webkit-calendar-picker-indicator {
+    opacity: 0.6;
+    cursor: pointer;
+}
+
+.settings-time-sep {
+    font-size: 13px;
+    color: #888;
+    font-weight: 500;
 }
 
 /* ========================================

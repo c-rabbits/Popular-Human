@@ -546,10 +546,12 @@ async function confirmNotification() {
         const permission = await Notification.requestPermission();
 
         if (permission === "granted") {
-            // 알림 설정 API 호출 (서버)
-            // await API.setNotification(...)
-
-            alert("✅ 알림이 설정되었습니다!\n다음 이벤트 시작 10분 전에 알려드릴게요.");
+            const settings = typeof getSettings === 'function' ? getSettings() : {};
+            await API.setNotification(true, {
+                notificationStartTime: settings.notificationStartTime || '09:00',
+                notificationEndTime: settings.notificationEndTime || '21:00'
+            });
+            alert("✅ 알림이 설정되었습니다!\n설정한 시간대(" + (settings.notificationStartTime || '09:00') + "~" + (settings.notificationEndTime || '21:00') + ")에만 알림을 보내드립니다.");
             closeNotificationPopup();
         } else if (permission === "denied") {
             alert("❌ 알림 권한이 거부되었습니다.\n\n브라우저 설정에서 알림 권한을 허용해주세요.");
