@@ -186,8 +186,8 @@ body {
     width: 22px;
     height: 22px;
     display: block;
-    /* 비활성 색상 #f1a209 */
-    filter: brightness(0) saturate(100%) invert(72%) sepia(89%) saturate(1200%) hue-rotate(10deg);
+    /* 비활성 색상 #f18709 */
+    filter: brightness(0) saturate(100%) invert(68%) sepia(95%) saturate(1200%) hue-rotate(5deg);
     transition: filter 0.2s;
 }
 
