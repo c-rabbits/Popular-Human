@@ -3,6 +3,48 @@
    전체 스타일시트 (style.css)
    ======================================== */
 
+/* LINE Seed Sans KR (LINE 공식 폰트, SIL OFL 1.1) */
+@font-face {
+    font-family: 'LINE Seed Sans KR';
+    src: local('LINE Seed Sans KR'),
+         url('https://cdn.jsdelivr.net/npm/@kfonts/line-seed-sans-kr@0.1.0/LINESeedKR-Th.woff2') format('woff2'),
+         url('https://cdn.jsdelivr.net/npm/@kfonts/line-seed-sans-kr@0.1.0/LINESeedKR-Th.woff') format('woff');
+    font-display: swap;
+    font-weight: 200;
+}
+@font-face {
+    font-family: 'LINE Seed Sans KR';
+    src: local('LINE Seed Sans KR'),
+         url('https://cdn.jsdelivr.net/npm/@kfonts/line-seed-sans-kr@0.1.0/LINESeedKR-Rg.woff2') format('woff2'),
+         url('https://cdn.jsdelivr.net/npm/@kfonts/line-seed-sans-kr@0.1.0/LINESeedKR-Rg.woff') format('woff');
+    font-display: swap;
+    font-weight: 400;
+}
+@font-face {
+    font-family: 'LINE Seed Sans KR';
+    src: local('LINE Seed Sans KR'),
+         url('https://cdn.jsdelivr.net/npm/@kfonts/line-seed-sans-kr@0.1.0/LINESeedKR-Bd.woff2') format('woff2'),
+         url('https://cdn.jsdelivr.net/npm/@kfonts/line-seed-sans-kr@0.1.0/LINESeedKR-Bd.woff') format('woff');
+    font-display: swap;
+    font-weight: 700;
+}
+
+/* LINE Seed Sans JP (일본어, 용량 절감을 위해 Rg/Bd만, woff2만) */
+@font-face {
+    font-family: 'LINE Seed Sans JP';
+    src: local('LINE Seed JP Regular'),
+         url('https://cdn.jsdelivr.net/npm/line-seed-jp@0.0.5/woff2/LINESeedJP_OTF_Rg.woff2') format('woff2');
+    font-display: swap;
+    font-weight: 400;
+}
+@font-face {
+    font-family: 'LINE Seed Sans JP';
+    src: local('LINE Seed JP Bold'),
+         url('https://cdn.jsdelivr.net/npm/line-seed-jp@0.0.5/woff2/LINESeedJP_OTF_Bd.woff2') format('woff2');
+    font-display: swap;
+    font-weight: 700;
+}
+
 * {
     margin: 0;
     padding: 0;
@@ -19,7 +61,7 @@
 }
 
 body {
-    font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+    font-family: 'LINE Seed Sans KR', 'LINE Seed Sans JP', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
     background: #f5f5f5;
     overflow: hidden;
     height: 100vh;
@@ -1305,6 +1347,79 @@ body {
     color: #856404;
     margin-bottom: 16px;
     line-height: 1.5;
+}
+
+/* 언어 선택 모달 */
+.language-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: none;
+    align-items: flex-end;
+    justify-content: center;
+    z-index: 300;
+    pointer-events: none;
+}
+
+.language-modal.active {
+    display: flex;
+    pointer-events: auto;
+}
+
+.language-modal-backdrop {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+}
+
+.language-modal-content {
+    position: relative;
+    background: #fff;
+    border-radius: 20px 20px 0 0;
+    padding: 20px 20px 32px;
+    width: 100%;
+    max-width: 480px;
+    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.15);
+}
+
+.language-modal-title {
+    font-size: 18px;
+    font-weight: 800;
+    color: #000;
+    margin-bottom: 16px;
+    padding: 0 4px;
+}
+
+.language-option {
+    display: block;
+    width: 100%;
+    text-align: left;
+    font-size: 16px;
+    font-weight: 600;
+    color: #222;
+    background: #f5f5f5;
+    border: none;
+    border-radius: 12px;
+    padding: 14px 16px;
+    margin-bottom: 8px;
+    cursor: pointer;
+}
+
+.language-option:last-child {
+    margin-bottom: 0;
+}
+
+.language-option:hover {
+    background: #eee;
+}
+
+.language-option:active {
+    background: #e0e0e0;
 }
 
 .notification-buttons {

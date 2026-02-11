@@ -787,6 +787,10 @@ function switchScreen(screenName) {
     if (screenName === 'ranking') {
         updateTrendMyResults();
     }
+    if (screenName === 'settings') {
+        applyLanguageToPage();
+        updateSettingsLanguageDisplay();
+    }
 
     // 네비게이션 활성화 (이벤트 타겟 찾기)
     const navItems = document.querySelectorAll('.nav-item');
@@ -1027,7 +1031,8 @@ function getSettings() {
         eventNotification: true,
         resultNotification: true,
         notificationStartTime: '09:00',
-        notificationEndTime: '21:00'
+        notificationEndTime: '21:00',
+        language: ''  // '' = 자동(기기/LIFF 언어)
     };
     try {
         const saved = localStorage.getItem('appSettings');
@@ -1035,6 +1040,116 @@ function getSettings() {
     } catch (e) {
         return defaults;
     }
+}
+
+// 지원 언어 코드
+const SUPPORTED_LANGS = ['ko', 'en', 'ja'];
+
+// 현재 사용할 언어 코드 반환 (자동 감지 또는 설정값)
+function getCurrentLanguage() {
+    const settings = getSettings();
+    if (settings.language && settings.language !== 'auto') return settings.language;
+    if (typeof liff !== 'undefined' && liff.getLanguage) {
+        const liffLang = liff.getLanguage();
+        if (SUPPORTED_LANGS.includes(liffLang)) return liffLang;
+    }
+    const browser = (navigator.language || navigator.userLanguage || '').toLowerCase();
+    if (browser.startsWith('ko')) return 'ko';
+    if (browser.startsWith('ja')) return 'ja';
+    return 'en';
+}
+
+// 언어 설정 저장 후 UI 반영
+function saveLanguage(langCode) {
+    const settings = getSettings();
+    settings.language = langCode || '';
+    saveSettings(settings);
+    document.documentElement.lang = getCurrentLanguage();
+    applyLanguageToPage();
+    updateSettingsLanguageDisplay();
+    console.log('[설정] 언어:', langCode || '자동');
+}
+
+// 설정 화면·모달용 번역 (추가 키는 여기에)
+const I18N = {
+    ko: {
+        settingsTitle: '설정',
+        settingsSubtitle: '알림과 계정을 관리하세요',
+        sectionGeneral: '일반',
+        sectionNotifications: '알림',
+        sectionAccount: '계정',
+        sectionInfo: '정보',
+        languageLabel: '언어',
+        languageDesc: '앱 표시 언어',
+        languageAuto: '자동 (기기 언어)',
+        languageKo: '한국어',
+        languageEn: 'English',
+        languageJa: '日本語'
+    },
+    en: {
+        settingsTitle: 'Settings',
+        settingsSubtitle: 'Manage notifications and account',
+        sectionGeneral: 'General',
+        sectionNotifications: 'Notifications',
+        sectionAccount: 'Account',
+        sectionInfo: 'Information',
+        languageLabel: 'Language',
+        languageDesc: 'Display language',
+        languageAuto: 'Auto (device)',
+        languageKo: 'Korean',
+        languageEn: 'English',
+        languageJa: 'Japanese'
+    },
+    ja: {
+        settingsTitle: '設定',
+        settingsSubtitle: '通知とアカウントを管理',
+        sectionGeneral: '一般',
+        sectionNotifications: '通知',
+        sectionAccount: 'アカウント',
+        sectionInfo: '情報',
+        languageLabel: '言語',
+        languageDesc: '表示言語',
+        languageAuto: '自動（端末の言語）',
+        languageKo: '韓国語',
+        languageEn: '英語',
+        languageJa: '日本語'
+    }
+};
+
+function applyLanguageToPage() {
+    const lang = getCurrentLanguage();
+    const t = I18N[lang] || I18N.ko;
+    document.querySelectorAll('[data-i18n]').forEach(el => {
+        const key = el.getAttribute('data-i18n');
+        if (t[key] != null) el.textContent = t[key];
+    });
+}
+
+function updateSettingsLanguageDisplay() {
+    const valueEl = document.getElementById('settingsLanguageValue');
+    if (!valueEl) return;
+    const settings = getSettings();
+    const t = I18N[getCurrentLanguage()] || I18N.ko;
+    if (!settings.language || settings.language === 'auto') valueEl.textContent = t.languageAuto;
+    else valueEl.textContent = t['language' + (settings.language === 'ko' ? 'Ko' : settings.language === 'en' ? 'En' : 'Ja')];
+}
+
+function openLanguageModal() {
+    const modal = document.getElementById('languageModal');
+    if (modal) modal.classList.add('active');
+    const lang = getCurrentLanguage();
+    const t = I18N[lang] || I18N.ko;
+    ['auto', 'ko', 'en', 'ja'].forEach(code => {
+        const btn = document.querySelector(`[data-lang-option="${code}"]`);
+        if (!btn) return;
+        if (code === 'auto') btn.textContent = t.languageAuto;
+        else btn.textContent = t['language' + (code === 'ko' ? 'Ko' : code === 'en' ? 'En' : 'Ja')];
+    });
+}
+
+function closeLanguageModal() {
+    const modal = document.getElementById('languageModal');
+    if (modal) modal.classList.remove('active');
 }
 
 function saveSettings(settings) {
@@ -1073,6 +1188,10 @@ function initSettingsToggles() {
 
     syncCustomTimePickerFromSettings();
     bindCustomTimePickerListeners();
+
+    document.documentElement.lang = getCurrentLanguage();
+    applyLanguageToPage();
+    updateSettingsLanguageDisplay();
 }
 
 function fillTimePickerOptions() {
