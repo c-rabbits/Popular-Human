@@ -50,15 +50,22 @@ function initBannerSlider() {
         return img.style.backgroundImage || (window.getComputedStyle && getComputedStyle(img).backgroundImage) || '';
     });
 
-    const copyBannerImage = (fromSlide, toSlide) => {
+    // 클론 슬라이드의 내용을 완전히 복사 (HTML 콘텐츠 배너 포함)
+    const copyBannerContent = (fromSlide, toSlide) => {
+        // innerHTML을 그대로 복사해 HTML 배너(친구초대 등)도 정상 표시
+        toSlide.innerHTML = fromSlide.innerHTML;
+        // 배경 이미지 기반 배너면 스타일도 복사
         const fromImg = fromSlide.querySelector('.banner-image');
         const toImg = toSlide.querySelector('.banner-image');
-        if (!fromImg || !toImg) return;
-        const bg = fromImg.style.backgroundImage || (window.getComputedStyle && getComputedStyle(fromImg).backgroundImage);
-        if (bg) toImg.style.backgroundImage = bg;
+        if (fromImg && toImg) {
+            const bg = fromImg.style.backgroundImage || (window.getComputedStyle && getComputedStyle(fromImg).backgroundImage);
+            if (bg) toImg.style.backgroundImage = bg;
+        }
+        // 클론의 onclick은 제거 (클릭 이벤트는 currentBannerIndex 기반으로 handleBannerClick에서 처리)
+        toSlide.removeAttribute('onclick');
     };
-    copyBannerImage(slides[0], firstClone);
-    copyBannerImage(slides[slides.length - 1], lastClone);
+    copyBannerContent(slides[0], firstClone);
+    copyBannerContent(slides[slides.length - 1], lastClone);
 
     track.appendChild(firstClone);            // 맨 뒤에 첫 번째 슬라이드 클론
     track.insertBefore(lastClone, slides[0]); // 맨 앞에 마지막 슬라이드 클론
@@ -208,10 +215,13 @@ function doBannerCloneJump(atLeftClone) {
         currentBannerIndex = 0;
     }
     track.style.transform = `translateX(-${bannerVisualIndex * 100}%)`;
+    // 이중 rAF: 첫 프레임에서 transition 제거 후, 두 번째 프레임에서 transition 복원
+    // 이렇게 해야 모바일에서 깜빡임 없이 안정적으로 점프
     requestAnimationFrame(() => {
-        track.style.transition = '';
-        // 모바일: 반복 스와이프 시 오프스크린 레이어에서 배경이 사라지는 것 방지 — 현재 슬라이드에 이미지 재적용
-        repaintBannerVisibleSlide();
+        requestAnimationFrame(() => {
+            track.style.transition = '';
+            repaintBannerVisibleSlide();
+        });
     });
 
     const dots = document.querySelectorAll('.banner-dot');
@@ -224,15 +234,21 @@ function doBannerCloneJump(atLeftClone) {
 /** 현재 보이는 배너 슬라이드에 배경 이미지 재적용 (모바일 repaint 유도) */
 function repaintBannerVisibleSlide() {
     const track = document.getElementById('bannerTrack');
-    if (!track || !bannerImageUrls.length) return;
+    if (!track) return;
     const slide = track.children[bannerVisualIndex];
     if (!slide) return;
-    const img = slide.querySelector('.banner-image');
+
+    // 배경 이미지 배너인 경우 재적용
     const url = bannerImageUrls[currentBannerIndex];
-    if (img && url) {
-        img.style.backgroundImage = url;
-        void track.offsetHeight; // reflow로 즉시 그리기 유도
+    if (url) {
+        const img = slide.querySelector('.banner-image');
+        if (img) {
+            img.style.backgroundImage = url;
+        }
     }
+
+    // 모든 슬라이드(HTML 포함)에 대해 reflow 유도 → 빈 화면 방지
+    void track.offsetHeight;
 }
 
 // 배너 무한 루프 처리를 위한 transition 종료 핸들러 (모바일: transitionend 불안정 시 폴백 타이머로 보완)
