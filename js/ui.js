@@ -277,16 +277,19 @@ function navigateBanner(url) {
 }
 
 // ========================================
-// 트렌드 날짜 아코디언 (목록에서 하나만 펼침, 최신 기본 펼침)
+// 트렌드 날짜 드롭다운 (버튼 클릭 → 날짜 목록 펼침, 선택 시 해당 시나리오만 아래 표시, 날짜 옆 에피소드 N개)
 // ========================================
 function initTrendDateDropdown() {
+    const triggerEl = document.getElementById('trendDateDropdownTrigger');
+    const panelEl = document.getElementById('trendDateDropdownPanel');
+    const labelEl = document.querySelector('.trend-date-dropdown-trigger-label');
     const listEl = document.querySelector('.trend-date-list');
-    if (!listEl) return;
+    if (!triggerEl || !panelEl || !labelEl || !listEl) return;
 
     const groups = listEl.querySelectorAll('.trend-date-group');
     if (groups.length === 0) return;
 
-    // data-date 기준 최신순 정렬 후 DOM 순서 재배치 (최신이 위로)
+    // data-date 기준 최신순 정렬 후 DOM 순서 재배치
     const sorted = Array.from(groups).sort((a, b) => {
         const dA = a.getAttribute('data-date') || '';
         const dB = b.getAttribute('data-date') || '';
@@ -294,26 +297,70 @@ function initTrendDateDropdown() {
     });
     sorted.forEach((g) => listEl.appendChild(g));
 
-    function setExpanded(group) {
-        groups.forEach((g) => g.classList.remove('trend-date-expanded'));
-        if (group) group.classList.add('trend-date-expanded');
+    function formatDateLabel(iso) {
+        const [y, m, d] = iso.split('-');
+        return y + '년 ' + parseInt(m, 10) + '월 ' + parseInt(d, 10) + '일';
     }
 
-    // 최신(첫 번째) 날짜만 펼침
-    setExpanded(sorted[0]);
+    function getScenarioCount(group) {
+        return group.querySelectorAll('.trend-scenario-card').length;
+    }
 
-    groups.forEach((group) => {
-        const trigger = group.querySelector('.trend-date-trigger');
-        if (!trigger) return;
-        trigger.addEventListener('click', function () {
-            setExpanded(group);
+    // 패널에 날짜 목록 채우기 (날짜 + 에피소드 N개)
+    panelEl.innerHTML = '';
+    sorted.forEach((group) => {
+        const date = group.getAttribute('data-date');
+        if (!date) return;
+        const count = getScenarioCount(group);
+        const item = document.createElement('div');
+        item.className = 'trend-date-dropdown-item';
+        item.setAttribute('role', 'option');
+        item.setAttribute('data-date', date);
+        item.innerHTML = '<span class="trend-date-dropdown-item-date">' + formatDateLabel(date) + '</span><span class="trend-date-dropdown-item-count">에피소드 ' + count + '개</span>';
+        panelEl.appendChild(item);
+    });
+
+    function showGroupForDate(date) {
+        groups.forEach((g) => {
+            g.style.display = g.getAttribute('data-date') === date ? '' : 'none';
         });
-        trigger.addEventListener('keydown', function (e) {
-            if (e.key === 'Enter' || e.key === ' ') {
-                e.preventDefault();
-                setExpanded(group);
-            }
+    }
+
+    function closePanel() {
+        panelEl.hidden = true;
+        triggerEl.setAttribute('aria-expanded', 'false');
+    }
+
+    function openPanel() {
+        panelEl.hidden = false;
+        triggerEl.setAttribute('aria-expanded', 'true');
+    }
+
+    // 기본: 최신 날짜 선택
+    const latestDate = sorted[0] && sorted[0].getAttribute('data-date');
+    if (latestDate) {
+        labelEl.textContent = formatDateLabel(latestDate);
+        showGroupForDate(latestDate);
+    }
+
+    triggerEl.addEventListener('click', function (e) {
+        e.stopPropagation();
+        if (panelEl.hidden) openPanel();
+        else closePanel();
+    });
+
+    panelEl.querySelectorAll('.trend-date-dropdown-item').forEach((item) => {
+        item.addEventListener('click', function () {
+            const date = this.getAttribute('data-date');
+            if (!date) return;
+            labelEl.textContent = formatDateLabel(date);
+            showGroupForDate(date);
+            closePanel();
         });
+    });
+
+    document.addEventListener('click', function (e) {
+        if (!triggerEl.contains(e.target) && !panelEl.contains(e.target)) closePanel();
     });
 }
 
