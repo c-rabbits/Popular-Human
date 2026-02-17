@@ -566,7 +566,10 @@ function updateWalletPage(data) {
             if (avatarWrap) avatarWrap.classList.add('no-image');
         }
     }
-    if (walletName) walletName.textContent = data.displayName || data.characterName || '-';
+    const displayLabel = data.nickname || data.displayName || data.characterName || '-';
+    if (walletName) walletName.textContent = displayLabel;
+    const nicknameBtn = document.getElementById('walletNicknameBtn');
+    if (nicknameBtn) nicknameBtn.textContent = data.nickname ? '닉네임 변경' : '닉네임 만들기';
 
     // UID
     const walletUID = document.getElementById('walletUID');
@@ -639,6 +642,102 @@ function fallbackCopyToClipboard(text, label) {
         showToast('복사에 실패했습니다');
     }
     document.body.removeChild(textarea);
+}
+
+// 최종 승자 리스트 렌더링 (승자/패배 화면)
+function fillWinnerList(containerId, winners) {
+    const container = document.getElementById(containerId);
+    if (!container) return;
+    if (!winners || winners.length === 0) {
+        container.innerHTML = '<div class="winner-list-empty">승자 목록이 없습니다.</div>';
+        return;
+    }
+    container.innerHTML = winners.map(function (w) {
+        const imgSrc = w.profileImageUrl || '';
+        const imgPart = imgSrc
+            ? '<img src="' + imgSrc.replace(/"/g, '&quot;') + '" alt="">'
+            : '<span class="winner-list-avatar-placeholder">?</span>';
+        return '<div class="winner-list-item">' +
+            '<div class="winner-list-avatar">' + imgPart + '</div>' +
+            '<span class="winner-list-nickname">' + escapeHtml(w.nickname || '-') + '</span>' +
+            '</div>';
+    }).join('');
+}
+
+function escapeHtml(s) {
+    const div = document.createElement('div');
+    div.textContent = s;
+    return div.innerHTML;
+}
+
+// 닉네임 (로컬 저장, 서버 연동 시 API로 교체)
+function getNickname() {
+    try {
+        return localStorage.getItem('ph_nickname') || null;
+    } catch (e) {
+        return null;
+    }
+}
+function setNickname(name) {
+    try {
+        localStorage.setItem('ph_nickname', name);
+        return true;
+    } catch (e) {
+        return false;
+    }
+}
+
+// 닉네임 중복 확인 (실서버: GET /user/nickname/check?q=xxx)
+async function checkNicknameDuplicate(nickname) {
+    // TODO: 실제 서버 API 연동
+    // const res = await fetch(`${API.baseURL}/user/nickname/check?q=${encodeURIComponent(nickname)}`);
+    // const data = await res.json(); return data.used === true;
+    return false;
+}
+
+function openNicknamePopup() {
+    const popup = document.getElementById('nicknamePopup');
+    const input = document.getElementById('nicknamePopupInput');
+    const errEl = document.getElementById('nicknamePopupError');
+    if (!popup || !input) return;
+    errEl.textContent = '';
+    input.value = getNickname() || '';
+    input.focus();
+    popup.classList.add('active');
+}
+
+function closeNicknamePopup() {
+    const popup = document.getElementById('nicknamePopup');
+    if (popup) popup.classList.remove('active');
+    const errEl = document.getElementById('nicknamePopupError');
+    if (errEl) errEl.textContent = '';
+}
+
+async function confirmNickname() {
+    const input = document.getElementById('nicknamePopupInput');
+    const errEl = document.getElementById('nicknamePopupError');
+    if (!input || !errEl) return;
+    const raw = (input.value || '').trim();
+    if (raw.length < 2) {
+        errEl.textContent = '2자 이상 입력해주세요.';
+        return;
+    }
+    if (raw.length > 10) {
+        errEl.textContent = '10자 이하로 입력해주세요.';
+        return;
+    }
+    errEl.textContent = '확인 중...';
+    const isUsed = await checkNicknameDuplicate(raw);
+    if (isUsed) {
+        errEl.textContent = '이미 사용 중인 닉네임입니다.';
+        return;
+    }
+    setNickname(raw);
+    errEl.textContent = '';
+    closeNicknamePopup();
+    const userInfo = await API.getUserInfo();
+    if (userInfo) updateWalletPage(userInfo);
+    if (typeof showToast === 'function') showToast('닉네임이 저장되었습니다.');
 }
 
 // 토큰 클레임

@@ -25,12 +25,14 @@ const API = {
             // 지갑 주소: Kaia 연결 시 실제 주소, 미연결 시 빈 값
             const walletAddress = getConnectedAddress() || '';
 
+            const nickname = (typeof localStorage !== 'undefined' && localStorage.getItem('ph_nickname')) || undefined;
             return {
                 userId: userId,
                 displayName: liffProfile ? liffProfile.displayName : '대중러버',
                 pictureUrl: liffProfile ? liffProfile.pictureUrl : '',
                 statusMessage: liffProfile ? (liffProfile.statusMessage || '') : '',
                 characterName: liffProfile ? liffProfile.displayName : '대중러버',
+                nickname: nickname,
                 cash: 1250,
                 rewardPoints: 850,
                 tickets: 5,
@@ -175,6 +177,15 @@ const API = {
             // 임시: 승자 데이터
             const isWinner = Math.random() > 0.5;
 
+            // 임시: 최종 승자 리스트 목업 (실서버에서는 /game/result 응답에 winners 포함)
+            const mockWinners = [
+                { profileImageUrl: liffProfile && liffProfile.pictureUrl ? liffProfile.pictureUrl : '', nickname: '대중1등' },
+                { profileImageUrl: '', nickname: '트렌드마스터' },
+                { profileImageUrl: '', nickname: '선택왕' },
+                { profileImageUrl: '', nickname: '인간독해기' },
+                { profileImageUrl: '', nickname: '맞춤왕' }
+            ];
+
             return {
                 status: 'complete',
                 isWinner: isWinner,
@@ -182,6 +193,7 @@ const API = {
                 totalQuestions: 10,
                 rewardAmount: isWinner ? 32.4 : 0,
                 totalWinners: 124,
+                winners: mockWinners,
                 topPercentile: 38,
                 questionResults: currentScenario.questions.map((q, idx) => {
                     const userAnswer = userAnswers[idx];

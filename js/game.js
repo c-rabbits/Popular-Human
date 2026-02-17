@@ -411,7 +411,6 @@ async function showFinalResult(result) {
 
         document.getElementById('rewardAmount').textContent = rewardPerWinner + ' USDT';
         document.getElementById('totalWinners').textContent = result.totalWinners.toLocaleString();
-        document.getElementById('correctAnswers').textContent = `${result.correctCount} / ${result.totalQuestions}`;
         document.getElementById('earnedPointsWin').textContent = earnedPoints;
 
         // 문제별 결과 표시 (전부 정답이므로 간단하게)
@@ -433,6 +432,9 @@ async function showFinalResult(result) {
         document.getElementById('loserContent').style.display = 'none';
 
         saveTrendMyResult(true, result.correctCount, result.totalQuestions);
+
+        // 최종 승자 리스트 표시
+        fillWinnerList('winnerListWin', result.winners || []);
 
         // 유저 스탯 업데이트
         const currentCash = parseInt(document.getElementById('cashCount').textContent);
@@ -474,6 +476,9 @@ async function showFinalResult(result) {
         document.getElementById('questionResultsLose').innerHTML = resultsHtml;
 
         saveTrendMyResult(false, result.correctCount, result.totalQuestions);
+
+        // 최종 승자 리스트 표시
+        fillWinnerList('winnerListLose', result.winners || []);
 
         document.getElementById('pendingContent').style.display = 'none';
         document.getElementById('winnerContent').style.display = 'none';

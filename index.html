@@ -338,14 +338,6 @@
 
                         <div class="event-status">
                             <div class="status-item">
-                                <span class="status-label">당신의 선택</span>
-                                <span class="status-value">✅ 글로벌 최다 선택</span>
-                            </div>
-                            <div class="status-item">
-                                <span class="status-label">정답 문제</span>
-                                <span class="status-value" id="correctAnswers">10 / 10</span>
-                            </div>
-                            <div class="status-item">
                                 <span class="status-label">획득 포인트</span>
                                 <span class="status-value">⭐ <span id="earnedPointsWin">100</span>P</span>
                             </div>
@@ -374,6 +366,10 @@
                             <button class="action-btn btn-primary" onclick="backToHome()">
                                 메인 화면
                             </button>
+                        </div>
+                        <div class="winner-list-section">
+                            <div class="winner-list-title">🏆 최종 승자 리스트</div>
+                            <div class="winner-list" id="winnerListWin"></div>
                         </div>
                     </div>
 
@@ -408,6 +404,10 @@
                                 메인 화면
                             </button>
                         </div>
+                        <div class="winner-list-section">
+                            <div class="winner-list-title">🏆 최종 승자 리스트</div>
+                            <div class="winner-list" id="winnerListLose"></div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -416,6 +416,21 @@
             <div class="debug-buttons">
                 <button class="debug-btn" onclick="testWinnerResult()">승자 화면 보기</button>
                 <button class="debug-btn" onclick="testLoserResult()">패배 화면 보기</button>
+            </div>
+
+            <!-- 닉네임 만들기 팝업 -->
+            <div class="nickname-popup" id="nicknamePopup">
+                <div class="nickname-popup-backdrop" onclick="closeNicknamePopup()"></div>
+                <div class="nickname-popup-content">
+                    <div class="nickname-popup-title">닉네임 만들기</div>
+                    <p class="nickname-popup-desc">2자 이상 10자 이하, 중복 불가</p>
+                    <input type="text" class="nickname-popup-input" id="nicknamePopupInput" maxlength="10" placeholder="닉네임 입력" autocomplete="off">
+                    <div class="nickname-popup-error" id="nicknamePopupError" aria-live="polite"></div>
+                    <div class="nickname-popup-buttons">
+                        <button type="button" class="nickname-popup-btn nickname-popup-cancel" onclick="closeNicknamePopup()">취소</button>
+                        <button type="button" class="nickname-popup-btn nickname-popup-confirm" onclick="confirmNickname()">확인</button>
+                    </div>
+                </div>
             </div>
 
             <!-- 언어 선택 모달 -->
@@ -1180,7 +1195,10 @@
                         <img class="wallet-profile-img" id="walletProfileImg" src="" alt="" role="presentation">
                     </div>
                     <div class="wallet-profile-info">
-                        <div class="wallet-profile-name" id="walletProfileName">-</div>
+                        <div class="wallet-profile-name-row">
+                            <span class="wallet-profile-name" id="walletProfileName">-</span>
+                            <button type="button" class="wallet-nickname-btn" id="walletNicknameBtn" onclick="openNicknamePopup()" aria-label="닉네임 만들기">닉네임 만들기</button>
+                        </div>
                         <div class="wallet-profile-badge">
                             <span class="wallet-line-badge">LINE 연동됨</span>
                         </div>
