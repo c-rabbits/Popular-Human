@@ -688,16 +688,16 @@ const historyDisplayed = { payment: 0, claim: 0 };
 // 목업 결제기록 데이터 (향후 API 연동)
 const mockPayments = [
     { title: '티켓 5장 구매', date: '2025-01-15 14:30', amount: '-5,000원', type: 'negative' },
-    { title: '코인 1000개 구매', date: '2025-01-10 09:15', amount: '-3,000원', type: 'negative' },
+    { title: '캐시 1000개 구매', date: '2025-01-10 09:15', amount: '-3,000원', type: 'negative' },
     { title: '프리미엄 패스', date: '2025-01-05 18:42', amount: '-9,900원', type: 'negative' },
     { title: '티켓 10장 구매', date: '2024-12-28 11:00', amount: '-1,000원', type: 'negative' },
-    { title: '코인 500개 구매', date: '2024-12-20 15:30', amount: '-1,500원', type: 'negative' },
+    { title: '캐시 500개 구매', date: '2024-12-20 15:30', amount: '-1,500원', type: 'negative' },
     { title: '티켓 30장 구매', date: '2024-12-15 09:45', amount: '-3,000원', type: 'negative' },
-    { title: '코인 2000개 구매', date: '2024-12-10 14:20', amount: '-6,000원', type: 'negative' },
+    { title: '캐시 2000개 구매', date: '2024-12-10 14:20', amount: '-6,000원', type: 'negative' },
     { title: '티켓 50장 구매', date: '2024-12-05 18:00', amount: '-5,000원', type: 'negative' },
     { title: '프리미엄 패스 갱신', date: '2024-12-01 10:30', amount: '-9,900원', type: 'negative' },
     { title: '티켓 100장 구매', date: '2024-11-25 13:15', amount: '-10,000원', type: 'negative' },
-    { title: '코인 300개 구매', date: '2024-11-20 16:45', amount: '-900원', type: 'negative' },
+    { title: '캐시 300개 구매', date: '2024-11-20 16:45', amount: '-900원', type: 'negative' },
     { title: '티켓 10장 구매', date: '2024-11-15 08:30', amount: '-1,000원', type: 'negative' }
 ];
 
