@@ -62,11 +62,19 @@ async function initLIFF() {
         if (typeof CONFIG !== 'undefined' && CONFIG.USE_SUPABASE && typeof setSupabaseSession === 'function') {
             const liffToken = liff.getAccessToken();
             const lineAuthUrl = (typeof CONFIG.LINE_AUTH_URL === 'string' && CONFIG.LINE_AUTH_URL) ? CONFIG.LINE_AUTH_URL : (CONFIG.SUPABASE_URL ? (CONFIG.SUPABASE_URL.replace(/\/$/, '') + '/functions/v1/line-auth') : '');
-            if (liffToken && lineAuthUrl) {
+            if (!liffToken) {
+                console.warn('[LIFF] Supabase 연동 스킵: LIFF 액세스 토큰 없음 (Scope profile 필요)');
+            } else if (!lineAuthUrl) {
+                console.warn('[LIFF] Supabase 연동 스킵: LINE_AUTH_URL 또는 SUPABASE_URL 없음');
+            } else {
                 try {
+                    const headers = { 'Content-Type': 'application/json' };
+                    if (typeof CONFIG.SUPABASE_ANON_KEY === 'string' && CONFIG.SUPABASE_ANON_KEY) {
+                        headers['Authorization'] = 'Bearer ' + CONFIG.SUPABASE_ANON_KEY;
+                    }
                     const res = await fetch(lineAuthUrl, {
                         method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
+                        headers: headers,
                         body: JSON.stringify({ access_token: liffToken })
                     });
                     const data = res.ok ? await res.json() : null;
@@ -74,7 +82,8 @@ async function initLIFF() {
                         await setSupabaseSession(data.access_token, data.refresh_token || '');
                         console.log('[LIFF] Supabase 세션 설정 완료');
                     } else if (!res.ok) {
-                        console.warn('[LIFF] line-auth 실패', res.status, await res.text());
+                        const errText = await res.text();
+                        console.warn('[LIFF] line-auth 실패', res.status, errText);
                     }
                 } catch (e) {
                     console.warn('[LIFF] line-auth 호출 오류', e);

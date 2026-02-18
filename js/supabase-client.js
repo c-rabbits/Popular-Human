@@ -3,10 +3,10 @@
 // config.js 로드 후, CONFIG.USE_SUPABASE === true 일 때만 사용합니다.
 // ========================================
 
-let supabase = null;
+var supabaseClientInstance = null;
 
 function getSupabase() {
-    if (supabase !== null) return supabase;
+    if (supabaseClientInstance !== null) return supabaseClientInstance;
     if (typeof CONFIG === 'undefined' || !CONFIG.USE_SUPABASE || !CONFIG.SUPABASE_URL || !CONFIG.SUPABASE_ANON_KEY) {
         return null;
     }
@@ -14,8 +14,8 @@ function getSupabase() {
         console.warn('[Supabase] supabase-js 미로드. index.html에 추가: <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>');
         return null;
     }
-    supabase = window.supabase.createClient(CONFIG.SUPABASE_URL, CONFIG.SUPABASE_ANON_KEY);
-    return supabase;
+    supabaseClientInstance = window.supabase.createClient(CONFIG.SUPABASE_URL, CONFIG.SUPABASE_ANON_KEY);
+    return supabaseClientInstance;
 }
 
 // 세션 설정 (Edge Function에서 받은 JWT로 로그인한 뒤 호출)
