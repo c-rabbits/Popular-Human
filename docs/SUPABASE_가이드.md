@@ -118,6 +118,88 @@ async getUserInfo() {
 
 기존 목업은 `if (CONFIG.USE_SUPABASE && getSupabase()) { ... } else { ... }` 처럼 분기해 두면 됩니다.
 
+### 4.4 api.js에서 Supabase 호출 분기 방법 (자세히)
+
+#### 전제 조건
+
+- `index.html`에서 **반드시** 아래 순서로 로드되어 있어야 합니다.
+  1. `config.js` → `CONFIG`, `CONFIG.USE_SUPABASE` 사용 가능
+  2. `@supabase/supabase-js` (CDN) → `window.supabase` 사용 가능
+  3. `supabase-client.js` → `getSupabase()`, `getSupabaseUserId()` 사용 가능
+  4. `api.js` → 위 전역 함수/객체를 참조 가능
+
+- Supabase를 쓸 때만 `config.js`에서 `CONFIG.USE_SUPABASE = true`로 두고, `SUPABASE_URL`, `SUPABASE_ANON_KEY`를 채웁니다.
+
+#### 분기 판단 헬퍼 (선택)
+
+`api.js` 상단에 아래를 두면, 매 메서드마다 조건을 짧게 쓸 수 있습니다.
+
+```javascript
+// Supabase 사용 가능 여부 (config.js + supabase-client.js 로드 후)
+function useSupabase() {
+    return typeof CONFIG !== 'undefined' && CONFIG.USE_SUPABASE && typeof getSupabase === 'function' && getSupabase() !== null;
+}
+```
+
+- `getSupabase()`가 `null`이면 URL/키가 비어 있어서 클라이언트가 생성되지 않은 상태이므로, 이 경우도 목업으로 넘깁니다.
+
+#### 공통 패턴 (각 API 메서드 안에서)
+
+1. **Supabase 분기**
+   - `if (useSupabase()) { ... }` 안에서만 Supabase 호출.
+   - 그 안에서 `const sb = getSupabase();` 로 클라이언트를 받고, `sb.from('테이블명').select() / insert() / update()` 등 사용.
+
+2. **비동기 사용자 식별**
+   - 프로필/게임 등 “현재 유저”가 필요하면 `line_user_id`를 씁니다.
+   - LIFF 로그인 상태면 `liffProfile.userId`, 아니면(또는 JWT만 있는 경우) `await getSupabaseUserId()` 사용.
+   - 예: `const lineUserId = (liffProfile && liffProfile.userId) || (await getSupabaseUserId());`
+
+3. **에러 처리**
+   - Supabase 호출은 `const { data, error } = await sb.from(...)...` 형태로 받고, `if (error) { console.error(...); }` 후 **아래 기존 목업 로직으로 폴백**하거나, 메서드 규격에 맞게 `return null` / `return { success: false }` 등 처리.
+
+4. **return 순서**
+   - Supabase 분기 안에서 **성공 시 바로 return**.
+   - Supabase를 쓰지 않거나, 에러가 나면 **기존 목업 코드가 실행되도록** 분기 밖에 기존 로직을 둡니다.
+
+```text
+async someMethod() {
+    try {
+        if (useSupabase()) {
+            const sb = getSupabase();
+            if (!sb) break;  // 또는 바로 목업으로
+            const lineUserId = (liffProfile && liffProfile.userId) || (await getSupabaseUserId());
+            if (!lineUserId) break;
+
+            const { data, error } = await sb.from('...').select()...;
+            if (error) {
+                console.error('[API] Supabase error', error);
+                break;
+            }
+            // data를 앱에서 쓰는 형태로 가공
+            return { ... };
+        }
+    } catch (e) {
+        console.error('[API] Supabase exception', e);
+    }
+
+    // 기존 목업 로직 (Supabase 미사용 또는 실패 시)
+    return { ... };
+}
+```
+
+#### 메서드별 분기 요약
+
+| API 메서드       | Supabase 분기 시 할 일 |
+|------------------|-------------------------|
+| `getUserInfo()`  | `profiles`에서 `line_user_id`로 1건 조회 후 반환 형태로 매핑. |
+| `getScenarios()` | 필요 시 `events` + `event_questions` 조회해 시나리오 목록 구성. (또는 기존 `scenarios` 정적 데이터 유지.) |
+| `startGame()`    | `games` insert, `profiles`의 `tickets` 감소 update. |
+| `submitAnswer()` | `game_answers` insert. |
+| `completeGame()` | `games` 상태 update, 필요 시 결과 계산. |
+| `getEventResult()` | `games` / 이벤트 정답·승자 정보 조회 후 반환. |
+
+모두 **같은 패턴**: `if (useSupabase()) { sb = getSupabase(); ... await sb.from(...)...; return ...; }` 뒤에 기존 목업을 두면 됩니다.
+
 ---
 
 ## 5. 관리자 페이지 연동
@@ -138,10 +220,10 @@ async getUserInfo() {
 
 ## 7. 체크리스트
 
-- [ ] Supabase 프로젝트 생성
-- [ ] `001_initial_schema.sql` 실행
+- [v] Supabase 프로젝트 생성
+- [v] `001_initial_schema.sql` 실행
 - [ ] (선택) Edge Function `line-auth` 배포 및 LIFF 토큰 → JWT 교환 연동
-- [ ] `config.js`에 URL/anon key 설정
+- [v] `config.js`에 URL/anon key 설정
 - [ ] `supabase-client.js` 로드 후 `api.js`에서 Supabase 호출 분기
 - [ ] 프로필/이벤트/게임 시작·답안·종료 흐름 테스트
 - [ ] 관리자 기능은 필요 시 별도 API로 이전

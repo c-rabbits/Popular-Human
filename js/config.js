@@ -6,11 +6,11 @@
 
 const CONFIG = {
     // Supabase 사용 여부 (true 시 api.js에서 Supabase 호출 사용)
-    USE_SUPABASE: false,
+    USE_SUPABASE: true,
 
     // Supabase Project URL (예: https://xxxxx.supabase.co)
-    SUPABASE_URL: '',
+    SUPABASE_URL: 'https://iqkkbulxmjpjrbyuyjqp.supabase.co',
 
     // Supabase anon public key
-    SUPABASE_ANON_KEY: ''
+    SUPABASE_ANON_KEY: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imlxa2tidWx4bWpwanJieXV5anFwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzEzOTQ1NTksImV4cCI6MjA4Njk3MDU1OX0.snrLD81NXrIyGdyNOEJlIA1ktvDE_2Sy43_895U_p4w'
 };

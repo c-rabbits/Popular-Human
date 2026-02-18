@@ -1,6 +1,12 @@
 // ========================================
 // API 모듈 (api.js)
 // ========================================
+// Supabase 분기: config.js + supabase-client.js 로드 후, CONFIG.USE_SUPABASE === true 이고
+// getSupabase() 가 null 이 아닐 때만 Supabase 호출. 그 외에는 기존 목업 실행.
+
+function useSupabase() {
+    return typeof CONFIG !== 'undefined' && CONFIG.USE_SUPABASE && typeof getSupabase === 'function' && getSupabase() !== null;
+}
 
 const API = {
     // 베이스 URL (실제 서버 주소로 변경 필요)
@@ -9,22 +15,39 @@ const API = {
     // 유저 정보 가져오기
     async getUserInfo() {
         try {
-            // const token = getLIFFToken();
-            // const response = await fetch(`${this.baseURL}/user/info`, {
-            //     headers: { 'Authorization': `Bearer ${token}` }
-            // });
-            // return await response.json();
+            // ----- Supabase 분기 (로드 순서: config.js → supabase-js → supabase-client.js → api.js) -----
+            if (useSupabase()) {
+                const sb = getSupabase();
+                const lineUserId = (liffProfile && liffProfile.userId) || (typeof getSupabaseUserId === 'function' ? await getSupabaseUserId() : null);
+                if (sb && lineUserId) {
+                    const { data: profile, error } = await sb.from('profiles').select('*').eq('line_user_id', lineUserId).maybeSingle();
+                    if (!error && profile) {
+                        const uidSuffix = (profile.line_user_id || '').replace(/[^a-zA-Z0-9]/g, '').substring(0, 8).toUpperCase();
+                        return {
+                            userId: lineUserId,
+                            displayName: profile.display_name || (liffProfile && liffProfile.displayName) || '',
+                            pictureUrl: profile.picture_url || (liffProfile && liffProfile.pictureUrl) || '',
+                            statusMessage: (liffProfile && liffProfile.statusMessage) || '',
+                            characterName: profile.display_name || (liffProfile && liffProfile.displayName) || '실험러버',
+                            nickname: profile.nickname || undefined,
+                            cash: profile.cash != null ? profile.cash : 0,
+                            rewardPoints: profile.reward_points != null ? profile.reward_points : 0,
+                            tickets: profile.tickets != null ? profile.tickets : 0,
+                            uid: 'PH-' + (uidSuffix || 'USER'),
+                            walletAddress: typeof getConnectedAddress === 'function' ? (getConnectedAddress() || '') : '',
+                            tokenBalance: { usdt: 0, kaia: 0 },
+                            claimable: { usdt: 0, kaia: 0 }
+                        };
+                    }
+                    if (error) console.error('[API] getUserInfo Supabase error', error);
+                }
+            }
 
-            // LIFF 프로필 + 게임 데이터 + Kaia 지갑 데이터 결합
+            // ----- 기존 목업 -----
             const userId = liffProfile ? liffProfile.userId : 'user123';
-
-            // UID 생성 (userId 앞 8자 기반)
             const uidSuffix = userId.replace(/[^a-zA-Z0-9]/g, '').substring(0, 8).toUpperCase();
             const uid = 'PH-' + uidSuffix;
-
-            // 지갑 주소: Kaia 연결 시 실제 주소, 미연결 시 빈 값
-            const walletAddress = getConnectedAddress() || '';
-
+            const walletAddress = typeof getConnectedAddress === 'function' ? (getConnectedAddress() || '') : '';
             const nickname = (typeof localStorage !== 'undefined' && localStorage.getItem('ph_nickname')) || undefined;
             return {
                 userId: userId,
@@ -36,11 +59,10 @@ const API = {
                 cash: 1250,
                 rewardPoints: 850,
                 tickets: 5,
-                // 지갑 데이터 (Kaia 온체인)
                 uid: uid,
                 walletAddress: walletAddress,
                 tokenBalance: { usdt: 0.00, kaia: 0.00 },
-                claimable: { usdt: 12.50, kaia: 150.00 }  // TODO: 백엔드 API로 교체
+                claimable: { usdt: 12.50, kaia: 150.00 }
             };
         } catch (error) {
             console.error('유저 정보 로드 실패:', error);
