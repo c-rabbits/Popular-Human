@@ -1721,7 +1721,10 @@
         </div>
     </div>
 
-    <!-- JavaScript 모듈 (의존성 순서) -->
+    <!-- JavaScript 모듈 (의존성 순서). Supabase 사용 시 config.js에 USE_SUPABASE: true, URL, anon key 설정 -->
+    <script src="js/config.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/supabase-client.js"></script>
     <script src="js/data.js"></script>
     <script src="js/liff-auth.js"></script>
     <script src="js/kaia-wallet.js"></script>
