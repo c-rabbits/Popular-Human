@@ -131,6 +131,7 @@ function addMockEvent(body) {
         questionCount: Number(body.questionCount),
         status: body.status || 'scheduled',
         bannerImageUrl: body.bannerImageUrl || '',
+        questions: Array.isArray(body.questions) ? body.questions : [],
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString()
     };
@@ -155,6 +156,7 @@ function updateMockEvent(id, body) {
         questionCount: Number(body.questionCount),
         status: body.status || 'scheduled',
         bannerImageUrl: body.bannerImageUrl !== undefined ? body.bannerImageUrl : events[idx].bannerImageUrl,
+        questions: Array.isArray(body.questions) ? body.questions : (events[idx].questions || []),
         updatedAt: new Date().toISOString()
     };
     saveMockEvents(events);
@@ -311,6 +313,7 @@ function setFormMode(mode, eventId) {
         document.getElementById('eventRequiredTickets').value = 1;
         document.getElementById('eventQuestionCount').value = 10;
         document.getElementById('eventStatus').value = 'scheduled';
+        clearEventQuestions();
         const now = new Date();
         const start = new Date(now.getTime() + 60 * 60 * 1000);
         const end = new Date(now.getTime() + 4 * 60 * 60 * 1000);
@@ -335,6 +338,7 @@ function setFormMode(mode, eventId) {
             document.getElementById('eventRequiredTickets').value = evt.requiredTickets;
             document.getElementById('eventQuestionCount').value = evt.questionCount;
             document.getElementById('eventStatus').value = evt.status;
+            fillEventQuestions(evt.questions);
         });
     }
 }
@@ -355,6 +359,56 @@ function editEvent(id) {
     switchPanel('eventForm');
 }
 
+function collectEventQuestions() {
+    const questions = [];
+    for (let i = 1; i <= 10; i++) {
+        const textEl = document.getElementById('eventQ' + i);
+        const correctEl = document.getElementById('eventQ' + i + 'Correct');
+        const choices = [
+            (document.getElementById('eventQ' + i + 'A1') || {}).value || '',
+            (document.getElementById('eventQ' + i + 'A2') || {}).value || '',
+            (document.getElementById('eventQ' + i + 'A3') || {}).value || '',
+            (document.getElementById('eventQ' + i + 'A4') || {}).value || ''
+        ];
+        const text = (textEl && textEl.value) ? textEl.value.trim() : '';
+        const correctVal = (correctEl && correctEl.value) ? parseInt(correctEl.value, 10) : 1;
+        questions.push({
+            text: text,
+            choices: choices,
+            correctIndex: Math.max(0, Math.min(3, correctVal - 1))
+        });
+    }
+    return questions;
+}
+
+function fillEventQuestions(questions) {
+    if (!Array.isArray(questions)) return;
+    for (let i = 0; i < Math.min(10, questions.length); i++) {
+        const q = questions[i];
+        const textEl = document.getElementById('eventQ' + (i + 1));
+        const correctEl = document.getElementById('eventQ' + (i + 1) + 'Correct');
+        if (textEl) textEl.value = (q.text || '');
+        if (correctEl) correctEl.value = String((q.correctIndex != null ? q.correctIndex : 0) + 1);
+        for (let c = 0; c < 4; c++) {
+            const choiceEl = document.getElementById('eventQ' + (i + 1) + 'A' + (c + 1));
+            if (choiceEl) choiceEl.value = (q.choices && q.choices[c]) ? q.choices[c] : '';
+        }
+    }
+}
+
+function clearEventQuestions() {
+    for (let i = 1; i <= 10; i++) {
+        const textEl = document.getElementById('eventQ' + i);
+        const correctEl = document.getElementById('eventQ' + i + 'Correct');
+        if (textEl) textEl.value = '';
+        if (correctEl) correctEl.value = '1';
+        for (let c = 1; c <= 4; c++) {
+            const choiceEl = document.getElementById('eventQ' + i + 'A' + c);
+            if (choiceEl) choiceEl.value = '';
+        }
+    }
+}
+
 function saveEvent(e) {
     e.preventDefault();
     const id = document.getElementById('eventId').value;
@@ -368,7 +422,8 @@ function saveEvent(e) {
         playTimeMinutes: document.getElementById('eventPlayTimeMinutes').value,
         requiredTickets: document.getElementById('eventRequiredTickets').value,
         questionCount: document.getElementById('eventQuestionCount').value,
-        status: document.getElementById('eventStatus').value
+        status: document.getElementById('eventStatus').value,
+        questions: collectEventQuestions()
     };
 
     const promise = id ? AdminAPI.updateEvent(id, body) : AdminAPI.createEvent(body);

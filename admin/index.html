@@ -116,6 +116,133 @@
                         <label for="eventQuestionCount">문제 수 *</label>
                         <input type="number" id="eventQuestionCount" min="1" max="20" value="10" required>
                     </div>
+
+                    <div class="event-questions-block">
+                        <h3 class="event-questions-title">문제 및 4지선다 (10문제)</h3>
+                        <p class="form-hint">각 문제에 지문과 보기 4개를 입력하고, 정답 번호를 선택하세요.</p>
+                        <div class="event-questions-list" id="eventQuestionsList">
+                            <div class="event-question-item">
+                                <div class="event-question-num">문제 1</div>
+                                <div class="form-row">
+                                    <label>지문</label>
+                                    <textarea id="eventQ1" rows="2" placeholder="문제 내용"></textarea>
+                                </div>
+                                <div class="event-choices">
+                                    <div class="event-choice-row"><label>①</label><input type="text" id="eventQ1A1" placeholder="보기 1"></div>
+                                    <div class="event-choice-row"><label>②</label><input type="text" id="eventQ1A2" placeholder="보기 2"></div>
+                                    <div class="event-choice-row"><label>③</label><input type="text" id="eventQ1A3" placeholder="보기 3"></div>
+                                    <div class="event-choice-row"><label>④</label><input type="text" id="eventQ1A4" placeholder="보기 4"></div>
+                                </div>
+                                <div class="form-row form-row-inline">
+                                    <label for="eventQ1Correct">정답</label>
+                                    <select id="eventQ1Correct"><option value="1">①</option><option value="2">②</option><option value="3">③</option><option value="4">④</option></select>
+                                </div>
+                            </div>
+                            <div class="event-question-item">
+                                <div class="event-question-num">문제 2</div>
+                                <div class="form-row"><label>지문</label><textarea id="eventQ2" rows="2" placeholder="문제 내용"></textarea></div>
+                                <div class="event-choices">
+                                    <div class="event-choice-row"><label>①</label><input type="text" id="eventQ2A1" placeholder="보기 1"></div>
+                                    <div class="event-choice-row"><label>②</label><input type="text" id="eventQ2A2" placeholder="보기 2"></div>
+                                    <div class="event-choice-row"><label>③</label><input type="text" id="eventQ2A3" placeholder="보기 3"></div>
+                                    <div class="event-choice-row"><label>④</label><input type="text" id="eventQ2A4" placeholder="보기 4"></div>
+                                </div>
+                                <div class="form-row form-row-inline"><label for="eventQ2Correct">정답</label><select id="eventQ2Correct"><option value="1">①</option><option value="2">②</option><option value="3">③</option><option value="4">④</option></select></div>
+                            </div>
+                            <div class="event-question-item">
+                                <div class="event-question-num">문제 3</div>
+                                <div class="form-row"><label>지문</label><textarea id="eventQ3" rows="2" placeholder="문제 내용"></textarea></div>
+                                <div class="event-choices">
+                                    <div class="event-choice-row"><label>①</label><input type="text" id="eventQ3A1" placeholder="보기 1"></div>
+                                    <div class="event-choice-row"><label>②</label><input type="text" id="eventQ3A2" placeholder="보기 2"></div>
+                                    <div class="event-choice-row"><label>③</label><input type="text" id="eventQ3A3" placeholder="보기 3"></div>
+                                    <div class="event-choice-row"><label>④</label><input type="text" id="eventQ3A4" placeholder="보기 4"></div>
+                                </div>
+                                <div class="form-row form-row-inline"><label for="eventQ3Correct">정답</label><select id="eventQ3Correct"><option value="1">①</option><option value="2">②</option><option value="3">③</option><option value="4">④</option></select></div>
+                            </div>
+                            <div class="event-question-item">
+                                <div class="event-question-num">문제 4</div>
+                                <div class="form-row"><label>지문</label><textarea id="eventQ4" rows="2" placeholder="문제 내용"></textarea></div>
+                                <div class="event-choices">
+                                    <div class="event-choice-row"><label>①</label><input type="text" id="eventQ4A1" placeholder="보기 1"></div>
+                                    <div class="event-choice-row"><label>②</label><input type="text" id="eventQ4A2" placeholder="보기 2"></div>
+                                    <div class="event-choice-row"><label>③</label><input type="text" id="eventQ4A3" placeholder="보기 3"></div>
+                                    <div class="event-choice-row"><label>④</label><input type="text" id="eventQ4A4" placeholder="보기 4"></div>
+                                </div>
+                                <div class="form-row form-row-inline"><label for="eventQ4Correct">정답</label><select id="eventQ4Correct"><option value="1">①</option><option value="2">②</option><option value="3">③</option><option value="4">④</option></select></div>
+                            </div>
+                            <div class="event-question-item">
+                                <div class="event-question-num">문제 5</div>
+                                <div class="form-row"><label>지문</label><textarea id="eventQ5" rows="2" placeholder="문제 내용"></textarea></div>
+                                <div class="event-choices">
+                                    <div class="event-choice-row"><label>①</label><input type="text" id="eventQ5A1" placeholder="보기 1"></div>
+                                    <div class="event-choice-row"><label>②</label><input type="text" id="eventQ5A2" placeholder="보기 2"></div>
+                                    <div class="event-choice-row"><label>③</label><input type="text" id="eventQ5A3" placeholder="보기 3"></div>
+                                    <div class="event-choice-row"><label>④</label><input type="text" id="eventQ5A4" placeholder="보기 4"></div>
+                                </div>
+                                <div class="form-row form-row-inline"><label for="eventQ5Correct">정답</label><select id="eventQ5Correct"><option value="1">①</option><option value="2">②</option><option value="3">③</option><option value="4">④</option></select></div>
+                            </div>
+                            <div class="event-question-item">
+                                <div class="event-question-num">문제 6</div>
+                                <div class="form-row"><label>지문</label><textarea id="eventQ6" rows="2" placeholder="문제 내용"></textarea></div>
+                                <div class="event-choices">
+                                    <div class="event-choice-row"><label>①</label><input type="text" id="eventQ6A1" placeholder="보기 1"></div>
+                                    <div class="event-choice-row"><label>②</label><input type="text" id="eventQ6A2" placeholder="보기 2"></div>
+                                    <div class="event-choice-row"><label>③</label><input type="text" id="eventQ6A3" placeholder="보기 3"></div>
+                                    <div class="event-choice-row"><label>④</label><input type="text" id="eventQ6A4" placeholder="보기 4"></div>
+                                </div>
+                                <div class="form-row form-row-inline"><label for="eventQ6Correct">정답</label><select id="eventQ6Correct"><option value="1">①</option><option value="2">②</option><option value="3">③</option><option value="4">④</option></select></div>
+                            </div>
+                            <div class="event-question-item">
+                                <div class="event-question-num">문제 7</div>
+                                <div class="form-row"><label>지문</label><textarea id="eventQ7" rows="2" placeholder="문제 내용"></textarea></div>
+                                <div class="event-choices">
+                                    <div class="event-choice-row"><label>①</label><input type="text" id="eventQ7A1" placeholder="보기 1"></div>
+                                    <div class="event-choice-row"><label>②</label><input type="text" id="eventQ7A2" placeholder="보기 2"></div>
+                                    <div class="event-choice-row"><label>③</label><input type="text" id="eventQ7A3" placeholder="보기 3"></div>
+                                    <div class="event-choice-row"><label>④</label><input type="text" id="eventQ7A4" placeholder="보기 4"></div>
+                                </div>
+                                <div class="form-row form-row-inline"><label for="eventQ7Correct">정답</label><select id="eventQ7Correct"><option value="1">①</option><option value="2">②</option><option value="3">③</option><option value="4">④</option></select></div>
+                            </div>
+                            <div class="event-question-item">
+                                <div class="event-question-num">문제 8</div>
+                                <div class="form-row"><label>지문</label><textarea id="eventQ8" rows="2" placeholder="문제 내용"></textarea></div>
+                                <div class="event-choices">
+                                    <div class="event-choice-row"><label>①</label><input type="text" id="eventQ8A1" placeholder="보기 1"></div>
+                                    <div class="event-choice-row"><label>②</label><input type="text" id="eventQ8A2" placeholder="보기 2"></div>
+                                    <div class="event-choice-row"><label>③</label><input type="text" id="eventQ8A3" placeholder="보기 3"></div>
+                                    <div class="event-choice-row"><label>④</label><input type="text" id="eventQ8A4" placeholder="보기 4"></div>
+                                </div>
+                                <div class="form-row form-row-inline"><label for="eventQ8Correct">정답</label><select id="eventQ8Correct"><option value="1">①</option><option value="2">②</option><option value="3">③</option><option value="4">④</option></select></div>
+                            </div>
+                            <div class="event-question-item">
+                                <div class="event-question-num">문제 9</div>
+                                <div class="form-row"><label>지문</label><textarea id="eventQ9" rows="2" placeholder="문제 내용"></textarea></div>
+                                <div class="event-choices">
+                                    <div class="event-choice-row"><label>①</label><input type="text" id="eventQ9A1" placeholder="보기 1"></div>
+                                    <div class="event-choice-row"><label>②</label><input type="text" id="eventQ9A2" placeholder="보기 2"></div>
+                                    <div class="event-choice-row"><label>③</label><input type="text" id="eventQ9A3" placeholder="보기 3"></div>
+                                    <div class="event-choice-row"><label>④</label><input type="text" id="eventQ9A4" placeholder="보기 4"></div>
+                                </div>
+                                <div class="form-row form-row-inline"><label for="eventQ9Correct">정답</label><select id="eventQ9Correct"><option value="1">①</option><option value="2">②</option><option value="3">③</option><option value="4">④</option></select></div>
+                            </div>
+                            <div class="event-question-item">
+                                <div class="event-question-num">문제 10</div>
+                                <div class="form-row"><label>지문</label><textarea id="eventQ10" rows="2" placeholder="문제 내용"></textarea></div>
+                                <div class="event-choices">
+                                    <div class="event-choice-row"><label>①</label><input type="text" id="eventQ10A1" placeholder="보기 1"></div>
+                                    <div class="event-choice-row"><label>②</label><input type="text" id="eventQ10A2" placeholder="보기 2"></div>
+                                    <div class="event-choice-row"><label>③</label><input type="text" id="eventQ10A3" placeholder="보기 3"></div>
+                                    <div class="event-choice-row"><label>④</label><input type="text" id="eventQ10A4" placeholder="보기 4"></div>
+                                </div>
+                                <div class="form-row form-row-inline"><label for="eventQ10Correct">정답</label><select id="eventQ10Correct"><option value="1">①</option><option value="2">②</option><option value="3">③</option><option value="4">④</option></select></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <label for="eventStatus">상태</label>
+
                     <div class="form-row">
                         <label for="eventStatus">상태</label>
                         <select id="eventStatus">
