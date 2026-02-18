@@ -1958,6 +1958,30 @@ body {
     gap: 14px;
 }
 
+/* 아이템 구매: 가로 3슬롯 그리드 (프로필·닉네임 3x2, 아바타 3x3) */
+.shop-list.shop-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+}
+.shop-list.shop-grid .shop-list-item {
+    min-height: 100px;
+    padding: 10px 12px;
+}
+.shop-list.shop-grid .shop-list-item-icon {
+    font-size: 22px;
+}
+.shop-list.shop-grid .shop-list-item-name {
+    font-size: 13px;
+}
+.shop-list.shop-grid .shop-list-item-price {
+    font-size: 12px;
+}
+.shop-list.shop-grid .shop-list-buy-btn {
+    padding: 8px 12px;
+    font-size: 12px;
+}
+
 /* 카드: 두 줄 레이아웃, 높이·비율 최적화 (상단 45% : 하단 55%) */
 .shop-list-item {
     display: flex;
@@ -1988,6 +2012,7 @@ body {
     padding-top: 10px;
     border-top: 1px solid #eee;
     margin-top: 0;
+    justify-content: flex-end;
 }
 
 .shop-list-item-left {
@@ -2053,19 +2078,19 @@ body {
 }
 
 .shop-list-buy-cash {
-    background: #06C755;
+    background: #000;
     color: #fff;
 }
 .shop-list-buy-cash:active {
-    opacity: 0.9;
+    background: #333;
     transform: scale(0.95);
 }
 .shop-list-buy-inapp {
-    background: #333;
+    background: #000;
     color: #fff;
 }
 .shop-list-buy-inapp:active {
-    opacity: 0.9;
+    background: #333;
     transform: scale(0.95);
 }
 
