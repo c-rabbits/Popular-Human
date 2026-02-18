@@ -408,6 +408,70 @@ body {
     justify-content: flex-end;
 }
 
+/* 설정 블록 */
+.settings-block {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1.25rem;
+    margin-bottom: 1.5rem;
+    max-width: 720px;
+}
+
+.settings-block-title {
+    margin: 0 0 1rem;
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--text);
+}
+
+.settings-block .form-row {
+    margin-bottom: 0.75rem;
+}
+
+.settings-block .btn {
+    margin-top: 0.5rem;
+}
+
+.form-hint {
+    margin: 0.5rem 0 0;
+    font-size: 0.85rem;
+    color: var(--text-muted);
+}
+
+.form-inline {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.form-inline input[type="time"] {
+    padding: 0.5rem 0.75rem;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    font-size: 0.95rem;
+}
+
+/* 배너 썸네일 */
+.banner-thumb {
+    width: 80px;
+    height: 40px;
+    background-size: cover;
+    background-position: center;
+    background-color: var(--border);
+    border-radius: 4px;
+}
+
+.panel-title-inline {
+    margin: 0;
+    font-size: 1.1rem;
+    font-weight: 700;
+}
+
+.panel-toolbar .panel-title-inline {
+    margin-right: auto;
+}
+
 /* 반응형 */
 @media (max-width: 768px) {
     .admin-table th:nth-child(3),

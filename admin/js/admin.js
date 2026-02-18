@@ -212,10 +212,16 @@ function switchPanel(panel) {
     document.querySelectorAll('.admin-panel').forEach(p => {
         p.classList.toggle('active', p.dataset.panel === panel);
     });
+    var navPanel = panel;
+    if (panel === 'eventForm') navPanel = 'eventList';
+    if (panel === 'bannerForm') navPanel = 'bannerList';
     document.querySelectorAll('.admin-nav-item').forEach(n => {
-        n.classList.toggle('active', n.dataset.panel === panel);
+        n.classList.toggle('active', n.dataset.panel === navPanel);
     });
-    if (panel === 'list') refreshEventList();
+    if (panel === 'eventList') refreshEventList();
+    if (panel === 'members') refreshMemberList();
+    if (panel === 'bannerList') refreshBannerList();
+    if (panel === 'settings') loadSettings();
 }
 
 // ----------------------------------------
@@ -299,6 +305,7 @@ function setFormMode(mode, eventId) {
         submitBtn.textContent = '저장';
         document.getElementById('eventTitle').value = '';
         document.getElementById('eventScenarioId').value = '';
+        document.getElementById('eventBannerImageUrl').value = '';
         document.getElementById('eventRewardUsdt').value = 50;
         document.getElementById('eventPlayTimeMinutes').value = 10;
         document.getElementById('eventRequiredTickets').value = 1;
@@ -320,6 +327,7 @@ function setFormMode(mode, eventId) {
             if (!evt) return;
             document.getElementById('eventTitle').value = evt.title || '';
             document.getElementById('eventScenarioId').value = evt.scenarioId || '';
+            document.getElementById('eventBannerImageUrl').value = evt.bannerImageUrl || '';
             document.getElementById('eventStartAt').value = formatDateTimeLocal(evt.startAt);
             document.getElementById('eventEndAt').value = formatDateTimeLocal(evt.endAt);
             document.getElementById('eventRewardUsdt').value = evt.rewardUsdt;
@@ -344,7 +352,7 @@ function formatDateTimeLocal(iso) {
 
 function editEvent(id) {
     setFormMode('edit', id);
-    switchPanel('form');
+    switchPanel('eventForm');
 }
 
 function saveEvent(e) {
@@ -353,6 +361,7 @@ function saveEvent(e) {
     const body = {
         title: document.getElementById('eventTitle').value,
         scenarioId: document.getElementById('eventScenarioId').value,
+        bannerImageUrl: document.getElementById('eventBannerImageUrl').value.trim(),
         startAt: new Date(document.getElementById('eventStartAt').value).toISOString(),
         endAt: new Date(document.getElementById('eventEndAt').value).toISOString(),
         rewardUsdt: document.getElementById('eventRewardUsdt').value,
@@ -364,7 +373,7 @@ function saveEvent(e) {
 
     const promise = id ? AdminAPI.updateEvent(id, body) : AdminAPI.createEvent(body);
     promise.then(() => {
-        switchPanel('list');
+        switchPanel('eventList');
         refreshEventList();
     }).catch(err => {
         alert('저장 실패: ' + (err && err.message ? err.message : '알 수 없음'));
@@ -396,6 +405,200 @@ function confirmDelete() {
         closeDeleteModal();
         refreshEventList();
     }).catch(() => alert('삭제 실패'));
+}
+
+// ----------------------------------------
+// 회원 관리 (목업)
+// ----------------------------------------
+function getMockMembers() {
+    return [
+        { id: 'user_1', userId: 'U1111', nickname: '테스트유저1', joinedAt: '2025-02-01T10:00:00Z', cash: 1250, tickets: 5, rewardPoints: 850 },
+        { id: 'user_2', userId: 'U2222', nickname: '대중러버', joinedAt: '2025-02-05T14:30:00Z', cash: 3200, tickets: 12, rewardPoints: 1200 },
+        { id: 'user_3', userId: 'U3333', nickname: '퀴즈왕', joinedAt: '2025-02-10T09:15:00Z', cash: 500, tickets: 2, rewardPoints: 400 }
+    ];
+}
+
+function refreshMemberList() {
+    var q = (document.getElementById('memberSearch') && document.getElementById('memberSearch').value) || '';
+    q = q.trim().toLowerCase();
+    var list = getMockMembers();
+    if (q) list = list.filter(function (m) {
+        return (m.nickname || '').toLowerCase().includes(q) || (m.userId || '').toLowerCase().includes(q);
+    });
+    renderMemberList(list);
+}
+
+function renderMemberList(members) {
+    var tbody = document.getElementById('memberListBody');
+    var emptyEl = document.getElementById('memberListEmpty');
+    if (!tbody) return;
+    tbody.innerHTML = '';
+    if (members.length === 0) {
+        if (emptyEl) emptyEl.classList.remove('hidden');
+        return;
+    }
+    if (emptyEl) emptyEl.classList.add('hidden');
+    members.forEach(function (m) {
+        var tr = document.createElement('tr');
+        tr.innerHTML = '<td>' + escapeHtml(m.userId) + '</td><td>' + escapeHtml(m.nickname) + '</td><td>' + formatDateTime(m.joinedAt) + '</td><td>' + (m.cash || 0) + '</td><td>' + (m.tickets || 0) + '</td><td>' + (m.rewardPoints || 0) + '</td>';
+        tbody.appendChild(tr);
+    });
+}
+
+// ----------------------------------------
+// 배너 관리 (목업 localStorage)
+// ----------------------------------------
+var STORAGE_KEY_BANNERS = 'ph_admin_banners';
+
+function getMockBanners() {
+    try {
+        var raw = localStorage.getItem(STORAGE_KEY_BANNERS);
+        if (raw) return JSON.parse(raw);
+    } catch (e) {}
+    return [
+        { id: 'banner_1', imageUrl: 'Main_Banner_001.png', linkType: 'none', linkUrl: '', order: 0 },
+        { id: 'banner_2', imageUrl: 'Main_Banner_002.png', linkType: 'external', linkUrl: 'https://example.com', order: 1 }
+    ];
+}
+
+function saveMockBanners(banners) {
+    localStorage.setItem(STORAGE_KEY_BANNERS, JSON.stringify(banners));
+}
+
+function refreshBannerList() {
+    var list = getMockBanners().sort(function (a, b) { return (a.order || 0) - (b.order || 0); });
+    renderBannerList(list);
+}
+
+function renderBannerList(banners) {
+    var tbody = document.getElementById('bannerListBody');
+    var emptyEl = document.getElementById('bannerListEmpty');
+    if (!tbody) return;
+    tbody.innerHTML = '';
+    if (banners.length === 0) {
+        if (emptyEl) emptyEl.classList.remove('hidden');
+        return;
+    }
+    if (emptyEl) emptyEl.classList.add('hidden');
+    var linkTypeLabel = { internal: '내부', external: '외부', none: '없음' };
+    banners.forEach(function (b) {
+        var tr = document.createElement('tr');
+        var img = b.imageUrl ? '<div class="banner-thumb" style="background-image:url(\'' + escapeHtml(b.imageUrl) + '\')"></div>' : '-';
+        tr.innerHTML = '<td>' + (b.order ?? 0) + '</td><td>' + img + '</td><td>' + (linkTypeLabel[b.linkType] || b.linkType) + '</td><td>' + escapeHtml(b.linkUrl || '-') + '</td><td><button type="button" class="btn btn-outline btn-sm" onclick="editBanner(\'' + b.id + '\')">수정</button> <button type="button" class="btn btn-danger btn-sm" onclick="openDeleteBannerModal(\'' + b.id + '\')">삭제</button></td>';
+        tbody.appendChild(tr);
+    });
+}
+
+function setBannerFormMode(mode, bannerId) {
+    var form = document.getElementById('bannerForm');
+    var titleEl = document.getElementById('bannerFormPanelTitle');
+    var idEl = document.getElementById('bannerId');
+    if (!form) return;
+    form.reset();
+    idEl.value = '';
+    if (mode === 'add') {
+        titleEl.textContent = '배너 추가';
+        document.getElementById('bannerOrder').value = 0;
+        return;
+    }
+    if (mode === 'edit' && bannerId) {
+        titleEl.textContent = '배너 수정';
+        idEl.value = bannerId;
+        var list = getMockBanners();
+        var b = list.find(function (x) { return x.id === bannerId; });
+        if (b) {
+            document.getElementById('bannerImageUrl').value = b.imageUrl || '';
+            document.getElementById('bannerLinkType').value = b.linkType || 'none';
+            document.getElementById('bannerLinkUrl').value = b.linkUrl || '';
+            document.getElementById('bannerOrder').value = b.order ?? 0;
+        }
+    }
+}
+
+function editBanner(id) {
+    setBannerFormMode('edit', id);
+    switchPanel('bannerForm');
+}
+
+function saveBanner(e) {
+    e.preventDefault();
+    var id = document.getElementById('bannerId').value;
+    var imageUrl = document.getElementById('bannerImageUrl').value.trim();
+    var linkType = document.getElementById('bannerLinkType').value;
+    var linkUrl = document.getElementById('bannerLinkUrl').value.trim();
+    var order = parseInt(document.getElementById('bannerOrder').value, 10) || 0;
+    var list = getMockBanners();
+    if (id) {
+        var idx = list.findIndex(function (x) { return x.id === id; });
+        if (idx >= 0) {
+            list[idx] = { ...list[idx], imageUrl: imageUrl, linkType: linkType, linkUrl: linkUrl, order: order };
+            saveMockBanners(list);
+        }
+    } else {
+        list.push({ id: 'banner_' + Date.now(), imageUrl: imageUrl, linkType: linkType, linkUrl: linkUrl, order: order });
+        saveMockBanners(list);
+    }
+    switchPanel('bannerList');
+    refreshBannerList();
+    return false;
+}
+
+var deleteBannerTargetId = null;
+
+function openDeleteBannerModal(id) {
+    deleteBannerTargetId = id;
+    document.getElementById('deleteBannerModalMessage').textContent = '이 배너를 삭제하시겠습니까?';
+    document.getElementById('deleteBannerModal').classList.remove('hidden');
+    document.getElementById('deleteBannerConfirmBtn').onclick = confirmDeleteBanner;
+}
+
+function closeDeleteBannerModal() {
+    deleteBannerTargetId = null;
+    document.getElementById('deleteBannerModal').classList.add('hidden');
+}
+
+function confirmDeleteBanner() {
+    if (!deleteBannerTargetId) return;
+    var list = getMockBanners().filter(function (b) { return b.id !== deleteBannerTargetId; });
+    saveMockBanners(list);
+    closeDeleteBannerModal();
+    refreshBannerList();
+}
+
+// ----------------------------------------
+// 설정 (localStorage)
+// ----------------------------------------
+var STORAGE_KEY_TERMS = 'ph_admin_terms';
+var STORAGE_KEY_PRIVACY = 'ph_admin_privacy';
+var STORAGE_KEY_NOTIFICATION = 'ph_admin_notification';
+
+function loadSettings() {
+    document.getElementById('settingTerms').value = localStorage.getItem(STORAGE_KEY_TERMS) || '';
+    document.getElementById('settingPrivacy').value = localStorage.getItem(STORAGE_KEY_PRIVACY) || '';
+    var notif = {};
+    try {
+        var raw = localStorage.getItem(STORAGE_KEY_NOTIFICATION);
+        if (raw) notif = JSON.parse(raw);
+    } catch (e) {}
+    document.getElementById('settingNotificationStart').value = notif.start || '09:00';
+    document.getElementById('settingNotificationEnd').value = notif.end || '21:00';
+}
+
+function saveTerms() {
+    localStorage.setItem(STORAGE_KEY_TERMS, document.getElementById('settingTerms').value);
+    alert('이용약관이 저장되었습니다. 앱에서는 서버/API 연동 후 동일 내용이 노출됩니다.');
+}
+
+function savePrivacy() {
+    localStorage.setItem(STORAGE_KEY_PRIVACY, document.getElementById('settingPrivacy').value);
+    alert('개인정보처리방침이 저장되었습니다. 앱에서는 서버/API 연동 후 동일 내용이 노출됩니다.');
+}
+
+function saveNotificationSettings() {
+    var start = document.getElementById('settingNotificationStart').value || '09:00';
+    var end = document.getElementById('settingNotificationEnd').value || '21:00';
+    localStorage.setItem(STORAGE_KEY_NOTIFICATION, JSON.stringify({ start: start, end: end }));
+    alert('푸시 알림 시간대 기본값이 저장되었습니다. 실제 발송은 서버 연동 후 적용됩니다.');
 }
 
 // ----------------------------------------

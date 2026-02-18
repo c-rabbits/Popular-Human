@@ -3,15 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>인간실험 관리자 – 이벤트 관리</title>
+    <title>인간실험 관리자</title>
     <link rel="stylesheet" href="css/admin.css">
 </head>
 <body>
-    <!-- 로그인 화면 (비밀번호 입력) -->
+    <!-- 로그인 화면 -->
     <div class="admin-login-screen" id="loginScreen">
         <div class="login-box">
             <h1 class="login-title">인간실험 관리자</h1>
-            <p class="login-desc">이벤트 생성·수정·삭제를 위해 로그인하세요.</p>
+            <p class="login-desc">관리자 페이지 로그인</p>
             <form class="login-form" id="loginForm" onsubmit="return handleLogin(event)">
                 <input type="password" id="adminPassword" class="login-input" placeholder="관리자 비밀번호" autocomplete="current-password" required>
                 <button type="submit" class="login-btn">로그인</button>
@@ -20,7 +20,7 @@
         </div>
     </div>
 
-    <!-- 메인 관리자 영역 (로그인 후 표시) -->
+    <!-- 메인 관리자 영역 -->
     <div class="admin-main hidden" id="adminMain">
         <header class="admin-header">
             <h1 class="admin-header-title">인간실험 관리자</h1>
@@ -31,13 +31,15 @@
         </header>
 
         <nav class="admin-nav">
-            <button type="button" class="admin-nav-item active" data-panel="list" onclick="switchPanel('list')">이벤트 목록</button>
-            <button type="button" class="admin-nav-item" data-panel="form" onclick="switchPanel('form')">이벤트 추가</button>
+            <button type="button" class="admin-nav-item active" data-panel="eventList" onclick="switchPanel('eventList')">이벤트 관리</button>
+            <button type="button" class="admin-nav-item" data-panel="members" onclick="switchPanel('members')">회원 관리</button>
+            <button type="button" class="admin-nav-item" data-panel="bannerList" onclick="switchPanel('bannerList')">배너 관리</button>
+            <button type="button" class="admin-nav-item" data-panel="settings" onclick="switchPanel('settings')">설정</button>
         </nav>
 
         <main class="admin-content">
-            <!-- 이벤트 목록 패널 -->
-            <section class="admin-panel active" id="panelList" data-panel="list">
+            <!-- 1. 이벤트 목록 -->
+            <section class="admin-panel active" id="panelEventList" data-panel="eventList">
                 <div class="panel-toolbar">
                     <div class="filters">
                         <label>상태</label>
@@ -52,7 +54,7 @@
                         <label>시나리오</label>
                         <input type="text" id="filterScenario" class="filter-input" placeholder="시나리오 ID로 검색" oninput="refreshEventList()">
                     </div>
-                    <button type="button" class="btn btn-primary" onclick="switchPanel('form'); setFormMode('add');">+ 이벤트 추가</button>
+                    <button type="button" class="btn btn-primary" onclick="switchPanel('eventForm'); setFormMode('add');">+ 이벤트 추가</button>
                 </div>
                 <div class="table-wrap">
                     <table class="admin-table">
@@ -67,16 +69,14 @@
                                 <th>작업</th>
                             </tr>
                         </thead>
-                        <tbody id="eventListBody">
-                            <!-- JS로 채움 -->
-                        </tbody>
+                        <tbody id="eventListBody"></tbody>
                     </table>
                 </div>
                 <p class="list-empty hidden" id="listEmpty">등록된 이벤트가 없습니다.</p>
             </section>
 
-            <!-- 이벤트 추가/수정 패널 -->
-            <section class="admin-panel" id="panelForm" data-panel="form">
+            <!-- 2. 이벤트 추가/수정 폼 -->
+            <section class="admin-panel" id="panelEventForm" data-panel="eventForm">
                 <h2 class="panel-title" id="formPanelTitle">이벤트 추가</h2>
                 <form class="event-form" id="eventForm" onsubmit="return saveEvent(event)">
                     <input type="hidden" id="eventId" value="">
@@ -87,6 +87,10 @@
                     <div class="form-row">
                         <label for="eventScenarioId">시나리오 *</label>
                         <input type="text" id="eventScenarioId" placeholder="시나리오 ID를 입력하세요" required>
+                    </div>
+                    <div class="form-row">
+                        <label for="eventBannerImageUrl">배너 이미지 URL</label>
+                        <input type="text" id="eventBannerImageUrl" placeholder="예: wedding_banner.png">
                     </div>
                     <div class="form-row">
                         <label for="eventStartAt">시작 일시 *</label>
@@ -124,14 +128,133 @@
                     </div>
                     <div class="form-actions">
                         <button type="submit" class="btn btn-primary" id="formSubmitBtn">저장</button>
-                        <button type="button" class="btn btn-outline" onclick="switchPanel('list')">취소</button>
+                        <button type="button" class="btn btn-outline" onclick="switchPanel('eventList')">취소</button>
                     </div>
                 </form>
+            </section>
+
+            <!-- 3. 회원 관리 -->
+            <section class="admin-panel" id="panelMembers" data-panel="members">
+                <h2 class="panel-title">회원 목록</h2>
+                <div class="panel-toolbar">
+                    <div class="filters">
+                        <label>검색</label>
+                        <input type="text" id="memberSearch" class="filter-input" placeholder="닉네임 또는 회원 ID" oninput="refreshMemberList()">
+                    </div>
+                </div>
+                <div class="table-wrap">
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>회원 ID</th>
+                                <th>닉네임</th>
+                                <th>가입일</th>
+                                <th>캐시</th>
+                                <th>티켓</th>
+                                <th>리워드 포인트</th>
+                            </tr>
+                        </thead>
+                        <tbody id="memberListBody"></tbody>
+                    </table>
+                </div>
+                <p class="list-empty hidden" id="memberListEmpty">조회된 회원이 없습니다.</p>
+            </section>
+
+            <!-- 4. 배너 목록 -->
+            <section class="admin-panel" id="panelBannerList" data-panel="bannerList">
+                <div class="panel-toolbar">
+                    <h2 class="panel-title-inline">배너 목록</h2>
+                    <button type="button" class="btn btn-primary" onclick="switchPanel('bannerForm'); setBannerFormMode('add');">+ 배너 추가</button>
+                </div>
+                <div class="table-wrap">
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>순서</th>
+                                <th>이미지 미리보기</th>
+                                <th>링크 유형</th>
+                                <th>링크 URL</th>
+                                <th>작업</th>
+                            </tr>
+                        </thead>
+                        <tbody id="bannerListBody"></tbody>
+                    </table>
+                </div>
+                <p class="list-empty hidden" id="bannerListEmpty">등록된 배너가 없습니다.</p>
+            </section>
+
+            <!-- 5. 배너 추가/수정 폼 -->
+            <section class="admin-panel" id="panelBannerForm" data-panel="bannerForm">
+                <h2 class="panel-title" id="bannerFormPanelTitle">배너 추가</h2>
+                <form class="event-form" id="bannerForm" onsubmit="return saveBanner(event)">
+                    <input type="hidden" id="bannerId" value="">
+                    <div class="form-row">
+                        <label for="bannerImageUrl">이미지 URL *</label>
+                        <input type="text" id="bannerImageUrl" placeholder="예: Main_Banner_001.png" required>
+                    </div>
+                    <div class="form-row">
+                        <label for="bannerLinkType">링크 유형 *</label>
+                        <select id="bannerLinkType" required>
+                            <option value="internal">내부 링크 (앱 내 화면)</option>
+                            <option value="external">외부 링크 (URL)</option>
+                            <option value="none">링크 없음</option>
+                        </select>
+                    </div>
+                    <div class="form-row" id="bannerLinkUrlRow">
+                        <label for="bannerLinkUrl">링크 URL / 화면 ID</label>
+                        <input type="text" id="bannerLinkUrl" placeholder="외부: https://... / 내부: shop, ranking 등">
+                    </div>
+                    <div class="form-row">
+                        <label for="bannerOrder">노출 순서</label>
+                        <input type="number" id="bannerOrder" min="0" value="0" placeholder="작을수록 앞에 표시">
+                    </div>
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary">저장</button>
+                        <button type="button" class="btn btn-outline" onclick="switchPanel('bannerList')">취소</button>
+                    </div>
+                </form>
+            </section>
+
+            <!-- 6. 설정 -->
+            <section class="admin-panel" id="panelSettings" data-panel="settings">
+                <h2 class="panel-title">설정</h2>
+
+                <div class="settings-block">
+                    <h3 class="settings-block-title">푸시 알림</h3>
+                    <div class="form-row">
+                        <label>알림 허용 시간대 (앱에서 기본값)</label>
+                        <div class="form-inline">
+                            <input type="time" id="settingNotificationStart" value="09:00">
+                            <span>~</span>
+                            <input type="time" id="settingNotificationEnd" value="21:00">
+                        </div>
+                    </div>
+                    <p class="form-hint">앱 설정 화면의 “이벤트 알림” 시간대 기본값입니다. 실제 발송은 서버 연동 후 적용됩니다.</p>
+                    <button type="button" class="btn btn-primary" onclick="saveNotificationSettings()">알림 설정 저장</button>
+                </div>
+
+                <div class="settings-block">
+                    <h3 class="settings-block-title">이용약관</h3>
+                    <div class="form-row">
+                        <label for="settingTerms">내용</label>
+                        <textarea id="settingTerms" rows="12" placeholder="이용약관 내용을 입력하세요"></textarea>
+                    </div>
+                    <button type="button" class="btn btn-primary" onclick="saveTerms()">이용약관 저장</button>
+                </div>
+
+                <div class="settings-block">
+                    <h3 class="settings-block-title">개인정보처리방침</h3>
+                    <div class="form-row">
+                        <label for="settingPrivacy">내용</label>
+                        <textarea id="settingPrivacy" rows="12" placeholder="개인정보처리방침 내용을 입력하세요"></textarea>
+                    </div>
+                    <button type="button" class="btn btn-primary" onclick="savePrivacy()">개인정보처리방침 저장</button>
+                </div>
             </section>
         </main>
     </div>
 
-    <!-- 삭제 확인 모달 -->
+    <!-- 삭제 확인 모달 (이벤트) -->
     <div class="modal hidden" id="deleteModal">
         <div class="modal-backdrop" onclick="closeDeleteModal()"></div>
         <div class="modal-content">
@@ -140,6 +263,19 @@
             <div class="modal-actions">
                 <button type="button" class="btn btn-danger" id="deleteConfirmBtn">삭제</button>
                 <button type="button" class="btn btn-outline" onclick="closeDeleteModal()">취소</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 삭제 확인 모달 (배너) -->
+    <div class="modal hidden" id="deleteBannerModal">
+        <div class="modal-backdrop" onclick="closeDeleteBannerModal()"></div>
+        <div class="modal-content">
+            <h3>배너 삭제</h3>
+            <p id="deleteBannerModalMessage">이 배너를 삭제하시겠습니까?</p>
+            <div class="modal-actions">
+                <button type="button" class="btn btn-danger" id="deleteBannerConfirmBtn">삭제</button>
+                <button type="button" class="btn btn-outline" onclick="closeDeleteBannerModal()">취소</button>
             </div>
         </div>
     </div>
