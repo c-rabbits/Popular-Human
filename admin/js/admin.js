@@ -408,14 +408,38 @@ function confirmDelete() {
 }
 
 // ----------------------------------------
-// 회원 관리 (목업)
+// 회원 관리 (목업 localStorage)
 // ----------------------------------------
+var STORAGE_KEY_MEMBERS = 'ph_admin_members';
+
 function getMockMembers() {
-    return [
-        { id: 'user_1', userId: 'U1111', nickname: '테스트유저1', joinedAt: '2025-02-01T10:00:00Z', cash: 1250, tickets: 5, rewardPoints: 850 },
-        { id: 'user_2', userId: 'U2222', nickname: '대중러버', joinedAt: '2025-02-05T14:30:00Z', cash: 3200, tickets: 12, rewardPoints: 1200 },
-        { id: 'user_3', userId: 'U3333', nickname: '퀴즈왕', joinedAt: '2025-02-10T09:15:00Z', cash: 500, tickets: 2, rewardPoints: 400 }
+    try {
+        var raw = localStorage.getItem(STORAGE_KEY_MEMBERS);
+        if (raw) return JSON.parse(raw);
+    } catch (e) {}
+    var defaultList = [
+        { id: 'user_1', userId: 'U1111', nickname: '테스트유저1', joinedAt: '2025-02-01T10:00:00Z', cash: 1250, tickets: 5, rewardPoints: 850, blocked: false },
+        { id: 'user_2', userId: 'U2222', nickname: '대중러버', joinedAt: '2025-02-05T14:30:00Z', cash: 3200, tickets: 12, rewardPoints: 1200, blocked: false },
+        { id: 'user_3', userId: 'U3333', nickname: '퀴즈왕', joinedAt: '2025-02-10T09:15:00Z', cash: 500, tickets: 2, rewardPoints: 400, blocked: false }
     ];
+    saveMockMembers(defaultList);
+    return defaultList;
+}
+
+function saveMockMembers(list) {
+    localStorage.setItem(STORAGE_KEY_MEMBERS, JSON.stringify(list));
+}
+
+function updateMember(id, patch) {
+    var list = getMockMembers();
+    var idx = list.findIndex(function (m) { return m.id === id; });
+    if (idx < 0) return null;
+    if (patch.blocked !== undefined) list[idx].blocked = !!patch.blocked;
+    if (patch.cash !== undefined) list[idx].cash = Math.max(0, (list[idx].cash || 0) + patch.cash);
+    if (patch.tickets !== undefined) list[idx].tickets = Math.max(0, (list[idx].tickets || 0) + patch.tickets);
+    if (patch.rewardPoints !== undefined) list[idx].rewardPoints = Math.max(0, (list[idx].rewardPoints || 0) + patch.rewardPoints);
+    saveMockMembers(list);
+    return list[idx];
 }
 
 function refreshMemberList() {
@@ -440,9 +464,58 @@ function renderMemberList(members) {
     if (emptyEl) emptyEl.classList.add('hidden');
     members.forEach(function (m) {
         var tr = document.createElement('tr');
-        tr.innerHTML = '<td>' + escapeHtml(m.userId) + '</td><td>' + escapeHtml(m.nickname) + '</td><td>' + formatDateTime(m.joinedAt) + '</td><td>' + (m.cash || 0) + '</td><td>' + (m.tickets || 0) + '</td><td>' + (m.rewardPoints || 0) + '</td>';
+        var status = m.blocked ? '<span class="status-badge status-cancelled">차단</span>' : '<span class="status-badge status-live">정상</span>';
+        tr.innerHTML = '<td>' + escapeHtml(m.userId) + '</td><td>' + escapeHtml(m.nickname) + '</td><td>' + formatDateTime(m.joinedAt) + '</td><td>' + (m.cash || 0) + '</td><td>' + (m.tickets || 0) + '</td><td>' + (m.rewardPoints || 0) + '</td><td>' + status + '</td><td><button type="button" class="btn btn-outline btn-sm" onclick="openMemberModal(\'' + m.id + '\')">관리</button></td>';
         tbody.appendChild(tr);
     });
+}
+
+function openMemberModal(memberId) {
+    var list = getMockMembers();
+    var m = list.find(function (x) { return x.id === memberId; });
+    if (!m) return;
+    document.getElementById('memberModalId').value = m.id;
+    document.getElementById('memberModalInfo').textContent = m.nickname + ' (' + m.userId + ')';
+    document.getElementById('memberModalBlocked').checked = !!m.blocked;
+    document.getElementById('memberModalCashCurrent').textContent = m.cash || 0;
+    document.getElementById('memberModalTicketCurrent').textContent = m.tickets || 0;
+    document.getElementById('memberModalRewardCurrent').textContent = m.rewardPoints || 0;
+    document.getElementById('memberModalCashDelta').value = 0;
+    document.getElementById('memberModalTicketDelta').value = 0;
+    document.getElementById('memberModalRewardDelta').value = 0;
+    document.getElementById('memberModal').classList.remove('hidden');
+}
+
+function closeMemberModal() {
+    document.getElementById('memberModal').classList.add('hidden');
+}
+
+function applyMemberDelta(field, sign) {
+    var id = field === 'cash' ? 'memberModalCashDelta' : field === 'tickets' ? 'memberModalTicketDelta' : 'memberModalRewardDelta';
+    var el = document.getElementById(id);
+    var amount = (parseInt(el.value, 10) || 0) * sign;
+    if (amount === 0) return;
+    var memberId = document.getElementById('memberModalId').value;
+    var patch = {};
+    patch[field] = amount;
+    updateMember(memberId, patch);
+    var m = getMockMembers().find(function (x) { return x.id === memberId; });
+    if (m) {
+        document.getElementById('memberModalCashCurrent').textContent = m.cash || 0;
+        document.getElementById('memberModalTicketCurrent').textContent = m.tickets || 0;
+        document.getElementById('memberModalRewardCurrent').textContent = m.rewardPoints || 0;
+    }
+    el.value = 0;
+    refreshMemberList();
+}
+
+function applyMemberAction() {
+    var id = document.getElementById('memberModalId').value;
+    var blocked = document.getElementById('memberModalBlocked').checked;
+    updateMember(id, { blocked: blocked });
+    closeMemberModal();
+    refreshMemberList();
+    alert('적용되었습니다.');
 }
 
 // ----------------------------------------
@@ -489,13 +562,41 @@ function renderBannerList(banners) {
     });
 }
 
+function onBannerFileSelect(input) {
+    var file = input && input.files && input.files[0];
+    var dataEl = document.getElementById('bannerImageData');
+    var urlEl = document.getElementById('bannerImageUrl');
+    var preview = document.getElementById('bannerPreview');
+    if (!preview || !dataEl) return;
+    if (!file || !file.type.match(/^image\//)) {
+        dataEl.value = '';
+        preview.style.backgroundImage = '';
+        preview.classList.remove('has-image');
+        return;
+    }
+    var reader = new FileReader();
+    reader.onload = function () {
+        dataEl.value = reader.result;
+        preview.style.backgroundImage = 'url(' + reader.result + ')';
+        preview.classList.add('has-image');
+        urlEl.value = '';
+    };
+    reader.readAsDataURL(file);
+}
+
 function setBannerFormMode(mode, bannerId) {
     var form = document.getElementById('bannerForm');
     var titleEl = document.getElementById('bannerFormPanelTitle');
     var idEl = document.getElementById('bannerId');
+    var dataEl = document.getElementById('bannerImageData');
+    var fileEl = document.getElementById('bannerImageFile');
+    var preview = document.getElementById('bannerPreview');
     if (!form) return;
     form.reset();
     idEl.value = '';
+    if (dataEl) dataEl.value = '';
+    if (fileEl) fileEl.value = '';
+    if (preview) { preview.style.backgroundImage = ''; preview.classList.remove('has-image'); }
     if (mode === 'add') {
         titleEl.textContent = '배너 추가';
         document.getElementById('bannerOrder').value = 0;
@@ -507,7 +608,15 @@ function setBannerFormMode(mode, bannerId) {
         var list = getMockBanners();
         var b = list.find(function (x) { return x.id === bannerId; });
         if (b) {
-            document.getElementById('bannerImageUrl').value = b.imageUrl || '';
+            var img = b.imageUrl || '';
+            if (img && img.indexOf('data:') === 0) {
+                dataEl.value = img;
+                preview.style.backgroundImage = 'url(' + img + ')';
+                preview.classList.add('has-image');
+            } else {
+                document.getElementById('bannerImageUrl').value = img;
+                if (img) { preview.style.backgroundImage = 'url(' + escapeHtml(img) + ')'; preview.classList.add('has-image'); }
+            }
             document.getElementById('bannerLinkType').value = b.linkType || 'none';
             document.getElementById('bannerLinkUrl').value = b.linkUrl || '';
             document.getElementById('bannerOrder').value = b.order ?? 0;
@@ -523,7 +632,13 @@ function editBanner(id) {
 function saveBanner(e) {
     e.preventDefault();
     var id = document.getElementById('bannerId').value;
-    var imageUrl = document.getElementById('bannerImageUrl').value.trim();
+    var imageData = (document.getElementById('bannerImageData') && document.getElementById('bannerImageData').value) || '';
+    var imageUrl = (document.getElementById('bannerImageUrl') && document.getElementById('bannerImageUrl').value) || '';
+    var finalImage = imageData.trim() || imageUrl.trim();
+    if (!finalImage) {
+        alert('이미지를 업로드하거나 URL을 입력하세요.');
+        return false;
+    }
     var linkType = document.getElementById('bannerLinkType').value;
     var linkUrl = document.getElementById('bannerLinkUrl').value.trim();
     var order = parseInt(document.getElementById('bannerOrder').value, 10) || 0;
@@ -531,11 +646,11 @@ function saveBanner(e) {
     if (id) {
         var idx = list.findIndex(function (x) { return x.id === id; });
         if (idx >= 0) {
-            list[idx] = { ...list[idx], imageUrl: imageUrl, linkType: linkType, linkUrl: linkUrl, order: order };
+            list[idx] = { ...list[idx], imageUrl: finalImage, linkType: linkType, linkUrl: linkUrl, order: order };
             saveMockBanners(list);
         }
     } else {
-        list.push({ id: 'banner_' + Date.now(), imageUrl: imageUrl, linkType: linkType, linkUrl: linkUrl, order: order });
+        list.push({ id: 'banner_' + Date.now(), imageUrl: finalImage, linkType: linkType, linkUrl: linkUrl, order: order });
         saveMockBanners(list);
     }
     switchPanel('bannerList');
@@ -582,6 +697,85 @@ function loadSettings() {
     } catch (e) {}
     document.getElementById('settingNotificationStart').value = notif.start || '09:00';
     document.getElementById('settingNotificationEnd').value = notif.end || '21:00';
+    refreshPushScheduledList();
+}
+
+// ----------------------------------------
+// 푸시 발송 (즉시/예약)
+// ----------------------------------------
+var STORAGE_KEY_SCHEDULED_PUSHES = 'ph_admin_scheduled_pushes';
+
+function getScheduledPushes() {
+    try {
+        var raw = localStorage.getItem(STORAGE_KEY_SCHEDULED_PUSHES);
+        if (raw) return JSON.parse(raw);
+    } catch (e) {}
+    return [];
+}
+
+function saveScheduledPushes(list) {
+    localStorage.setItem(STORAGE_KEY_SCHEDULED_PUSHES, JSON.stringify(list));
+}
+
+function refreshPushScheduledList() {
+    var list = getScheduledPushes();
+    var ul = document.getElementById('pushScheduledList');
+    var wrap = document.getElementById('pushScheduledListWrap');
+    if (!ul) return;
+    ul.innerHTML = '';
+    if (list.length === 0) {
+        ul.innerHTML = '<li class="empty">예약된 푸시가 없습니다.</li>';
+        return;
+    }
+    list.forEach(function (p, i) {
+        var li = document.createElement('li');
+        var at = p.scheduledAt ? formatDateTime(p.scheduledAt) : '즉시';
+        li.innerHTML = '<strong>' + escapeHtml(p.title || '(제목 없음)') + '</strong> – ' + at + ' <button type="button" class="btn btn-outline btn-sm" onclick="removeScheduledPush(' + i + ')">삭제</button>';
+        ul.appendChild(li);
+    });
+}
+
+function removeScheduledPush(index) {
+    var list = getScheduledPushes();
+    list.splice(index, 1);
+    saveScheduledPushes(list);
+    refreshPushScheduledList();
+}
+
+function sendPushNow() {
+    var title = (document.getElementById('pushTitle') && document.getElementById('pushTitle').value) || '';
+    var body = (document.getElementById('pushBody') && document.getElementById('pushBody').value) || '';
+    if (!title && !body) {
+        alert('제목 또는 내용을 입력하세요.');
+        return;
+    }
+    alert('즉시 발송은 서버/Firebase 연동 후 적용됩니다. 현재는 등록만 됩니다.');
+    var list = getScheduledPushes();
+    list.unshift({ title: title, body: body, scheduledAt: null, createdAt: new Date().toISOString() });
+    saveScheduledPushes(list);
+    refreshPushScheduledList();
+}
+
+function schedulePush() {
+    var title = (document.getElementById('pushTitle') && document.getElementById('pushTitle').value) || '';
+    var body = (document.getElementById('pushBody') && document.getElementById('pushBody').value) || '';
+    var scheduledAt = (document.getElementById('pushScheduledAt') && document.getElementById('pushScheduledAt').value) || '';
+    if (!title && !body) {
+        alert('제목 또는 내용을 입력하세요.');
+        return;
+    }
+    if (!scheduledAt) {
+        alert('예약 일시를 선택하세요.');
+        return;
+    }
+    var list = getScheduledPushes();
+    list.push({ title: title, body: body, scheduledAt: new Date(scheduledAt).toISOString(), createdAt: new Date().toISOString() });
+    saveScheduledPushes(list);
+    refreshPushScheduledList();
+    document.getElementById('pushTitle').value = '';
+    document.getElementById('pushBody').value = '';
+    document.getElementById('pushScheduledAt').value = '';
+    alert('예약 발송이 등록되었습니다. 실제 발송은 서버/Firebase 연동 후 적용됩니다.');
 }
 
 function saveTerms() {

@@ -408,6 +408,83 @@ body {
     justify-content: flex-end;
 }
 
+.modal-content-wide {
+    max-width: 480px;
+}
+
+.member-modal-info {
+    margin: 0 0 1rem;
+    font-weight: 500;
+    color: var(--text);
+}
+
+.checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: normal;
+    cursor: pointer;
+}
+
+.checkbox-label input {
+    width: auto;
+}
+
+/* 배너 업로드 */
+.banner-upload-area {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.banner-upload-area input[type="file"] {
+    font-size: 0.9rem;
+}
+
+.banner-preview {
+    width: 100%;
+    max-width: 320px;
+    height: 120px;
+    background: var(--bg) center/contain no-repeat;
+    border: 1px dashed var(--border);
+    border-radius: 8px;
+}
+
+.banner-preview.has-image {
+    border-style: solid;
+}
+
+/* 예약 푸시 목록 */
+.push-scheduled-list {
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--border);
+}
+
+.push-scheduled-list h4 {
+    margin: 0 0 0.5rem;
+    font-size: 0.95rem;
+}
+
+.push-scheduled-list ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.push-scheduled-list li {
+    padding: 0.35rem 0;
+    font-size: 0.9rem;
+}
+
+.push-scheduled-list li.empty {
+    color: var(--text-muted);
+}
+
+.push-scheduled-list li .btn {
+    margin-left: 0.5rem;
+}
+
 /* 설정 블록 */
 .settings-block {
     background: var(--card);

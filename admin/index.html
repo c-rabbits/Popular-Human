@@ -152,6 +152,8 @@
                                 <th>캐시</th>
                                 <th>티켓</th>
                                 <th>리워드 포인트</th>
+                                <th>상태</th>
+                                <th>작업</th>
                             </tr>
                         </thead>
                         <tbody id="memberListBody"></tbody>
@@ -188,9 +190,18 @@
                 <h2 class="panel-title" id="bannerFormPanelTitle">배너 추가</h2>
                 <form class="event-form" id="bannerForm" onsubmit="return saveBanner(event)">
                     <input type="hidden" id="bannerId" value="">
+                    <input type="hidden" id="bannerImageData" value="">
                     <div class="form-row">
-                        <label for="bannerImageUrl">이미지 URL *</label>
-                        <input type="text" id="bannerImageUrl" placeholder="예: Main_Banner_001.png" required>
+                        <label>이미지 *</label>
+                        <div class="banner-upload-area">
+                            <input type="file" id="bannerImageFile" accept="image/*" onchange="onBannerFileSelect(this)">
+                            <div class="banner-preview" id="bannerPreview"></div>
+                            <p class="form-hint">이미지를 선택하거나 아래에 URL을 입력하세요.</p>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <label for="bannerImageUrl">또는 이미지 URL</label>
+                        <input type="text" id="bannerImageUrl" placeholder="예: https://... 또는 Main_Banner_001.png">
                     </div>
                     <div class="form-row">
                         <label for="bannerLinkType">링크 유형 *</label>
@@ -234,6 +245,32 @@
                 </div>
 
                 <div class="settings-block">
+                    <h3 class="settings-block-title">푸시 발송</h3>
+                    <p class="form-hint">실제 발송은 Firebase Cloud Messaging(FCM) 또는 서버 연동 후 적용됩니다. Firebase Console 등 별도 관리툴 사용 시 이 기능은 생략 가능합니다.</p>
+                    <div class="form-row">
+                        <label for="pushTitle">제목</label>
+                        <input type="text" id="pushTitle" placeholder="푸시 제목">
+                    </div>
+                    <div class="form-row">
+                        <label for="pushBody">내용</label>
+                        <textarea id="pushBody" rows="3" placeholder="푸시 내용"></textarea>
+                    </div>
+                    <div class="form-row">
+                        <label for="pushScheduledAt">예약 일시 (선택)</label>
+                        <input type="datetime-local" id="pushScheduledAt">
+                        <p class="form-hint">비워두면 즉시 발송으로 등록됩니다.</p>
+                    </div>
+                    <div class="form-inline form-actions">
+                        <button type="button" class="btn btn-primary" onclick="sendPushNow()">즉시 발송</button>
+                        <button type="button" class="btn btn-outline" onclick="schedulePush()">예약 발송 등록</button>
+                    </div>
+                    <div class="push-scheduled-list" id="pushScheduledListWrap">
+                        <h4>예약된 푸시</h4>
+                        <ul id="pushScheduledList"></ul>
+                    </div>
+                </div>
+
+                <div class="settings-block">
                     <h3 class="settings-block-title">이용약관</h3>
                     <div class="form-row">
                         <label for="settingTerms">내용</label>
@@ -263,6 +300,51 @@
             <div class="modal-actions">
                 <button type="button" class="btn btn-danger" id="deleteConfirmBtn">삭제</button>
                 <button type="button" class="btn btn-outline" onclick="closeDeleteModal()">취소</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 회원 관리 모달 (지급/차감·블록) -->
+    <div class="modal hidden" id="memberModal">
+        <div class="modal-backdrop" onclick="closeMemberModal()"></div>
+        <div class="modal-content modal-content-wide">
+            <h3>회원 관리</h3>
+            <p class="member-modal-info" id="memberModalInfo"></p>
+            <input type="hidden" id="memberModalId" value="">
+            <div class="form-row">
+                <label>블록 (차단)</label>
+                <label class="checkbox-label"><input type="checkbox" id="memberModalBlocked"> 차단 시 로그인·플레이 불가</label>
+            </div>
+            <div class="form-row">
+                <label>캐시</label>
+                <div class="form-inline">
+                    <input type="number" id="memberModalCashDelta" placeholder="숫자 입력" value="0">
+                    <button type="button" class="btn btn-outline btn-sm" onclick="applyMemberDelta('cash', 1)">지급</button>
+                    <button type="button" class="btn btn-outline btn-sm" onclick="applyMemberDelta('cash', -1)">차감</button>
+                </div>
+                <p class="form-hint">현재 보유: <span id="memberModalCashCurrent">0</span></p>
+            </div>
+            <div class="form-row">
+                <label>티켓</label>
+                <div class="form-inline">
+                    <input type="number" id="memberModalTicketDelta" placeholder="숫자 입력" value="0">
+                    <button type="button" class="btn btn-outline btn-sm" onclick="applyMemberDelta('tickets', 1)">지급</button>
+                    <button type="button" class="btn btn-outline btn-sm" onclick="applyMemberDelta('tickets', -1)">차감</button>
+                </div>
+                <p class="form-hint">현재 보유: <span id="memberModalTicketCurrent">0</span></p>
+            </div>
+            <div class="form-row">
+                <label>리워드 포인트</label>
+                <div class="form-inline">
+                    <input type="number" id="memberModalRewardDelta" placeholder="숫자 입력" value="0">
+                    <button type="button" class="btn btn-outline btn-sm" onclick="applyMemberDelta('rewardPoints', 1)">지급</button>
+                    <button type="button" class="btn btn-outline btn-sm" onclick="applyMemberDelta('rewardPoints', -1)">차감</button>
+                </div>
+                <p class="form-hint">현재 보유: <span id="memberModalRewardCurrent">0</span></p>
+            </div>
+            <div class="modal-actions">
+                <button type="button" class="btn btn-primary" onclick="applyMemberAction()">적용</button>
+                <button type="button" class="btn btn-outline" onclick="closeMemberModal()">닫기</button>
             </div>
         </div>
     </div>
