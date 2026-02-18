@@ -601,6 +601,8 @@ function updateUserStats(data) {
     console.log('유저 스탯 업데이트:', data);
     if (data.cash !== undefined) {
         document.getElementById('cashCount').textContent = data.cash;
+        var shopCashEl = document.getElementById('shopCashCount');
+        if (shopCashEl) shopCashEl.textContent = data.cash;
     }
     if (data.rewardPoints !== undefined) {
         document.getElementById('rewardPoints').textContent = data.rewardPoints;
@@ -1145,6 +1147,11 @@ function switchScreen(screenName) {
 
     if (screenName === 'ranking') {
         updateTrendMyResults();
+    }
+    if (screenName === 'shop') {
+        var cashEl = document.getElementById('cashCount');
+        var shopCashEl = document.getElementById('shopCashCount');
+        if (cashEl && shopCashEl) shopCashEl.textContent = cashEl.textContent;
     }
     applyLanguageToPage();
     if (screenName === 'settings') {

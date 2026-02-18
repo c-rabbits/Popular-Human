@@ -1591,6 +1591,33 @@ body {
     margin-bottom: 20px;
 }
 
+/* 상점 헤더: 타이틀 + 내 캐시(오른쪽) */
+.shop-header-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    gap: 12px;
+}
+.shop-header-row .screen-title {
+    margin-bottom: 0;
+}
+.shop-my-cash {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 18px;
+    font-weight: 700;
+    color: #000;
+    flex-shrink: 0;
+}
+.shop-my-cash-icon {
+    font-size: 20px;
+}
+.shop-my-cash-value {
+    font-variant-numeric: tabular-nums;
+}
+
 .placeholder-content {
     background: #f8f8f8;
     border-radius: 12px;
@@ -2028,7 +2055,10 @@ body {
     justify-content: space-between;
     min-height: auto;
     padding: 12px 16px;
-    border-top: none;
+    background: #fff;
+    border-radius: 14px;
+    border: 1px solid #c4c4c4;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.08);
 }
 .shop-list-item.shop-list-item-single .shop-list-item-row-top,
 .shop-list-item.shop-list-item-single .shop-list-item-row-bottom {

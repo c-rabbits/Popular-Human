@@ -28,7 +28,6 @@
                     <div class="user-stats">
                         <div class="stat-item" data-asset="cash" title="보유 캐시">
                             <span class="stat-icon">💰</span>
-                            <span class="stat-label">캐시</span>
                             <span class="stat-value" id="cashCount">1250</span>
                         </div>
                         <div class="stat-item">
@@ -549,7 +548,13 @@
 
             <!-- 상점 화면 -->
             <div class="other-screen" id="shopScreen">
-                <div class="screen-title" data-i18n="screenShop">🛍 상점</div>
+                <div class="shop-header-row">
+                    <h2 class="screen-title" data-i18n="screenShop">🛍 상점</h2>
+                    <div class="shop-my-cash" aria-label="내 캐시">
+                        <span class="shop-my-cash-icon">💰</span>
+                        <span class="shop-my-cash-value" id="shopCashCount">0</span>
+                    </div>
+                </div>
 
                 <div class="shop-tabs" role="tablist">
                     <button type="button" class="shop-tab active" role="tab" aria-selected="true" data-tab="cash" onclick="switchShopTab('cash')">캐시 구매</button>
