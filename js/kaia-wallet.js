@@ -29,10 +29,9 @@ let isKaiaInitialized = false;
 // ========================================
 
 async function initKaiaSDK() {
-    // clientId 미설정 시 개발 모드
+    // clientId 미설정 시 개발 모드 (경고 한 번만)
     if (!KAIA_CONFIG.clientId) {
-        console.warn('[Kaia] clientId 미설정 → 개발 모드 (목업 데이터 사용)');
-        console.warn('[Kaia] Dapp Portal에서 clientId를 발급받아 KAIA_CONFIG.clientId에 입력하세요.');
+        console.warn('[Kaia] clientId 미설정 → 개발 모드 (목업). Dapp Portal에서 clientId 발급 후 KAIA_CONFIG.clientId에 입력.');
         isKaiaInitialized = false;
         return false;
     }

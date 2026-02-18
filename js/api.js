@@ -22,6 +22,7 @@ const API = {
                 if (sb && lineUserId) {
                     const { data: profile, error } = await sb.from('profiles').select('*').eq('line_user_id', lineUserId).maybeSingle();
                     if (!error && profile) {
+                        console.log('[API] getUserInfo: Supabase profiles에서 로드');
                         const uidSuffix = (profile.line_user_id || '').replace(/[^a-zA-Z0-9]/g, '').substring(0, 8).toUpperCase();
                         return {
                             userId: lineUserId,
