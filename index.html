@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>대중적 인간 - Popular Human</title>
+    <title>Human Experiment</title>
     <script charset="utf-8" src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
     <script src="https://static.kaiawallet.io/js/dapp-portal-sdk.js"></script>
     <link rel="stylesheet" href="css/style.css">
@@ -418,9 +418,9 @@
             </div>
 
             <!-- 닉네임 만들기 팝업 -->
-            <div class="nickname-popup" id="nicknamePopup">
+            <div class="nickname-popup" id="nicknamePopup" onclick="event.stopPropagation()">
                 <div class="nickname-popup-backdrop" onclick="closeNicknamePopup()"></div>
-                <div class="nickname-popup-content">
+                <div class="nickname-popup-content" onclick="event.stopPropagation()">
                     <div class="nickname-popup-title">닉네임 만들기</div>
                     <p class="nickname-popup-desc">2자 이상 10자 이하, 중복 불가</p>
                     <input type="text" class="nickname-popup-input" id="nicknamePopupInput" maxlength="10" placeholder="닉네임 입력" autocomplete="off">
@@ -433,9 +433,9 @@
             </div>
 
             <!-- 언어 선택 모달 -->
-            <div class="language-modal" id="languageModal">
+            <div class="language-modal" id="languageModal" onclick="event.stopPropagation()">
                 <div class="language-modal-backdrop" onclick="closeLanguageModal()"></div>
-                <div class="language-modal-content">
+                <div class="language-modal-content" onclick="event.stopPropagation()">
                     <div class="language-modal-title" data-i18n="languageLabel">언어</div>
                     <button type="button" class="language-option" data-lang-option="auto" onclick="saveLanguage(''); closeLanguageModal();">자동 (기기 언어)</button>
                     <button type="button" class="language-option" data-lang-option="ko" onclick="saveLanguage('ko'); closeLanguageModal();">한국어</button>
@@ -445,8 +445,8 @@
             </div>
 
             <!-- 알림 팝업 -->
-            <div class="notification-popup" id="notificationPopup">
-                <div class="notification-popup-content">
+            <div class="notification-popup" id="notificationPopup" onclick="event.stopPropagation()">
+                <div class="notification-popup-content" onclick="event.stopPropagation()">
                     <div class="notification-popup-title">🔔 다음 이벤트 알림</div>
                     <div class="notification-popup-text">
                         다음 이벤트 시작 <strong>10분 전</strong>에 알림을 보내드립니다.
@@ -462,9 +462,9 @@
                 </div>
             </div>
 
-            <!-- 공유 팝업 -->
-            <div class="share-popup" id="sharePopup">
-                <div class="share-popup-content">
+            <!-- 공유 팝업 (결과 공유하기 / 이벤트 공유하기) -->
+            <div class="share-popup" id="sharePopup" onclick="event.stopPropagation()">
+                <div class="share-popup-content" onclick="event.stopPropagation()">
                     <div class="share-popup-title">📤 결과 공유하기</div>
                     <div class="share-text-area" id="shareText"></div>
                     <div class="share-buttons">
@@ -475,8 +475,8 @@
             </div>
 
             <!-- 시간 종료 팝업 -->
-            <div class="timeout-popup" id="timeoutPopup">
-                <div class="timeout-popup-content">
+            <div class="timeout-popup" id="timeoutPopup" onclick="event.stopPropagation()">
+                <div class="timeout-popup-content" onclick="event.stopPropagation()">
                     <div class="timeout-popup-icon">⏱️</div>
                     <div class="timeout-popup-title">시간이 종료되었습니다</div>
                     <div class="timeout-popup-text">10분 안에 모든 질문에<br>답변하지 못했습니다.</div>
@@ -485,8 +485,8 @@
             </div>
 
             <!-- 게임 시작 확인 팝업 -->
-            <div class="game-start-popup" id="gameStartPopup">
-                <div class="game-start-popup-content">
+            <div class="game-start-popup" id="gameStartPopup" onclick="event.stopPropagation()">
+                <div class="game-start-popup-content" onclick="event.stopPropagation()">
                     <div class="game-start-popup-title">게임을 시작할까요?</div>
                     <div class="game-start-info">
                         <div class="game-start-info-item">
@@ -510,8 +510,8 @@
             </div>
 
             <!-- 게임 종료 확인 팝업 -->
-            <div class="exit-game-popup" id="exitGamePopup">
-                <div class="exit-game-popup-content">
+            <div class="exit-game-popup" id="exitGamePopup" onclick="event.stopPropagation()">
+                <div class="exit-game-popup-content" onclick="event.stopPropagation()">
                     <div class="exit-game-popup-icon">⚠️</div>
                     <div class="exit-game-popup-title">게임을 종료하시겠습니까?</div>
                     <div class="exit-game-popup-text">
@@ -526,8 +526,8 @@
             </div>
 
             <!-- 티켓 구매 확인 팝업 (게임 시작 팝업과 동일 스타일) -->
-            <div class="game-start-popup" id="shopPurchasePopup">
-                <div class="game-start-popup-content">
+            <div class="game-start-popup" id="shopPurchasePopup" onclick="event.stopPropagation()">
+                <div class="game-start-popup-content" onclick="event.stopPropagation()">
                     <div class="game-start-popup-title">티켓을 구매할까요?</div>
                     <div class="game-start-info">
                         <div class="game-start-info-item">
@@ -1353,7 +1353,7 @@
 
                 <!-- UID 섹션 -->
                 <div class="wallet-info-card">
-                    <div class="wallet-info-label">대중적인간 UID</div>
+                    <div class="wallet-info-label">Human Experiment UID</div>
                     <div class="wallet-info-row">
                         <span class="wallet-info-value" id="walletUID">-</span>
                         <button class="wallet-copy-btn" onclick="copyToClipboard(document.getElementById('walletUID').textContent, 'UID')">

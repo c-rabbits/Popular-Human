@@ -396,7 +396,7 @@ async function showFinalResult(result) {
     if (result.isWinner) {
         // 승자
         document.getElementById('resultEmoji').style.display = 'none';
-        document.getElementById('resultTitle').textContent = '🎊 축하합니다! 당신은 가장 대중적인 인간입니다 🎊';
+        document.getElementById('resultTitle').textContent = '🎊 축하합니다! 당신은 Human Experiment 우승자입니다 🎊';
         document.getElementById('resultSubtitle').textContent = '전 세계 사람들의 판단 흐름을 완벽하게 읽어냈어요! 당신은 트렌드의 중심에 있습니다.';
 
         // 도전 정보 표시

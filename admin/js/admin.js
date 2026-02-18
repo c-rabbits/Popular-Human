@@ -419,7 +419,7 @@ function getMockMembers() {
     } catch (e) {}
     var defaultList = [
         { id: 'user_1', userId: 'U1111', nickname: '테스트유저1', joinedAt: '2025-02-01T10:00:00Z', cash: 1250, tickets: 5, rewardPoints: 850, blocked: false },
-        { id: 'user_2', userId: 'U2222', nickname: '대중러버', joinedAt: '2025-02-05T14:30:00Z', cash: 3200, tickets: 12, rewardPoints: 1200, blocked: false },
+        { id: 'user_2', userId: 'U2222', nickname: '실험러버', joinedAt: '2025-02-05T14:30:00Z', cash: 3200, tickets: 12, rewardPoints: 1200, blocked: false },
         { id: 'user_3', userId: 'U3333', nickname: '퀴즈왕', joinedAt: '2025-02-10T09:15:00Z', cash: 500, tickets: 2, rewardPoints: 400, blocked: false }
     ];
     saveMockMembers(defaultList);

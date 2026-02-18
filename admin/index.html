@@ -294,7 +294,7 @@
     <!-- 삭제 확인 모달 (이벤트) -->
     <div class="modal hidden" id="deleteModal">
         <div class="modal-backdrop" onclick="closeDeleteModal()"></div>
-        <div class="modal-content">
+        <div class="modal-content" onclick="event.stopPropagation()">
             <h3>이벤트 삭제</h3>
             <p id="deleteModalMessage">이 이벤트를 삭제하시겠습니까?</p>
             <div class="modal-actions">
@@ -307,7 +307,7 @@
     <!-- 회원 관리 모달 (지급/차감·블록) -->
     <div class="modal hidden" id="memberModal">
         <div class="modal-backdrop" onclick="closeMemberModal()"></div>
-        <div class="modal-content modal-content-wide">
+        <div class="modal-content modal-content-wide" onclick="event.stopPropagation()">
             <h3>회원 관리</h3>
             <p class="member-modal-info" id="memberModalInfo"></p>
             <input type="hidden" id="memberModalId" value="">
@@ -319,8 +319,8 @@
                 <label>캐시</label>
                 <div class="form-inline">
                     <input type="number" id="memberModalCashDelta" placeholder="숫자 입력" value="0">
-                    <button type="button" class="btn btn-outline btn-sm" onclick="applyMemberDelta('cash', 1)">지급</button>
-                    <button type="button" class="btn btn-outline btn-sm" onclick="applyMemberDelta('cash', -1)">차감</button>
+                    <button type="button" class="btn btn-outline btn-sm btn-delta" onclick="applyMemberDelta('cash', 1)">지급</button>
+                    <button type="button" class="btn btn-outline btn-sm btn-delta" onclick="applyMemberDelta('cash', -1)">차감</button>
                 </div>
                 <p class="form-hint">현재 보유: <span id="memberModalCashCurrent">0</span></p>
             </div>
@@ -328,8 +328,8 @@
                 <label>티켓</label>
                 <div class="form-inline">
                     <input type="number" id="memberModalTicketDelta" placeholder="숫자 입력" value="0">
-                    <button type="button" class="btn btn-outline btn-sm" onclick="applyMemberDelta('tickets', 1)">지급</button>
-                    <button type="button" class="btn btn-outline btn-sm" onclick="applyMemberDelta('tickets', -1)">차감</button>
+                    <button type="button" class="btn btn-outline btn-sm btn-delta" onclick="applyMemberDelta('tickets', 1)">지급</button>
+                    <button type="button" class="btn btn-outline btn-sm btn-delta" onclick="applyMemberDelta('tickets', -1)">차감</button>
                 </div>
                 <p class="form-hint">현재 보유: <span id="memberModalTicketCurrent">0</span></p>
             </div>
@@ -337,8 +337,8 @@
                 <label>리워드 포인트</label>
                 <div class="form-inline">
                     <input type="number" id="memberModalRewardDelta" placeholder="숫자 입력" value="0">
-                    <button type="button" class="btn btn-outline btn-sm" onclick="applyMemberDelta('rewardPoints', 1)">지급</button>
-                    <button type="button" class="btn btn-outline btn-sm" onclick="applyMemberDelta('rewardPoints', -1)">차감</button>
+                    <button type="button" class="btn btn-outline btn-sm btn-delta" onclick="applyMemberDelta('rewardPoints', 1)">지급</button>
+                    <button type="button" class="btn btn-outline btn-sm btn-delta" onclick="applyMemberDelta('rewardPoints', -1)">차감</button>
                 </div>
                 <p class="form-hint">현재 보유: <span id="memberModalRewardCurrent">0</span></p>
             </div>
@@ -352,7 +352,7 @@
     <!-- 삭제 확인 모달 (배너) -->
     <div class="modal hidden" id="deleteBannerModal">
         <div class="modal-backdrop" onclick="closeDeleteBannerModal()"></div>
-        <div class="modal-content">
+        <div class="modal-content" onclick="event.stopPropagation()">
             <h3>배너 삭제</h3>
             <p id="deleteBannerModalMessage">이 배너를 삭제하시겠습니까?</p>
             <div class="modal-actions">

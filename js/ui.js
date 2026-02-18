@@ -1065,14 +1065,14 @@ function shareInviteLink() {
     var messages = [
         {
             type: 'flex',
-            altText: '대중적 인간 - 함께 플레이해요!',
+            altText: 'Human Experiment - 함께 플레이해요!',
             contents: {
                 type: 'bubble',
                 hero: {
                     type: 'box',
                     layout: 'vertical',
                     contents: [
-                        { type: 'text', text: '🎁 대중적 인간', weight: 'bold', size: 'xl', align: 'center', color: '#FF6B35' },
+                        { type: 'text', text: '🎁 Human Experiment', weight: 'bold', size: 'xl', align: 'center', color: '#FF6B35' },
                         { type: 'text', text: '사회적 행동 예측 퀴즈 게임', size: 'sm', align: 'center', color: '#999999', margin: 'sm' }
                     ],
                     paddingAll: '20px',
@@ -1238,9 +1238,9 @@ function shareResult() {
         const correctAnswers = document.getElementById('correctAnswers').textContent;
         const totalWinners = document.getElementById('totalWinners').textContent;
 
-        shareText = `🏆 대중적 인간 게임 결과 🏆
+        shareText = `🏆 Human Experiment 게임 결과 🏆
 
-✅ 당신은 대중적 인간입니다!
+✅ 당신은 Human Experiment입니다!
 전 세계 사람들의 판단 흐름을 끝까지 읽었습니다.
 
 💰 획득 상금: ${rewardAmount}
@@ -1254,7 +1254,7 @@ ${gameUrl}`;
     } else {
         const correctAnswers = document.getElementById('correctAnswersLose').textContent;
 
-        shareText = `🧠 대중적 인간 게임 결과
+        shareText = `🧠 Human Experiment 게임 결과
 
 당신은 대중과 다른 선택을 했습니다.
 하지만, 대부분의 사람도 이 지점에서 갈렸습니다!
@@ -1303,7 +1303,7 @@ async function copyShareText() {
 }
 
 function shareEvent() {
-    const shareText = `🎮 대중적 인간 - 트렌드 예측 게임
+    const shareText = `🎮 Human Experiment - 트렌드 예측 게임
 
 "사람들은 당신과 같은 선택을 할까요?"
 

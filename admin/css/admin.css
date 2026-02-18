@@ -430,6 +430,11 @@ body {
     width: auto;
 }
 
+/* 회원 관리 팝업 지급/차감 버튼 가로 확대 (약 2배) */
+.btn-delta {
+    min-width: 4.5rem;
+}
+
 /* 배너 업로드 */
 .banner-upload-area {
     display: flex;

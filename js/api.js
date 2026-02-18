@@ -28,10 +28,10 @@ const API = {
             const nickname = (typeof localStorage !== 'undefined' && localStorage.getItem('ph_nickname')) || undefined;
             return {
                 userId: userId,
-                displayName: liffProfile ? liffProfile.displayName : '대중러버',
+                displayName: liffProfile ? liffProfile.displayName : '실험러버',
                 pictureUrl: liffProfile ? liffProfile.pictureUrl : '',
                 statusMessage: liffProfile ? (liffProfile.statusMessage || '') : '',
-                characterName: liffProfile ? liffProfile.displayName : '대중러버',
+                characterName: liffProfile ? liffProfile.displayName : '실험러버',
                 nickname: nickname,
                 cash: 1250,
                 rewardPoints: 850,
@@ -179,7 +179,7 @@ const API = {
 
             // 임시: 최종 승자 리스트 목업 (실서버에서는 /game/result 응답에 winners 포함)
             const mockWinners = [
-                { profileImageUrl: liffProfile && liffProfile.pictureUrl ? liffProfile.pictureUrl : '', nickname: '대중1등' },
+                { profileImageUrl: liffProfile && liffProfile.pictureUrl ? liffProfile.pictureUrl : '', nickname: 'HE1등' },
                 { profileImageUrl: '', nickname: '트렌드마스터' },
                 { profileImageUrl: '', nickname: '선택왕' },
                 { profileImageUrl: '', nickname: '인간독해기' },
