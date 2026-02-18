@@ -307,7 +307,12 @@ function setFormMode(mode, eventId) {
         submitBtn.textContent = '저장';
         document.getElementById('eventTitle').value = '';
         document.getElementById('eventScenarioId').value = '';
-        document.getElementById('eventBannerImageUrl').value = '';
+        var bannerDataEl = document.getElementById('eventBannerImageData');
+        var bannerPreview = document.getElementById('eventBannerPreview');
+        var bannerFileEl = document.getElementById('eventBannerImageFile');
+        if (bannerDataEl) bannerDataEl.value = '';
+        if (bannerPreview) { bannerPreview.style.backgroundImage = ''; bannerPreview.classList.remove('has-image'); }
+        if (bannerFileEl) bannerFileEl.value = '';
         document.getElementById('eventRewardUsdt').value = 50;
         document.getElementById('eventPlayTimeMinutes').value = 10;
         document.getElementById('eventRequiredTickets').value = 1;
@@ -330,7 +335,20 @@ function setFormMode(mode, eventId) {
             if (!evt) return;
             document.getElementById('eventTitle').value = evt.title || '';
             document.getElementById('eventScenarioId').value = evt.scenarioId || '';
-            document.getElementById('eventBannerImageUrl').value = evt.bannerImageUrl || '';
+            var bannerDataEl = document.getElementById('eventBannerImageData');
+            var bannerPreview = document.getElementById('eventBannerPreview');
+            var bannerFileEl = document.getElementById('eventBannerImageFile');
+            if (bannerFileEl) bannerFileEl.value = '';
+            if (evt.bannerImageUrl && evt.bannerImageUrl.indexOf('data:') === 0) {
+                if (bannerDataEl) bannerDataEl.value = evt.bannerImageUrl;
+                if (bannerPreview) {
+                    bannerPreview.style.backgroundImage = 'url(' + evt.bannerImageUrl + ')';
+                    bannerPreview.classList.add('has-image');
+                }
+            } else {
+                if (bannerDataEl) bannerDataEl.value = '';
+                if (bannerPreview) { bannerPreview.style.backgroundImage = ''; bannerPreview.classList.remove('has-image'); }
+            }
             document.getElementById('eventStartAt').value = formatDateTimeLocal(evt.startAt);
             document.getElementById('eventEndAt').value = formatDateTimeLocal(evt.endAt);
             document.getElementById('eventRewardUsdt').value = evt.rewardUsdt;
@@ -363,7 +381,6 @@ function collectEventQuestions() {
     const questions = [];
     for (let i = 1; i <= 10; i++) {
         const textEl = document.getElementById('eventQ' + i);
-        const correctEl = document.getElementById('eventQ' + i + 'Correct');
         const choices = [
             (document.getElementById('eventQ' + i + 'A1') || {}).value || '',
             (document.getElementById('eventQ' + i + 'A2') || {}).value || '',
@@ -371,12 +388,7 @@ function collectEventQuestions() {
             (document.getElementById('eventQ' + i + 'A4') || {}).value || ''
         ];
         const text = (textEl && textEl.value) ? textEl.value.trim() : '';
-        const correctVal = (correctEl && correctEl.value) ? parseInt(correctEl.value, 10) : 1;
-        questions.push({
-            text: text,
-            choices: choices,
-            correctIndex: Math.max(0, Math.min(3, correctVal - 1))
-        });
+        questions.push({ text: text, choices: choices });
     }
     return questions;
 }
@@ -386,9 +398,7 @@ function fillEventQuestions(questions) {
     for (let i = 0; i < Math.min(10, questions.length); i++) {
         const q = questions[i];
         const textEl = document.getElementById('eventQ' + (i + 1));
-        const correctEl = document.getElementById('eventQ' + (i + 1) + 'Correct');
         if (textEl) textEl.value = (q.text || '');
-        if (correctEl) correctEl.value = String((q.correctIndex != null ? q.correctIndex : 0) + 1);
         for (let c = 0; c < 4; c++) {
             const choiceEl = document.getElementById('eventQ' + (i + 1) + 'A' + (c + 1));
             if (choiceEl) choiceEl.value = (q.choices && q.choices[c]) ? q.choices[c] : '';
@@ -399,9 +409,7 @@ function fillEventQuestions(questions) {
 function clearEventQuestions() {
     for (let i = 1; i <= 10; i++) {
         const textEl = document.getElementById('eventQ' + i);
-        const correctEl = document.getElementById('eventQ' + i + 'Correct');
         if (textEl) textEl.value = '';
-        if (correctEl) correctEl.value = '1';
         for (let c = 1; c <= 4; c++) {
             const choiceEl = document.getElementById('eventQ' + i + 'A' + c);
             if (choiceEl) choiceEl.value = '';
@@ -412,10 +420,12 @@ function clearEventQuestions() {
 function saveEvent(e) {
     e.preventDefault();
     const id = document.getElementById('eventId').value;
+    const bannerDataEl = document.getElementById('eventBannerImageData');
+    const bannerImageUrl = (bannerDataEl && bannerDataEl.value) ? bannerDataEl.value.trim() : '';
     const body = {
         title: document.getElementById('eventTitle').value,
         scenarioId: document.getElementById('eventScenarioId').value,
-        bannerImageUrl: document.getElementById('eventBannerImageUrl').value.trim(),
+        bannerImageUrl: bannerImageUrl,
         startAt: new Date(document.getElementById('eventStartAt').value).toISOString(),
         endAt: new Date(document.getElementById('eventEndAt').value).toISOString(),
         rewardUsdt: document.getElementById('eventRewardUsdt').value,
@@ -615,6 +625,26 @@ function renderBannerList(banners) {
         tr.innerHTML = '<td>' + (b.order ?? 0) + '</td><td>' + img + '</td><td>' + (linkTypeLabel[b.linkType] || b.linkType) + '</td><td>' + escapeHtml(b.linkUrl || '-') + '</td><td><button type="button" class="btn btn-outline btn-sm" onclick="editBanner(\'' + b.id + '\')">수정</button> <button type="button" class="btn btn-danger btn-sm" onclick="openDeleteBannerModal(\'' + b.id + '\')">삭제</button></td>';
         tbody.appendChild(tr);
     });
+}
+
+function onEventBannerFileSelect(input) {
+    var file = input && input.files && input.files[0];
+    var dataEl = document.getElementById('eventBannerImageData');
+    var preview = document.getElementById('eventBannerPreview');
+    if (!preview || !dataEl) return;
+    if (!file || !file.type.match(/^image\//)) {
+        dataEl.value = '';
+        preview.style.backgroundImage = '';
+        preview.classList.remove('has-image');
+        return;
+    }
+    var reader = new FileReader();
+    reader.onload = function () {
+        dataEl.value = reader.result;
+        preview.style.backgroundImage = 'url(' + reader.result + ')';
+        preview.classList.add('has-image');
+    };
+    reader.readAsDataURL(file);
 }
 
 function onBannerFileSelect(input) {

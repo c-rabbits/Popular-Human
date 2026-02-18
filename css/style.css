@@ -163,6 +163,14 @@ body {
     font-size: 16px;
 }
 
+/* Icon_png 아이콘 (이모지 대체) - 상단/헤더 재화 등 */
+.stat-icon-img {
+    width: 16px;
+    height: 16px;
+    display: block;
+    flex-shrink: 0;
+}
+
 .stat-value {
     color: #000;
 }
@@ -342,6 +350,15 @@ body {
     font-weight: 700;
     color: #000;
     margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.section-title-icon {
+    width: 22px;
+    height: 22px;
+    flex-shrink: 0;
 }
 
 /* 광고 리워드 섹션 */
@@ -406,6 +423,14 @@ body {
     font-size: 28px;
     margin-bottom: 6px;
     display: block;
+}
+
+.ad-reward-icon-img {
+    width: 28px;
+    height: 28px;
+    display: block;
+    margin: 0 auto 6px;
+    flex-shrink: 0;
 }
 
 .ad-reward-text {
@@ -599,6 +624,15 @@ body {
     font-size: 15px;
     color: #000;
     font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.stat-box-icon {
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
 }
 
 .scenario-meta {
@@ -1599,6 +1633,15 @@ body {
     font-weight: 900;
     color: #000;
     margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.screen-title-icon {
+    width: 28px;
+    height: 28px;
+    flex-shrink: 0;
 }
 
 /* 상점 헤더: 타이틀 + 재화정보(캐시·리워드포인트·티켓, 메인 상단과 동일) */
@@ -1865,6 +1908,13 @@ body {
     background: #f0f0f0;
 }
 
+.trend-dropdown-icon {
+    width: 18px;
+    height: 18px;
+    vertical-align: middle;
+    margin-right: 4px;
+}
+
 .trend-dropdown-arrow {
     transition: transform 0.3s;
 }
@@ -2114,6 +2164,13 @@ body {
 .shop-list-item-icon {
     font-size: 28px;
     flex-shrink: 0;
+}
+
+.shop-list-item-icon-img {
+    width: 28px;
+    height: 28px;
+    flex-shrink: 0;
+    display: block;
 }
 
 .shop-list-item-name {
@@ -2843,6 +2900,18 @@ body {
     text-align: center;
 }
 
+.settings-item-icon-img {
+    width: 28px;
+    height: 28px;
+    flex-shrink: 0;
+    display: block;
+}
+
+/* 설정 항목 아이콘 짙은 갈색 (흰색 아이콘용) */
+.settings-item-icon-img.icon-dark {
+    filter: brightness(0) saturate(100%) invert(22%) sepia(15%) saturate(1200%) hue-rotate(15deg);
+}
+
 .settings-item-text {
     flex: 1;
     min-width: 0;
@@ -3252,6 +3321,9 @@ body {
     font-size: 12px;
     font-weight: 600;
     color: #555;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
     cursor: pointer;
     transition: all 0.2s;
     white-space: nowrap;
@@ -3260,6 +3332,12 @@ body {
 .wallet-copy-btn:active {
     background: #ddd;
     transform: scale(0.95);
+}
+
+.wallet-copy-icon {
+    width: 14px;
+    height: 14px;
+    display: block;
 }
 
 /* 섹션 타이틀 */
@@ -3382,6 +3460,15 @@ body {
     font-size: 14px;
     color: #555;
     font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.wallet-asset-icon {
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
 }
 
 .wallet-asset-value {
@@ -3616,6 +3703,13 @@ body {
 .invite-reward-icon {
     font-size: 28px;
     flex-shrink: 0;
+}
+
+.invite-reward-icon-img {
+    width: 28px;
+    height: 28px;
+    flex-shrink: 0;
+    display: block;
 }
 
 .invite-reward-info {
