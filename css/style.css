@@ -872,6 +872,14 @@ body {
     overflow: hidden;
 }
 
+/* 패배 화면: 상단 빈 공간 축소 */
+.result-screen.show-loser .result-hero {
+    padding-top: 12px;
+}
+.result-screen.show-loser .result-banner {
+    margin-top: 16px;
+}
+
 .result-banner {
     width: 100%;
     margin: 50px 0 20px;
@@ -1131,8 +1139,6 @@ body {
     display: flex;
     flex-direction: column;
     gap: 8px;
-    max-height: 240px;
-    overflow-y: auto;
 }
 .winner-list-item {
     display: flex;

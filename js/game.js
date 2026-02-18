@@ -374,6 +374,7 @@ function showPendingResult(result) {
     document.getElementById('pendingContent').style.display = 'block';
     document.getElementById('winnerContent').style.display = 'none';
     document.getElementById('loserContent').style.display = 'none';
+    document.getElementById('resultScreen').classList.remove('show-loser');
     document.getElementById('pendingMessage').style.display = 'block';
 }
 
@@ -430,6 +431,7 @@ async function showFinalResult(result) {
         document.getElementById('pendingContent').style.display = 'none';
         document.getElementById('winnerContent').style.display = 'block';
         document.getElementById('loserContent').style.display = 'none';
+        document.getElementById('resultScreen').classList.remove('show-loser');
 
         saveTrendMyResult(true, result.correctCount, result.totalQuestions);
 
@@ -483,6 +485,7 @@ async function showFinalResult(result) {
         document.getElementById('pendingContent').style.display = 'none';
         document.getElementById('winnerContent').style.display = 'none';
         document.getElementById('loserContent').style.display = 'block';
+        document.getElementById('resultScreen').classList.add('show-loser');
 
         // 유저 스탯 업데이트 (리워드 포인트만)
         const currentPoints = parseInt(document.getElementById('rewardPoints').textContent);
