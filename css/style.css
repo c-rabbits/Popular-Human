@@ -3343,10 +3343,9 @@ body {
     margin-left: 2px;
 }
 
-/* 지갑 섹션 카드 내부: 보유 토큰/게임 재화/친구 초대는 설정 섹션과 동일 카드 안에 있으므로 내부 카드 스타일 제거 */
+/* 지갑 섹션 카드 내부: 보유 토큰/게임 재화는 설정 섹션과 동일 카드 안에 있으므로 내부 카드 스타일 제거 */
 .settings-section-card .wallet-token-card,
-.settings-section-card .wallet-asset-card,
-.settings-section-card .invite-reward-card {
+.settings-section-card .wallet-asset-card {
     background: transparent;
     box-shadow: none;
     margin-bottom: 0;
@@ -3575,12 +3574,25 @@ body {
    친구초대 리워드 섹션 (지갑)
    ======================================== */
 
+/* 독립 카드로 쓸 때 (다른 화면 등) */
 .invite-reward-card {
     background: #fff;
     border-radius: 14px;
     padding: 16px;
     margin-bottom: 10px;
     box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+}
+
+/* 지갑: 설정 섹션 카드 안에 직접 넣은 경우 간격 조정 */
+.settings-section-card#inviteRewardSection .settings-section-title {
+    margin-bottom: 10px;
+}
+.settings-section-card#inviteRewardSection .invite-reward-header {
+    margin-top: 0;
+    margin-bottom: 12px;
+}
+.settings-section-card#inviteRewardSection .invite-reward-stats {
+    margin-bottom: 12px;
 }
 
 .invite-reward-header {
