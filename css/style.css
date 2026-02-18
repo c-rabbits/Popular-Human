@@ -356,8 +356,8 @@ body {
 }
 
 .ad-reward-btn {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: #fff;
+    background: linear-gradient(135deg, #2a2520 0%, #0d0d0d 100%);
+    color: #c9a227;
     border: none;
     border-radius: 12px;
     padding: 20px 8px;
@@ -365,7 +365,7 @@ body {
     cursor: pointer;
     transition: all 0.3s;
     position: relative;
-    box-shadow: 0 2px 8px rgba(102, 126, 234, 0.2);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
     /* 터치 최적화 */
     touch-action: manipulation;
     -webkit-user-select: none;
@@ -378,7 +378,7 @@ body {
 
 .ad-reward-btn:hover:not(.cooldown) {
     transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+    box-shadow: 0 4px 12px rgba(201, 162, 39, 0.25);
 }
 
 .ad-reward-btn.loading {
@@ -423,10 +423,10 @@ body {
 
 /* 준비중 시나리오 */
 .scenario-card.upcoming {
-    opacity: 0.7;
+    opacity: 0.88;
     cursor: not-allowed;
     position: relative;
-    filter: grayscale(30%);
+    filter: grayscale(20%);
 }
 
 .scenario-card.upcoming::before {
@@ -436,7 +436,7 @@ body {
     left: 0;
     right: 0;
     bottom: 0;
-    background: rgba(255, 255, 255, 0.4);
+    background: rgba(255, 255, 255, 0.2);
     border-radius: 16px;
     pointer-events: none;
     z-index: 1;
@@ -2749,8 +2749,21 @@ body {
    설정 화면
    ======================================== */
 
+.settings-title-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.settings-title-icon {
+    width: 28px;
+    height: 28px;
+    flex-shrink: 0;
+}
+
 #settingsScreen .screen-title {
-    margin-bottom: 4px;
+    margin-bottom: 0;
 }
 
 .settings-subtitle {
@@ -3065,16 +3078,16 @@ body {
    지갑 화면 스타일
    ======================================== */
 
-/* 프로필 카드 */
+/* 프로필 카드 (설정 항목과 동일한 테두리) */
 .wallet-profile-card {
     display: flex;
     align-items: center;
     gap: 14px;
-    background: #fff;
-    border-radius: 16px;
-    padding: 16px;
-    margin-bottom: 12px;
-    box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+    background: #fafafa;
+    border-radius: 12px;
+    padding: 14px 16px;
+    margin-bottom: 8px;
+    border: 1px solid #e0e0e0;
 }
 
 .wallet-profile-avatar {
@@ -3140,13 +3153,13 @@ body {
     background: rgba(6, 199, 85, 0.2);
 }
 
-/* UID / 지갑주소 카드 */
+/* UID / 지갑주소 카드 (설정 항목과 동일한 테두리) */
 .wallet-info-card {
-    background: #fff;
-    border-radius: 14px;
+    background: #fafafa;
+    border-radius: 12px;
     padding: 14px 16px;
-    margin-bottom: 10px;
-    box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+    margin-bottom: 8px;
+    border: 1px solid #e0e0e0;
 }
 
 .wallet-info-label {
