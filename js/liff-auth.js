@@ -58,6 +58,30 @@ async function initLIFF() {
 
         isLIFFInitialized = true;
 
+        // Supabase 사용 시: LIFF 토큰으로 line-auth 호출 → JWT 받아 세션 설정
+        if (typeof CONFIG !== 'undefined' && CONFIG.USE_SUPABASE && typeof setSupabaseSession === 'function') {
+            const liffToken = liff.getAccessToken();
+            const lineAuthUrl = (typeof CONFIG.LINE_AUTH_URL === 'string' && CONFIG.LINE_AUTH_URL) ? CONFIG.LINE_AUTH_URL : (CONFIG.SUPABASE_URL ? (CONFIG.SUPABASE_URL.replace(/\/$/, '') + '/functions/v1/line-auth') : '');
+            if (liffToken && lineAuthUrl) {
+                try {
+                    const res = await fetch(lineAuthUrl, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ access_token: liffToken })
+                    });
+                    const data = res.ok ? await res.json() : null;
+                    if (data && data.access_token) {
+                        await setSupabaseSession(data.access_token, data.refresh_token || '');
+                        console.log('[LIFF] Supabase 세션 설정 완료');
+                    } else if (!res.ok) {
+                        console.warn('[LIFF] line-auth 실패', res.status, await res.text());
+                    }
+                } catch (e) {
+                    console.warn('[LIFF] line-auth 호출 오류', e);
+                }
+            }
+        }
+
         // LIFF 초기화 완료 후 → Kaia SDK 초기화
         await initKaiaSDK();
 

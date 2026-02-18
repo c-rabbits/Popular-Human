@@ -12,6 +12,9 @@ const CONFIG = {
     // Supabase Project URL (예: https://xxxxx.supabase.co)
     SUPABASE_URL: 'https://iqkkbulxmjpjrbyuyjqp.supabase.co',
 
+    // line-auth Edge Function URL (LIFF 토큰 → JWT 교환)
+    LINE_AUTH_URL: 'https://iqkkbulxmjpjrbyuyjqp.supabase.co/functions/v1/line-auth',
+
     // Supabase anon public key
     SUPABASE_ANON_KEY: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imlxa2tidWx4bWpwanJieXV5anFwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzEzOTQ1NTksImV4cCI6MjA4Njk3MDU1OX0.snrLD81NXrIyGdyNOEJlIA1ktvDE_2Sy43_895U_p4w'
 };
