@@ -1,18 +1,21 @@
-// Edge Function: line-auth
-// LIFF 액세스 토큰 수신 → LINE 프로필 조회 → profiles 조회/생성 → JWT 발급(sub=line_user_id) → 클라이언트 반환
+// Setup type definitions for built-in Supabase Runtime APIs
+import "jsr:@supabase/functions-js/edge-runtime.d.ts";
+// Edge Function: line-auth — LIFF 토큰 → LINE 프로필 조회 → profiles 조회/생성 → JWT 발급
+import { createClient } from 'npm:@supabase/supabase-js@2';
+import * as jose from 'npm:jose';
 
-import 'jsr:@supabase/functions-js/edge-runtime.d.ts'
-import { createClient } from 'npm:@supabase/supabase-js@2'
-import * as jose from 'npm:jose'
+console.info('server started');
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Methods': 'POST, OPTIONS',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-}
+  'Access-Control-Max-Age': '86400',
+};
 
 Deno.serve(async (req: Request) => {
   if (req.method === 'OPTIONS') {
-    return new Response('ok', { headers: corsHeaders })
+    return new Response(null, { status: 204, headers: corsHeaders })
   }
 
   if (req.method !== 'POST') {
